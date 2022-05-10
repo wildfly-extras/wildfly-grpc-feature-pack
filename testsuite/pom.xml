@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+     Copyright 2022 Red Hat, Inc.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>wildfly-grpc-parent</artifactId>
+        <groupId>org.wildfly.extras.grpc</groupId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>wildfly-grpc-testsuite</artifactId>
+    <name>WildFly gRPC :: Test Suite</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <debug.jvm.args/>
+
+        <!-- Used to provide an absolute location for the distribution under test. -->
+        <jboss.dist>${project.basedir}/target/wildfly</jboss.dist>
+        <jboss.home>${jboss.dist}</jboss.home>
+
+
+        <!-- IP address defaults. -->
+        <node0>127.0.0.1</node0>
+        <node1>127.0.0.1</node1>
+        <mcast>230.0.0.4</mcast> <!-- Default multicast address. -->
+        <mcast.ttl>0</mcast.ttl> <!-- Multicast TTL. -->
+        <port-offset>0</port-offset>
+
+        <!-- IP stack configs. -->
+        <jvm.args.ip>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false</jvm.args.ip>
+        <jvm.args.ip.server>${jvm.args.ip}
+            -Djboss.bind.address=${node0}
+            -Djboss.bind.address.unsecure=${node0}
+            -Djboss.bind.address.private=${node0}
+            -Djboss.bind.address.management=${node0}
+            -Djboss.default.multicast.address=${mcast}
+        </jvm.args.ip.server>
+        <jvm.args.ip.client>${jvm.args.ip}</jvm.args.ip.client>
+
+        <!-- Server arguments. Cannot have a null server argument in ARQ, set a dummy system property -->
+        <jboss.args>-Dharald.surname=pehl</jboss.args>
+
+        <!-- Additional JVM args, like those for EC2. -->
+        <jvm.args.other>-server</jvm.args.other>
+
+        <!-- Logging config -->
+        <testLogToFile>true</testLogToFile>
+
+        <!-- Timeout ratios. 100 will leave the timeout as it was coded. -->
+        <timeout.factor>100</timeout.factor>
+        <jvm.args.timeouts>-Dts.timeout.factor=${timeout.factor}</jvm.args.timeouts>
+
+        <!-- Common surefire arguments -->
+        <surefire.memory.args>-Xmx512m -XX:MetaspaceSize=128m</surefire.memory.args>
+        <surefire.jpda.args/>
+        <as.debug.port>8787</as.debug.port>
+        <modular.jdk.testsuite.args />
+        <surefire.system.args>${modular.jdk.testsuite.args} ${surefire.memory.args} ${surefire.jpda.args} -Djboss.dist=${jboss.dist} -Dmaven.repo.local=${settings.localRepository}</surefire.system.args>
+        <extra.server.jvm.args />
+
+        <!-- Hook to control forked process timeout via -D. Default value of 0 means no timeout -->
+        <surefire.forked.process.timeout>0</surefire.forked.process.timeout>
+
+        <!-- If servers should be killed before the test suite is run-->
+        <org.wildfly.test.kill-servers-before-test>false</org.wildfly.test.kill-servers-before-test>
+
+        <!-- Arquillian dependency versions -->
+        <version.arquillian_wildfly>${version.org.wildfly}</version.arquillian_wildfly>
+
+        <!-- Don't try to deploy the testsuite modules because they don't build jars -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+
+        <!-- used to enable trace logging for test suite runs -->
+        <trace>none</trace>
+
+        <jvm.args.dirs>
+            -Djboss.dist=${jboss.dist}
+            -Djava.io.tmpdir=${basedir}/target
+        </jvm.args.dirs>
+
+        <!--
+            Used in arquillian.xml - arguments for all JBoss AS instances.
+            System properties are duplicated here until ARQ-647 is implemented.
+        -->
+        <server.jvm.args>${surefire.system.args} ${jvm.args.ip.server} ${jvm.args.other} ${jvm.args.timeouts} -Dnode0=${node0} -Dnode1=${node1} -Dmcast=${mcast} -Dmcast.ttl=${mcast.ttl} ${jvm.args.dirs} ${extra.server.jvm.args} ${debug.jvm.args}</server.jvm.args>
+        <cli.jvm.args>${modular.jdk.args} -Dmaven.repo.local=${settings.localRepository}</cli.jvm.args>
+    </properties>
+
+    <modules>
+        <module>integration</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <!-- Don't compile src/main/java - nothing to do. -->
+                    <executions><execution><id>default-compile</id><phase>none</phase></execution></executions>
+                </plugin>
+
+                <!--
+                   Sets general surefire system properties.
+                   These can be overridden by inheriting plugin configurations.
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <failIfNoTests>false</failIfNoTests>
+                        <redirectTestOutputToFile>${testLogToFile}</redirectTestOutputToFile>
+                        <systemPropertyVariables>
+                            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                            <jboss.dist>${jboss.dist}</jboss.dist>
+                            <jboss.home>${basedir}/target/wildfly</jboss.home>
+                            <jboss.args>${jboss.args}</jboss.args>
+                            <module.path>${jboss.dist}/modules${path.separator}${basedir}/target/modules</module.path>
+                            <org.wildfly.test.kill-servers-before-test>${org.wildfly.test.kill-servers-before-test}</org.wildfly.test.kill-servers-before-test>
+                        </systemPropertyVariables>
+                        <!-- Arquillian's config files. -->
+                        <additionalClasspathElements combine.children="append">
+                            <additionalClasspathElement>${basedir}/src/test/config/arq</additionalClasspathElement>
+                        </additionalClasspathElements>
+                        <argLine>${surefire.system.args}</argLine>
+                        <trimStackTrace>false</trimStackTrace>
+                    </configuration>
+                </plugin>
+
+                <!-- Disable default site run. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <executions>
+                        <execution><id>default-site</id><phase>none</phase></execution></executions>
+                </plugin>
+
+                <!-- Don't create jars - nothing to do. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <executions><execution><id>default-jar</id><phase>none</phase></execution></executions>
+                </plugin>
+
+                <!-- Don't create source jars - nothing to do. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <executions><execution><id>attach-sources</id><phase>none</phase></execution></executions>
+                </plugin>
+
+                <!-- Don't install - nothing to do. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <executions><execution><id>default-install</id><phase>none</phase></execution></executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>jdk9</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <modular.jdk.testsuite.args>${modular.jdk.args}
+                    --add-exports=java.base/sun.security.validator=ALL-UNNAMED
+                    --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED
+                    --add-exports=java.base/com.sun.crypto.provider=ALL-UNNAMED
+                </modular.jdk.testsuite.args>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-target</id>
+            <activation>
+                <jdk>[9,)</jdk>
+                <property>
+                    <name>jdk-release</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${version.compiler.plugin}</version>
+                        <configuration>
+                            <release>${jdk-release}</release>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Debug server profile -->
+            <id>debug.profile</id>
+            <activation>
+                <property>
+                    <name>debug</name>
+                </property>
+            </activation>
+            <properties>
+                <debug.jvm.args>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8787</debug.jvm.args>
+            </properties>
+        </profile>
+    </profiles>
+</project>
