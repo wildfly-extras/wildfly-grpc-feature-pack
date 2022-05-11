@@ -13,7 +13,7 @@ mvn install
 This will build everything, and run the testsuite. A WildFly server with the gRPC subsystem will be created in
 the `build/target` directory.
 
-## Run thw Example
+## Run the Example
 
 The `example` folder contains the 'Hello World' example from
 the [gRPC Java examples](https://github.com/grpc/grpc-java/tree/master/examples).
