@@ -49,7 +49,7 @@
 
     <properties>
         <!-- WildFly -->
-        <version.org.wildfly>26.1.0.Final</version.org.wildfly>
+        <version.org.wildfly>26.1.1.Final</version.org.wildfly>
         <version.org.wildfly.core>18.1.1.Final</version.org.wildfly.core>
         <version.org.wildfly.common>1.6.0.Final</version.org.wildfly.common>
 
