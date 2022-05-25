@@ -69,7 +69,7 @@
         <version.org.wildfly.license-plugin>2.3.0.Final</version.org.wildfly.license-plugin>
         <version.com.mycila.license-plugin>4.1</version.com.mycila.license-plugin>
         <version.net.revelc.formatter-plugin>2.18.0</version.net.revelc.formatter-plugin>
-        <version.net.revelc.impsort-plugin>1.6.2</version.net.revelc.impsort-plugin>
+        <version.net.revelc.impsort-plugin>1.7.0</version.net.revelc.impsort-plugin>
 
         <!-- Repos, URLs & protocols -->
         <wildfly-grpc.repo.scm.connection>git@github.com:hpehl/wildfly-grpc-feature-pack.git</wildfly-grpc.repo.scm.connection>
