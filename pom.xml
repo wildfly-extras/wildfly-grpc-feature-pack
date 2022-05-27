@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-     Copyright 2022 Red Hat, Inc.
+     Copyright 2022 Red Hat
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
 
-         http://www.apache.org/licenses/LICENSE-2.0
+         https://www.apache.org/licenses/LICENSE-2.0
 
      Unless required by applicable law or agreed to in writing, software
      distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
@@ -30,7 +31,7 @@
     <packaging>pom</packaging>
     <name>WildFly gRPC :: Parent</name>
     <description>WildFly gRPC subsystem</description>
-    <inceptionYear>2021</inceptionYear>
+    <inceptionYear>2022</inceptionYear>
 
     <licenses>
         <license>
@@ -40,233 +41,177 @@
         </license>
     </licenses>
 
+    <organization>
+        <name>Red Hat</name>
+        <url>https://developers.redhat.com/</url>
+    </organization>
+
     <scm>
-        <connection>scm:git:${wildfly-grpc.repo.scm.connection}</connection>
-        <developerConnection>scm:git:${wildfly-grpc.repo.scm.connection}</developerConnection>
-        <url>${wildfly-grpc.repo.scm.url}</url>
+        <connection>scm:git:${repo.scm.connection}</connection>
+        <developerConnection>scm:git:${repo.scm.connection}</developerConnection>
+        <url>${repo.scm.url}</url>
         <tag>HEAD</tag>
     </scm>
 
     <properties>
-        <!-- WildFly -->
-        <version.org.wildfly>26.1.1.Final</version.org.wildfly>
-        <version.org.wildfly.core>18.1.1.Final</version.org.wildfly.core>
-        <version.org.wildfly.common>1.6.0.Final</version.org.wildfly.common>
-
-        <!-- gRPC, Protobuf versions & related -->
-        <version.com.google.protobuf>4.0.0-rc-2</version.com.google.protobuf>
-        <version.io.grpc>1.46.0</version.io.grpc>
-        <version.io.perfmark>0.25.0</version.io.perfmark>
-        <version.javax.annotation-api>1.3.2</version.javax.annotation-api>
-
-        <!-- Other dependency versions -->
-        <version.org.jboss.arquillian.junit>1.6.0.Final</version.org.jboss.arquillian.junit>
+        <!-- Dependency versions -->
+        <version.arquillian.junit>1.6.0.Final</version.arquillian.junit>
+        <version.grpc>1.46.0</version.grpc>
+        <version.javax.annotation>1.3.2</version.javax.annotation>
+        <version.perfmark>0.25.0</version.perfmark>
+        <version.protobuf>4.0.0-rc-2</version.protobuf>
+        <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
+        <version.wildfly.common>1.6.0.Final</version.wildfly.common>
+        <version.wildfly.core>18.1.1.Final</version.wildfly.core>
+        <version.wildfly>26.1.1.Final</version.wildfly>
 
         <!-- Plugin versions -->
-        <version.org.wildfly.checkstyle-config>1.0.8.Final</version.org.wildfly.checkstyle-config>
-        <version.org.wildfly.galleon-plugin>5.2.11.Final</version.org.wildfly.galleon-plugin>
-        <version.org.wildfly.maven.plugin>3.0.0.Final</version.org.wildfly.maven.plugin>
-        <version.org.wildfly.license-plugin>2.3.0.Final</version.org.wildfly.license-plugin>
-        <version.com.mycila.license-plugin>4.1</version.com.mycila.license-plugin>
-        <version.net.revelc.formatter-plugin>2.18.0</version.net.revelc.formatter-plugin>
-        <version.net.revelc.impsort-plugin>1.7.0</version.net.revelc.impsort-plugin>
+        <version.checkstyle.plugin>3.1.1</version.checkstyle.plugin>
+        <version.enforcer.plugin>3.0.0-M3</version.enforcer.plugin>
+        <version.formatter.plugin>2.17.0</version.formatter.plugin>
+        <version.galleon.plugin>5.2.11.Final</version.galleon.plugin>
+        <version.impsort.plugin>1.6.2</version.impsort.plugin>
+        <version.license.plugin>4.1</version.license.plugin>
+        <version.wildfly.plugin>3.0.0.Final</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
-        <wildfly-grpc.repo.scm.connection>git@github.com:hpehl/wildfly-grpc-feature-pack.git</wildfly-grpc.repo.scm.connection>
-        <wildfly-grpc.repo.scm.url>https://github.com/hpehl/wildfly-grpc-feature-pack</wildfly-grpc.repo.scm.url>
+        <repo.scm.connection>git@github.com:wildfly-extras/wildfly-grpc-feature-pack</repo.scm.connection>
+        <repo.scm.url>https://github.com/wildfly-extras/wildfly-grpc-feature-pack</repo.scm.url>
         <maven.repository.protocol>https</maven.repository.protocol>
         <maven.repository.url>${maven.repository.protocol}://repository.jboss.org/nexus/content/groups/public/</maven.repository.url>
         <maven.redhat.repository.url>${maven.repository.protocol}://maven.repository.redhat.com/ga/</maven.redhat.repository.url>
 
         <!-- Build related -->
         <encoding>UTF-8</encoding>
-        <java.version>11</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
-        <server.name>wildfly-${version.org.wildfly}-grpc-${project.version}</server.name>
-        <wildfly.build.output.dir>build/target/${server.name}</wildfly.build.output.dir>
-
-        <!-- Galleon -->
         <galleon.fork.embedded>true</galleon.fork.embedded>
         <galleon.log.time>true</galleon.log.time>
         <galleon.wildfly.home>/tmp</galleon.wildfly.home>
-
-        <!-- Checkstyle configuration -->
+        <jakarta-ee>false</jakarta-ee>
+        <java.version>11</java.version>
         <linkXRef>false</linkXRef>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.min.version>3.2.5</maven.min.version>
+        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+        <server.name>wildfly-${version.wildfly}-grpc-${project.version}</server.name>
+        <wildfly.build.output.dir>build/target/${server.name}</wildfly.build.output.dir>
     </properties>
 
     <modules>
         <module>api</module>
         <module>build</module>
-        <module>example</module>
+        <module>build-config</module>
+        <module>code-parent</module>
         <module>feature-pack</module>
         <module>subsystem</module>
         <module>testsuite</module>
     </modules>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- BOMs first and in THIS order! -->
-            <dependency>
-                <groupId>com.google.protobuf</groupId>
-                <artifactId>protobuf-bom</artifactId>
-                <version>${version.com.google.protobuf}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>grpc-bom</artifactId>
-                <version>${version.io.grpc}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-component-matrix</artifactId>
-                <version>${version.org.wildfly}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Project -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>wildfly-grpc-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>wildfly-grpc-subsystem</artifactId>
-                <version>${project.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>*</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>wildfly-grpc-feature-pack</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <exclusions>
-                    <exclusion>
-                        <groupId>*</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>wildfly-grpc-feature-pack</artifactId>
-                <version>${project.version}</version>
-                <type>zip</type>
-                <exclusions>
-                    <exclusion>
-                        <groupId>*</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- WildFly dependencies -->
-            <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-ee-galleon-pack</artifactId>
-                <version>${version.org.wildfly}</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-galleon-pack</artifactId>
-                <version>${version.org.wildfly}</version>
-                <type>zip</type>
-            </dependency>
-
-            <!-- Misc dependencies -->
-            <dependency>
-                <groupId>io.perfmark</groupId>
-                <artifactId>perfmark-api</artifactId>
-                <version>${version.io.perfmark}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>${version.javax.annotation-api}</version>
-            </dependency>
-
-            <!-- External dependencies -->
-            <!-- This does not go into the modules so don't worry about exclusions -->
-            <dependency>
-                <groupId>org.wildfly.checkstyle</groupId>
-                <artifactId>wildfly-checkstyle-config</artifactId>
-                <version>${version.org.wildfly.checkstyle-config}</version>
-            </dependency>
-
-            <!-- Test dependencies -->
-            <dependency>
-                <groupId>org.jboss.arquillian.junit</groupId>
-                <artifactId>arquillian-junit-core</artifactId>
-                <scope>test</scope>
-                <version>${version.org.jboss.arquillian.junit}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <!-- No dependencies! Dependencies are managed in code-parent -->
+    <dependencies/>
 
     <build>
+        <!--
+            All plugins are declared and (partly) configured here.
+            Some of them are redefined in code-parent
+        -->
         <pluginManagement>
             <plugins>
+                <!-- Ordered by artifactID -->
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>${version.formatter.plugin}</version>
+                    <inherited>false</inherited>
+                    <configuration>
+                        <configFile>build-config/src/main/resources/etc/eclipse-formatter-config.xml</configFile>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>${version.com.mycila.license-plugin}</version>
+                    <version>${version.license.plugin}</version>
                     <configuration>
-                        <header>etc/license.txt</header>
+                        <header>build-config/src/main/resources/etc/license.txt</header>
                         <strictCheck>true</strictCheck>
                         <aggregate>true</aggregate>
+                        <useDefaultExcludes>true</useDefaultExcludes>
                         <mapping>
                             <proto>JAVADOC_STYLE</proto>
                         </mapping>
                         <excludes>
-                            <exclude>LICENSE.txt</exclude>
+                            <exclude>.sdkmanrc</exclude>
+                            <exclude>LICENSE</exclude>
                             <exclude>**/*license*.txt</exclude>
-                            <exclude>work/**</exclude>
                         </excludes>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>net.revelc.code.formatter</groupId>
-                    <artifactId>formatter-maven-plugin</artifactId>
-                    <version>${version.net.revelc.formatter-plugin}</version>
-                    <inherited>false</inherited>
-                    <configuration>
-                        <configFile>etc/eclipse-formatter-config.xml</configFile>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>net.revelc.code</groupId>
                     <artifactId>impsort-maven-plugin</artifactId>
-                    <version>${version.net.revelc.impsort-plugin}</version>
+                    <version>${version.impsort.plugin}</version>
                     <configuration>
                         <groups>java.,javax.,org.,io.,com.</groups>
                         <removeUnused>true</removeUnused>
                         <staticAfter>true</staticAfter>
-                        <!-- <staticGroups>java.,javax.,org.w3c.,org.xml.,junit.</staticGroups> -->
                     </configuration>
                 </plugin>
-                    <plugin>
-                    <groupId>org.wildfly.maven.plugins</groupId>
-                    <artifactId>licenses-plugin</artifactId>
-                    <version>${version.org.wildfly.license-plugin}</version>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <configuration>
+                        <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>true</failsOnError>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                        <excludes>**/*$logger.java,**/*$bundle.java</excludes>
+                        <useFile/>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.wildfly.checkstyle</groupId>
+                            <artifactId>wildfly-checkstyle-config</artifactId>
+                            <version>${version.checkstyle.config}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <configuration>
+                        <rules>
+                            <bannedRepositories>
+                                <message>To build this project, don't use maven repositories over HTTP. Please use HTTPS
+                                    in your settings.xml or run the build with property insecure.repositories=WARN
+                                </message>
+                                <level>ERROR</level>
+                                <bannedRepositories>
+                                    <bannedRepository>http://*</bannedRepository>
+                                </bannedRepositories>
+                                <bannedPluginRepositories>
+                                    <bannedPluginRepository>http://*</bannedPluginRepository>
+                                </bannedPluginRepositories>
+                            </bannedRepositories>
+                            <requireMavenVersion>
+                                <message>To build this project Maven ${maven.min.version} (or greater) is required.
+                                    Please install it.
+                                </message>
+                                <version>${maven.min.version}</version>
+                            </requireMavenVersion>
+                            <requireJavaVersion>
+                                <message>To build this project JDK ${maven.compiler.source} (or greater) is required.
+                                    Please install it.
+                                </message>
+                                <version>${maven.compiler.source}</version>
+                            </requireJavaVersion>
+                        </rules>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.wildfly.galleon-plugins</groupId>
                     <artifactId>wildfly-galleon-maven-plugin</artifactId>
-                    <version>${version.org.wildfly.galleon-plugin}</version>
+                    <version>${version.galleon.plugin}</version>
                     <dependencies>
                         <!--
                             feature-spec-gen uses wildfly-embedded to generate the feature specs,
@@ -275,66 +220,40 @@
                         <dependency>
                             <groupId>org.wildfly.core</groupId>
                             <artifactId>wildfly-embedded</artifactId>
-                            <version>${version.org.wildfly.core}</version>
+                            <version>${version.wildfly.core}</version>
                         </dependency>
                         <!-- If you add a dependency on wildfly-embedded you need to bring your own transitives -->
                         <dependency>
                             <groupId>org.wildfly.common</groupId>
                             <artifactId>wildfly-common</artifactId>
-                            <version>${version.org.wildfly.common}</version>
+                            <version>${version.wildfly.common}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
-                <!-- Only here to be able to run wildfly:deploy for the example -->
                 <plugin>
                     <groupId>org.wildfly.plugins</groupId>
                     <artifactId>wildfly-maven-plugin</artifactId>
-                    <version>${version.org.wildfly.maven.plugin}</version>
-                </plugin>
-                <!-- Checkstyle -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>${version.checkstyle.plugin}</version>
-                    <executions>
-                        <execution>
-                            <id>check-style</id>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>checkstyle</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.wildfly.checkstyle</groupId>
-                            <artifactId>wildfly-checkstyle-config</artifactId>
-                            <version>${version.org.wildfly.checkstyle-config}</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
-                        <consoleOutput>true</consoleOutput>
-                        <failsOnError>true</failsOnError>
-                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        <excludes>**/*$logger.java,**/*$bundle.java</excludes>
-                        <suppressionsLocation>etc/checkstyle-suppressions.xml</suppressionsLocation>
-                        <useFile/>
-                    </configuration>
+                    <version>${version.wildfly.plugin}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
+            <!-- Ordered by artifactID -->
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>license-format</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>license-check</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -342,28 +261,15 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>format</id>
+                        <id>enforcer-enforce</id>
+                        <phase>initialize</phase>
                         <goals>
-                            <goal>format</goal>
+                            <goal>enforce</goal>
                         </goals>
-                        <phase>process-sources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>net.revelc.code</groupId>
-                <artifactId>impsort-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sort-imports</id>
-                        <goals>
-                            <goal>sort</goal>
-                        </goals>
-                        <phase>process-sources</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -371,6 +277,12 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>examples</id>
+            <modules>
+                <module>examples</module>
+            </modules>
+        </profile>
         <profile>
             <id>jdk9</id>
             <activation>
@@ -381,6 +293,12 @@
                     --add-exports=jdk.unsupported/sun.reflect=ALL-UNNAMED
                     --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED
                     --add-modules=java.se</modular.jdk.args>
+            </properties>
+        </profile>
+        <profile>
+            <id>jakarta</id>
+            <properties>
+                <jakarta-ee>true</jakarta-ee>
             </properties>
         </profile>
     </profiles>

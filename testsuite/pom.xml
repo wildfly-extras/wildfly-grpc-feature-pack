@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-     Copyright 2022 Red Hat, Inc.
+     Copyright 2022 Red Hat
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
 
-         http://www.apache.org/licenses/LICENSE-2.0
+         https://www.apache.org/licenses/LICENSE-2.0
 
      Unless required by applicable law or agreed to in writing, software
      distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,10 +20,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>wildfly-grpc-parent</artifactId>
         <groupId>org.wildfly.extras.grpc</groupId>
+        <artifactId>wildfly-grpc-code-parent</artifactId>
         <version>0.0.1</version>
+        <relativePath>../code-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>wildfly-grpc-testsuite</artifactId>
@@ -36,7 +38,6 @@
         <!-- Used to provide an absolute location for the distribution under test. -->
         <jboss.dist>${project.basedir}/target/wildfly</jboss.dist>
         <jboss.home>${jboss.dist}</jboss.home>
-
 
         <!-- IP address defaults. -->
         <node0>127.0.0.1</node0>
@@ -84,7 +85,7 @@
         <org.wildfly.test.kill-servers-before-test>false</org.wildfly.test.kill-servers-before-test>
 
         <!-- Arquillian dependency versions -->
-        <version.arquillian_wildfly>${version.org.wildfly}</version.arquillian_wildfly>
+        <version.arquillian_wildfly>${version.wildfly}</version.arquillian_wildfly>
 
         <!-- Don't try to deploy the testsuite modules because they don't build jars -->
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -118,7 +119,6 @@
                     <!-- Don't compile src/main/java - nothing to do. -->
                     <executions><execution><id>default-compile</id><phase>none</phase></execution></executions>
                 </plugin>
-
                 <!--
                    Sets general surefire system properties.
                    These can be overridden by inheriting plugin configurations.
