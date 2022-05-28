@@ -20,7 +20,7 @@ import org.wildfly.grpc.GrpcService;
 import io.grpc.stub.StreamObserver;
 
 @GrpcService
-public class GreeterImpl extends GreeterGrpc.GreeterImplBase {
+public class GreeterServiceImpl extends GreeterGrpc.GreeterImplBase {
 
     @Override
     public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {

@@ -22,8 +22,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>wildfly-grpc-examples-chat</artifactId>
         <groupId>org.wildfly.extras.grpc</groupId>
+        <artifactId>wildfly-grpc-examples-chat</artifactId>
         <version>0.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

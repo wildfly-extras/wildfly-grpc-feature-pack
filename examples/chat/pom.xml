@@ -22,8 +22,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>wildfly-grpc-examples</artifactId>
         <groupId>org.wildfly.extras.grpc</groupId>
+        <artifactId>wildfly-grpc-examples</artifactId>
         <version>0.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -31,6 +31,11 @@
     <artifactId>wildfly-grpc-examples-chat</artifactId>
     <name>WildFly gRPC :: Examples :: Chat</name>
     <packaging>pom</packaging>
+
+    <properties>
+        <version.javafx>18.0.1</version.javafx>
+        <version.javafx.plugin>0.0.8</version.javafx.plugin>
+    </properties>
 
     <modules>
         <module>client</module>
@@ -45,6 +50,23 @@
                 <artifactId>wildfly-grpc-examples-chat-proto</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>${version.javafx}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-maven-plugin</artifactId>
+                    <version>${version.javafx.plugin}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

@@ -33,8 +33,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <os-maven-plugin.version>1.7.0</os-maven-plugin.version>
-        <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
+        <version.os.plugin>1.7.0</version.os.plugin>
+        <version.protobuf.plugin>0.6.1</version.protobuf.plugin>
     </properties>
 
     <modules>
@@ -47,7 +47,7 @@
             <extension>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>os-maven-plugin</artifactId>
-                <version>${os-maven-plugin.version}</version>
+                <version>${version.os.plugin}</version>
             </extension>
         </extensions>
 
@@ -56,7 +56,7 @@
                 <plugin>
                     <groupId>org.xolstice.maven.plugins</groupId>
                     <artifactId>protobuf-maven-plugin</artifactId>
-                    <version>${protobuf-maven-plugin.version}</version>
+                    <version>${version.protobuf.plugin}</version>
                     <configuration>
                         <pluginId>grpc-java</pluginId>
                         <protocArtifact>

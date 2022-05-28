@@ -1,6 +1,8 @@
 # WildFly gRPC
 
-Feature pack to bring gRPC support to WildFly.
+Feature pack to bring gRPC support to WildFly. Currently, the feature pack supports the deployment of gRPC services annotated with a custom annotation: `org.wildfly.grpc.GrpcService`. 
+
+The gRPC service is registered against a gRPC server listening to port 9555. Configuration and customization is not yet supported. Also, only gRPC services are supported at the moment. Support of gRPC clients is coming soon.
 
 ## Get Started
 
@@ -13,22 +15,39 @@ mvn install
 This will build everything, and run the testsuite. A WildFly server with the gRPC subsystem will be created in
 the `build/target` directory.
 
+### Profiles
+
+The maven build supports the following profiles:
+
+- `jakarta`: Makes sure the feature pack is Jakarta EE compliant
+- `examples`: Builds the examples
+
 ## Examples
+
+The examples consist of three modules:
+
+1. Proto: Contains the proto definitions 
+2. Service: Contains the gRPC service annotated with `@GrpcService`
+3. Client: Contains a client to call the deployed gRPC service
 
 ### Hello World
 
-The `examples/hello-world` folder contains the 'Hello World' example from
-the [gRPC Java examples](https://github.com/grpc/grpc-java/tree/master/examples).
+The `helloworld` example is a slightly modified version of the `helloworld` example from [gRPC Java examples](https://github.com/grpc/grpc-java/tree/master/examples).
 
-To build the hello-world service, provision a WildFly server with gRPC and start the server, run:
+#### Service
+
+To build the `helloworld` service, provision a WildFly server with the gRPC subsystem and deploy the service, run:
 
 ```shell
-mvn package wildfly:run -P examples -pl examples/helloworld/service
+mvn wildfly:run -P examples -pl examples/helloworld/service
 ```
-To call the service execute in another shell:
+
+#### Client
+
+The `helloworld` client is a simple Java application. To build the client and call to the gRPC service, run:
 
 ```shell
-mvn compile exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob"
+mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob"
 ```
 
 Alternatively you could also use tools like [BloomRPC](https://github.com/uw-labs/bloomrpc)
@@ -43,4 +62,22 @@ grpcurl \
 
 ### Chat
 
-Pending
+The `chat` example is taken from [gRPC by example](https://github.com/saturnism/grpc-by-example-java). 
+
+#### Service
+
+To build the `chat` service, provision a WildFly server with the gRPC subsystem and deploy the service, run:
+
+```shell
+mvn wildfly:run -P examples -pl examples/chat/service
+```
+
+#### Client
+
+The `chat` client is a JavaFX application. To build the client and connect to the gRPC service, run:
+
+```shell
+mvn javafx:run -P examples -pl examples/chat/client
+```
+
+To see the `chat` example in action, you should start multiple chat clients. 
