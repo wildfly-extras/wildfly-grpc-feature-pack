@@ -27,13 +27,13 @@ import com.google.protobuf.Timestamp;
 @GrpcService
 public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
 
-    private static Set<StreamObserver<ChatMessageFromServer>> observers = ConcurrentHashMap.newKeySet();
+    private static final Set<StreamObserver<ChatMessageFromServer>> observers = ConcurrentHashMap.newKeySet();
 
     @Override
     public StreamObserver<ChatMessage> chat(StreamObserver<ChatMessageFromServer> responseObserver) {
         observers.add(responseObserver);
 
-        return new StreamObserver<ChatMessage>() {
+        return new StreamObserver<>() {
             @Override
             public void onNext(ChatMessage value) {
                 System.out.println(value);
