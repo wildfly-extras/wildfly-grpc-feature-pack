@@ -72,7 +72,7 @@
         <version.galleon.plugin>5.2.11.Final</version.galleon.plugin>
         <version.impsort.plugin>1.7.0</version.impsort.plugin>
         <version.license.plugin>4.1</version.license.plugin>
-        <version.wildfly.plugin>3.0.0.Final</version.wildfly.plugin>
+        <version.wildfly.plugin>3.0.1.Final</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
         <repo.scm.connection>git@github.com:wildfly-extras/wildfly-grpc-feature-pack</repo.scm.connection>
