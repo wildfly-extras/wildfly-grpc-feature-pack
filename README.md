@@ -2,7 +2,7 @@
 
 Feature pack to bring gRPC support to WildFly. Currently, the feature pack supports the deployment of gRPC services annotated with a custom annotation: `org.wildfly.grpc.GrpcService`. 
 
-The gRPC service is registered against a gRPC server listening to port 9555. Configuration and customization is not yet supported. Also, only gRPC services are supported at the moment. Support of gRPC clients is coming soon.
+gRPC services are registered against a gRPC server listening to port 9555. Configuration and customization is not yet supported. Also, only gRPC services are supported at the moment. Support for gRPC clients is coming soon.
 
 ## Get Started
 
@@ -24,7 +24,7 @@ The maven build supports the following profiles:
 
 ## Examples
 
-The examples consist of three modules:
+Each example consists of three modules:
 
 1. Proto: Contains the proto definitions 
 2. Service: Contains the gRPC service annotated with `@GrpcService`
