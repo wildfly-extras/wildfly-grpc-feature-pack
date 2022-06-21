@@ -36,8 +36,6 @@
     </dependencies>
     <default-packages>
         <package name="modules.all"/>
-        <package name="docs"/>
-        <package name="docs.licenses.merge"/>
     </default-packages>
     <generate-feature-specs>
         <extensions>
