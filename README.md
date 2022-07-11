@@ -30,6 +30,12 @@ Each example consists of three modules:
 2. Service: Contains the gRPC service annotated with `@GrpcService`
 3. Client: Contains a client to call the deployed gRPC service
 
+Before running the examples, please make sure that all necessary dependencies are available in your local maven repository:
+
+```shell
+mvn install -P examples
+```
+
 ### Hello World
 
 The `helloworld` example is a slightly modified version of the `helloworld` example from [gRPC Java examples](https://github.com/grpc/grpc-java/tree/master/examples).
