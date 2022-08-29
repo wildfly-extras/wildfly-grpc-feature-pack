@@ -41,7 +41,7 @@
         <!-- Other feature pack dependencies -->
         <dependency>
             <groupId>org.wildfly</groupId>
-            <artifactId>wildfly-galleon-pack</artifactId>
+            <artifactId>wildfly-preview-feature-pack</artifactId>
             <version>${version.wildfly}</version>
             <type>zip</type>
         </dependency>
