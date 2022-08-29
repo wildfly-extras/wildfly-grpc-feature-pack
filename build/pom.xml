@@ -78,7 +78,6 @@
                         <layer>grpc</layer>
                     </layers>
                     <galleon-options>
-                        <jboss-maven-dist/>
                         <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
                     </galleon-options>
                     <provisioning-dir>${project.build.finalName}</provisioning-dir>
