@@ -19,7 +19,6 @@ the `build/target` directory.
 
 The maven build supports the following profiles:
 
-- `jakarta`: Makes sure the feature pack is Jakarta EE compliant
 - `examples`: Builds the examples
 
 ## Examples
