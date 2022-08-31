@@ -62,7 +62,7 @@
                     <feature-packs>
                         <feature-pack>
                             <groupId>org.wildfly</groupId>
-                            <artifactId>wildfly-galleon-pack</artifactId>
+                            <artifactId>wildfly-preview-feature-pack</artifactId>
                             <version>${version.wildfly}</version>
                         </feature-pack>
                         <feature-pack>
@@ -78,7 +78,6 @@
                         <layer>grpc</layer>
                     </layers>
                     <galleon-options>
-                        <jboss-maven-dist/>
                         <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
                     </galleon-options>
                     <provisioning-dir>${project.build.finalName}</provisioning-dir>
