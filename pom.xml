@@ -63,7 +63,7 @@
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
         <version.wildfly.common>1.6.0.Final</version.wildfly.common>
         <version.wildfly.core>18.1.2.Final</version.wildfly.core>
-        <version.wildfly>26.1.1.Final</version.wildfly>
+        <version.wildfly>26.1.2.Final</version.wildfly>
 
         <!-- Plugin versions -->
         <version.checkstyle.plugin>3.1.1</version.checkstyle.plugin>
