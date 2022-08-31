@@ -86,7 +86,6 @@
         <galleon.fork.embedded>true</galleon.fork.embedded>
         <galleon.log.time>true</galleon.log.time>
         <galleon.wildfly.home>/tmp</galleon.wildfly.home>
-        <jakarta-ee>true</jakarta-ee>
         <java.version>11</java.version>
         <linkXRef>false</linkXRef>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -293,12 +292,6 @@
                     --add-exports=jdk.unsupported/sun.reflect=ALL-UNNAMED
                     --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED
                     --add-modules=java.se</modular.jdk.args>
-            </properties>
-        </profile>
-        <profile>
-            <id>jakarta</id>
-            <properties>
-                <jakarta-ee>true</jakarta-ee>
             </properties>
         </profile>
     </profiles>

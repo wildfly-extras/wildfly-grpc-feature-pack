@@ -102,17 +102,10 @@
             <!-- WildFly dependencies -->
             <dependency>
                 <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-ee-galleon-pack</artifactId>
-                <version>${version.wildfly}</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly</groupId>
                 <artifactId>wildfly-preview-feature-pack</artifactId>
                 <version>${version.wildfly}</version>
                 <type>zip</type>
             </dependency>
-
 
             <!-- gRPC / protobuf dependencies -->
             <dependency>
