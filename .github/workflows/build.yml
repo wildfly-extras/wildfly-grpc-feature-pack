@@ -1,4 +1,4 @@
-name: Build Codebase
+name: Verify Codebase
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build Codebase
+    name: Verify Codebase
     runs-on: ubuntu-latest
     env:
       MVN: ./mvnw --show-version --batch-mode
@@ -16,6 +16,11 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v3
+      - name: Initialize CodeQL
+        id: init-codeql
+        uses: github/codeql-action/init@v2
+        with:
+          languages: java
       - name: Set up JDK
         id: setup-jdk
         uses: actions/setup-java@v3
@@ -23,6 +28,9 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: maven
-      - name: Install
-        id: install
-        run: $MVN install
+      - name: Verify
+        id: verify
+        run: $MVN verify
+      - name: Perform CodeQL Analysis
+        id: perform-codeql
+        uses: github/codeql-action/analyze@v2
