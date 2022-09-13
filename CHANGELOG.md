@@ -13,10 +13,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Add code of conduct
 - Add contribution guide
 
-## 0.0.1 - 2022-09-12
-
-Initial version
-
 <!--
 ## Template
 

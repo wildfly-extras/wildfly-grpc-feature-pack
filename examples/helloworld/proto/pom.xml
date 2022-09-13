@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-examples-helloworld</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
