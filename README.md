@@ -4,7 +4,7 @@ Feature pack to bring gRPC support to WildFly. Currently, the feature pack suppo
 
 gRPC services are registered against a gRPC server listening to port 9555. Configuration and customization is not yet supported. Also, only gRPC services are supported at the moment. Support for gRPC clients is coming soon.
 
-## Get Started
+# Get Started
 
 To build the feature pack, simply run
 
@@ -15,13 +15,13 @@ mvn install
 This will build everything, and run the testsuite. A WildFly server with the gRPC subsystem will be created in
 the `build/target` directory.
 
-### Profiles
+## Profiles
 
 The maven build supports the following profiles:
 
 - `examples`: Builds the examples
 
-## Examples
+# Examples
 
 Each example consists of three modules:
 
@@ -35,11 +35,11 @@ Before running the examples, please make sure that all necessary dependencies ar
 mvn install -P examples
 ```
 
-### Hello World
+## Hello World
 
 The `helloworld` example is a slightly modified version of the `helloworld` example from [gRPC Java examples](https://github.com/grpc/grpc-java/tree/master/examples).
 
-#### Service
+### Service
 
 To build the `helloworld` service, provision a WildFly server with the gRPC subsystem and deploy the service, run:
 
@@ -47,7 +47,7 @@ To build the `helloworld` service, provision a WildFly server with the gRPC subs
 mvn wildfly:run -P examples -pl examples/helloworld/service
 ```
 
-#### Client
+### Client
 
 The `helloworld` client is a simple Java application. To build the client and call to the gRPC service, run:
 
@@ -65,11 +65,11 @@ grpcurl \
   localhost:9555 helloworld.Greeter/SayHello
 ```
 
-### Chat
+## Chat
 
 The `chat` example is taken from [gRPC by example](https://github.com/saturnism/grpc-by-example-java). 
 
-#### Service
+### Service
 
 To build the `chat` service, provision a WildFly server with the gRPC subsystem and deploy the service, run:
 
@@ -77,7 +77,7 @@ To build the `chat` service, provision a WildFly server with the gRPC subsystem 
 mvn wildfly:run -P examples -pl examples/chat/service
 ```
 
-#### Client
+### Client
 
 The `chat` client is a JavaFX application. To build the client and connect to the gRPC service, run:
 
@@ -86,3 +86,9 @@ mvn javafx:run -P examples -pl examples/chat/client
 ```
 
 To see the `chat` example in action, you should start multiple chat clients. 
+
+# Licenses
+
+This project uses the following licenses:
+
+* [Apache License 2.0](https://repository.jboss.org/licenses/apache-2.0.txt)
