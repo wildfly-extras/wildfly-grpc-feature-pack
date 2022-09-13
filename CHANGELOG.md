@@ -49,4 +49,4 @@ Initial version
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/vTemplate...v0.0.1
