@@ -23,9 +23,9 @@ jobs:
           java-version: 11
           distribution: temurin
           cache: maven
-      - name: Package
-        id: package
-        run: $MVN package
+      - name: Install
+        id: install
+        run: $MVN install
 #      - name: Set up Maven Settings
 #        id: setup-maven-settings
 #        uses: actions/setup-java@v3
