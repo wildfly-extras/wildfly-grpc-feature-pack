@@ -64,14 +64,10 @@ jobs:
           version: ${{ steps.get-version.outputs.version-without-v }}
       - name: Create GitHub Release
         id: create-gh-release
-        uses: actions/create-release@v1
-        env:
-          # Don't use ${{ secrets.GITHUB_TOKEN }}
-          # This doesn't trigger the release event
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        uses: ncipollo/release-action@v1.10.0
         with:
-          tag_name: ${{ steps.get-version.outputs.version }}
-          release_name: WildFly gRPC ${{ steps.get-version.outputs.version-without-v }}.Final
+          tag: ${{ steps.get-version.outputs.version }}
+          name: WildFly gRPC ${{ steps.get-version.outputs.version-without-v }}.Final
           body: ${{ steps.read-changelog.outputs.changes }}
           draft: false
           prerelease: false
