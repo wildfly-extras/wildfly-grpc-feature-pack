@@ -26,24 +26,24 @@ jobs:
       - name: Install
         id: install
         run: $MVN install
-#      - name: Set up Maven Settings
-#        id: setup-maven-settings
-#        uses: actions/setup-java@v3
-#        with: # running setup-java again overwrites the settings.xml
-#          java-version: 11
-#          distribution: temurin
-#          server-id: ossrh
-#          server-username: OSSRH_USERNAME
-#          server-password: OSSRH_PASSWORD
-#          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-#          gpg-passphrase: MAVEN_GPG_PASSPHRASE
-#      - name: Deploy
-#        id: deploy
-#        run: $MVN deploy -P release
-#        env:
-#          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-#          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-#          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      - name: Set up Maven Settings
+        id: setup-maven-settings
+        uses: actions/setup-java@v3
+        with: # running setup-java again overwrites the settings.xml
+          java-version: 11
+          distribution: temurin
+          server-id: ossrh
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      - name: Deploy
+        id: deploy
+        run: $MVN deploy -P release
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
   release:
     name: Create GitHub Release

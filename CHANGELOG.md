@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Deploy to Maven Central
+
 ## [0.0.1] - 2022-09-14
 
 ### Added
@@ -47,7 +51,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - for dependency upgrades
 -->
 
-[0.0.1]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/vTemplate...v0.0.1
-[0.0.1]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/vTemplate...v0.0.1
 [Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.0.1...HEAD
 [0.0.1]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/vTemplate...v0.0.1
