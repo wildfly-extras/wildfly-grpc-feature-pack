@@ -20,6 +20,7 @@ the `build/target` directory.
 The maven build supports the following profiles:
 
 - `examples`: Builds the examples
+- `testsuite`: Runs the test suite
 
 # Examples
 
