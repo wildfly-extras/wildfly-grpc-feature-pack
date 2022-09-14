@@ -25,4 +25,4 @@ jobs:
           cache: maven
       - name: Install
         id: install
-        run: $MVN install
+        run: $MVN install -P testsuite
