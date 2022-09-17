@@ -59,6 +59,17 @@
         <url>https://github.com/wildfly-extras/wildfly-grpc-feature-pack/issues</url>
     </issueManagement>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>${repo.sonatype.url}/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>${repo.sonatype.url}/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <!-- Dependency versions -->
         <version.arquillian.junit>1.6.0.Final</version.arquillian.junit>
@@ -83,11 +94,12 @@
         <version.wildfly.plugin>4.0.0.Beta3</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
-        <repo.scm.connection>git@github.com:wildfly-extras/wildfly-grpc-feature-pack</repo.scm.connection>
-        <repo.scm.url>https://github.com/wildfly-extras/wildfly-grpc-feature-pack</repo.scm.url>
         <maven.repository.protocol>https</maven.repository.protocol>
         <maven.repository.url>${maven.repository.protocol}://repository.jboss.org/nexus/content/groups/public/</maven.repository.url>
         <maven.redhat.repository.url>${maven.repository.protocol}://maven.repository.redhat.com/ga/</maven.redhat.repository.url>
+        <repo.scm.connection>git@github.com:wildfly-extras/wildfly-grpc-feature-pack</repo.scm.connection>
+        <repo.scm.url>https://github.com/wildfly-extras/wildfly-grpc-feature-pack</repo.scm.url>
+        <repo.sonatype.url>https://oss.sonatype.org</repo.sonatype.url>
 
         <!-- Build related -->
         <encoding>UTF-8</encoding>
@@ -219,12 +231,12 @@
                         </rules>
                     </configuration>
                 </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>${version.nexus.staging.plugin}</version>
-                        <extensions>true</extensions>
-                    </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${version.nexus.staging.plugin}</version>
+                    <extensions>true</extensions>
+                </plugin>
                 <plugin>
                     <groupId>org.wildfly.galleon-plugins</groupId>
                     <artifactId>wildfly-galleon-maven-plugin</artifactId>
@@ -384,11 +396,9 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>${version.nexus.staging.plugin}</version>
-                        <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <nexusUrl>${repo.sonatype.url}</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
