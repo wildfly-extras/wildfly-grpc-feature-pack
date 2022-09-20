@@ -8,7 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added 
 
-- Documentation
+- Enhance [community standards](https://github.com/wildfly-extras/wildfly-grpc-feature-pack/community)
+    - Add [CODEOWNERS](CODEOWNERS)
+    - Add [SECURITY.md](SECURITY.md)
+
+### Changed
+
+- Update documentation
+
+### Upgrades
+
+- Bump wildfly-galleon-maven-plugin from 6.0.0.Final to 6.1.0.Final
 
 ## [0.0.2] - 2022-09-14
 
@@ -16,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Deploy to Maven Central
 
-## [0.0.1] - 2022-09-14
+## 0.0.1 - 2022-09-14
 
 ### Added
 
