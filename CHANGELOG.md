@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Upgrades
+
+- Bump grpc-bom from 1.49.1 to 1.49.2
+- Bump wildfly-maven-plugin from 4.0.0.Beta3 to 4.0.0.Beta4
+- Bump wildfly-galleon-maven-plugin from 6.1.0.Final to 6.2.0.Final
+- Bump WildFly from 26.1.0.Final to 27.0.0.Beta1
+
 ## [0.0.3] - 2022-09-21
 
 ### Added 
