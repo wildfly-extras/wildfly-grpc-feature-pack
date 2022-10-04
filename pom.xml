@@ -90,13 +90,13 @@
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
         <version.wildfly.common>1.6.0.Final</version.wildfly.common>
         <version.wildfly.core>18.1.2.Final</version.wildfly.core>
-        <version.wildfly>26.1.2.Final</version.wildfly>
+        <version.wildfly>27.0.0.Beta1</version.wildfly>
 
         <!-- Plugin versions -->
         <version.checkstyle.plugin>3.1.1</version.checkstyle.plugin>
         <version.enforcer.plugin>3.0.0-M3</version.enforcer.plugin>
         <version.formatter.plugin>2.20.0</version.formatter.plugin>
-        <version.galleon.plugin>6.1.0.Final</version.galleon.plugin>
+        <version.galleon.plugin>6.2.0.Final</version.galleon.plugin>
         <version.impsort.plugin>1.7.0</version.impsort.plugin>
         <version.keepachangelog>2.1.1</version.keepachangelog>
         <version.license.plugin>4.1</version.license.plugin>

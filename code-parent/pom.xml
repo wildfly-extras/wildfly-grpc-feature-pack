@@ -52,7 +52,12 @@
             <dependency>
                 <groupId>org.wildfly</groupId>
                 <artifactId>wildfly-component-matrix</artifactId>
-                <version>${version.wildfly}</version>
+                <!--
+                    TODO Replace with ${version.wildfly} as soon as
+                      org.wildfly:wildfly-component-matrix:27.0.0.Beta1
+                      has been released
+                 -->
+                <version>27.0.0.Alpha1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

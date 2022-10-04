@@ -195,7 +195,6 @@
                         </goals>
                         <phase>prepare-package</phase>
                         <configuration>
-                            <jakarta-transform>true</jakarta-transform>
                             <fork-embedded>${galleon.fork.embedded}</fork-embedded>
                         </configuration>
                     </execution>
