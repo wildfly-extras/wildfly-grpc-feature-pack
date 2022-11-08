@@ -33,7 +33,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <version.os.plugin>1.7.0</version.os.plugin>
+        <version.os.plugin>1.7.1</version.os.plugin>
         <version.protobuf.plugin>0.6.1</version.protobuf.plugin>
     </properties>
 
