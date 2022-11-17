@@ -22,12 +22,12 @@ import org.jboss.as.controller.AttributeDefinition;
 
 public class GrpcConstants {
 
-	public static final String WILDFLY_GRPC_SERVER_PORT = "wildfly-grpc-server-port";
-    public static final String WILDFLY_GRPC_SERVER_HOST = "wildfly-grpc-server-host";
+    public static final String GRPC_SERVER_HOST = "wildfly-grpc-server-host";
+    public static final String GRPC_SERVER_PORT = "wildfly-grpc-server-port";
 
     public static final Map<String, AttributeDefinition> nameToAttributeMap = new HashMap<String, AttributeDefinition>();
     static {
-        nameToAttributeMap.put(WILDFLY_GRPC_SERVER_PORT, GrpcAttribute.WILDFLY_GRPC_SERVER_PORT);
-        nameToAttributeMap.put(WILDFLY_GRPC_SERVER_HOST, GrpcAttribute.WILDFLY_GRPC_SERVER_HOST);
+        nameToAttributeMap.put(GRPC_SERVER_HOST, GrpcAttribute.GRPC_SERVER_HOST);
+        nameToAttributeMap.put(GRPC_SERVER_PORT, GrpcAttribute.GRPC_SERVER_PORT);
     }
 }

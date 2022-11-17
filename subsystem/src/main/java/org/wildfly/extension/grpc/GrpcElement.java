@@ -19,16 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * gRPC configuration elements.
- *
- * @author <a href="mailto:alessio.soldano@jboss.com">Alessio Soldano</a>
- * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
- * @author <a href="mailto:rsigal@redhat.com">Ron Sigal</a>
+ * gRPC configuration elements
  */
 enum GrpcElement {
-    UNKNOWN(null), WILDFLY_GRPC_SERVER_PORT(GrpcConstants.WILDFLY_GRPC_SERVER_PORT), WILDFLY_GRPC_SERVER_HOST(
-            GrpcConstants.WILDFLY_GRPC_SERVER_HOST),
-            ;
+    UNKNOWN(null),
+    GRPC_SERVER_HOST(GrpcConstants.GRPC_SERVER_HOST),
+    GRPC_SERVER_PORT(GrpcConstants.GRPC_SERVER_PORT),
+    ;
 
     private final String name;
 

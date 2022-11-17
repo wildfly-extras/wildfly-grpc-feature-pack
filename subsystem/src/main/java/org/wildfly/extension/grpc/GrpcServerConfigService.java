@@ -25,12 +25,6 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 
 /**
- * WS server config service.
- *
- * @author <a href="alessio.soldano@jboss.com">Alessio Soldano</a>
- * @author <a href="mailto:ropalka@redhat.com">Richard Opalka</a>
- * @author <a href="mailto:ema@redhat.com">Jim Ma</a>
- * @author <a href="mailto:rsigal@redhat.com">Ron Sigal</a>
  */
 @SuppressWarnings("deprecation")
 public final class GrpcServerConfigService implements Service<GrpcServerConfig> {

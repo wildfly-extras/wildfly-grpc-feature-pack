@@ -18,7 +18,6 @@ package org.wildfly.extension.grpc;
 import org.jboss.dmr.ModelNode;
 
 /**
- * @author <a href="mailto:rsigal@redhat.com">Ron Sigal</a>
  */
 public class GrpcServerConfig {
 

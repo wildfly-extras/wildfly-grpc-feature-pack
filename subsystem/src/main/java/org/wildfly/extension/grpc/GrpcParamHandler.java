@@ -24,11 +24,7 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
 
 /**
- * An AbstractWriteAttributeHandler extension for updating basic RESTEasy config attributes
- *
- * @author <a href="mailto:alessio.soldano@jboss.com">Alessio Soldano</a>
- * @author <a href="mailto:ema@redhat.com">Jim Ma</a>
- * @author <a href="mailto:rsigal@redhat.com">Ron Sigal</a>
+ * An AbstractWriteAttributeHandler extension for updating basic gRPC config attributes
  */
 final class GrpcParamHandler extends AbstractWriteAttributeHandler<Void> {
 
@@ -81,12 +77,13 @@ final class GrpcParamHandler extends AbstractWriteAttributeHandler<Void> {
         GrpcServerConfig config = (GrpcServerConfig) registry.getRequiredService(name).getValue();
 
         switch (attributeName) {
-            case GrpcConstants.WILDFLY_GRPC_SERVER_PORT:
-                config.setWildflyGrpcServerPort(value);
+            
+            case GrpcConstants.GRPC_SERVER_HOST:
+                config.setWildflyGrpcServerHost(value);
                 break;
 
-            case GrpcConstants.WILDFLY_GRPC_SERVER_HOST:
-                config.setWildflyGrpcServerHost(value);
+            case GrpcConstants.GRPC_SERVER_PORT:
+                config.setWildflyGrpcServerPort(value);
                 break;
 
             default:

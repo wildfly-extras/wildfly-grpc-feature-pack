@@ -59,13 +59,13 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
     private static GrpcServerConfig createServerConfig(ModelNode configuration, OperationContext context)
             throws OperationFailedException {
         final GrpcServerConfig config = new GrpcServerConfig();
-        if (configuration.hasDefined(GrpcConstants.WILDFLY_GRPC_SERVER_PORT)) {
-            config.setWildflyGrpcServerPort(
-                    GrpcAttribute.WILDFLY_GRPC_SERVER_PORT.resolveModelAttribute(context, configuration));
-        }
-        if (configuration.hasDefined(GrpcConstants.WILDFLY_GRPC_SERVER_HOST)) {
+        if (configuration.hasDefined(GrpcConstants.GRPC_SERVER_HOST)) {
             config.setWildflyGrpcServerHost(
-                    GrpcAttribute.WILDFLY_GRPC_SERVER_HOST.resolveModelAttribute(context, configuration));
+                    GrpcAttribute.GRPC_SERVER_HOST.resolveModelAttribute(context, configuration));
+        }
+        if (configuration.hasDefined(GrpcConstants.GRPC_SERVER_PORT)) {
+            config.setWildflyGrpcServerPort(
+                    GrpcAttribute.GRPC_SERVER_PORT.resolveModelAttribute(context, configuration));
         }
         return config;
     }
