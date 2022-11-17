@@ -33,5 +33,7 @@
             ]]>
             </xs:documentation>
         </xs:annotation>
+        <xs:attribute name="server-host" type="xs:string"/>
+        <xs:attribute name="server-port" type="xs:positiveInteger"/>
     </xs:complexType>
 </xs:schema>
