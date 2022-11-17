@@ -73,11 +73,11 @@ final class GrpcParamHandler extends AbstractWriteAttributeHandler<Void> {
         ServiceRegistry registry = context.getServiceRegistry(true);
         ServiceName name = GrpcServerConfigService.CONFIG_SERVICE;
 
-        @SuppressWarnings("deprecation")
-        GrpcServerConfig config = (GrpcServerConfig) registry.getRequiredService(name).getValue();
+        @SuppressWarnings("deprecation") GrpcServerConfig config = (GrpcServerConfig) registry.getRequiredService(name)
+                .getValue();
 
         switch (attributeName) {
-            
+
             case GrpcConstants.GRPC_SERVER_HOST:
                 config.setWildflyGrpcServerHost(value);
                 break;

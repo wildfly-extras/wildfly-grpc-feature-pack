@@ -22,9 +22,7 @@ import java.util.Map;
  * gRPC configuration elements
  */
 enum GrpcElement {
-    UNKNOWN(null),
-    GRPC_SERVER_HOST(GrpcConstants.GRPC_SERVER_HOST),
-    GRPC_SERVER_PORT(GrpcConstants.GRPC_SERVER_PORT),
+    UNKNOWN(null), GRPC_SERVER_HOST(GrpcConstants.GRPC_SERVER_HOST), GRPC_SERVER_PORT(GrpcConstants.GRPC_SERVER_PORT),
     ;
 
     private final String name;
