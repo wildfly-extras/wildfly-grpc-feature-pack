@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-parent</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -52,7 +52,12 @@
             <dependency>
                 <groupId>org.wildfly</groupId>
                 <artifactId>wildfly-component-matrix</artifactId>
-                <version>${version.wildfly}</version>
+                <!--
+                    TODO Replace with ${version.wildfly} as soon as
+                      org.wildfly:wildfly-component-matrix:27.0.0.Beta1
+                      has been released
+                 -->
+                <version>27.0.0.Alpha1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -102,17 +107,10 @@
             <!-- WildFly dependencies -->
             <dependency>
                 <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-ee-galleon-pack</artifactId>
+                <artifactId>wildfly-preview-feature-pack</artifactId>
                 <version>${version.wildfly}</version>
                 <type>zip</type>
             </dependency>
-            <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-galleon-pack</artifactId>
-                <version>${version.wildfly}</version>
-                <type>zip</type>
-            </dependency>
-
 
             <!-- gRPC / protobuf dependencies -->
             <dependency>

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-code-parent</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.4-SNAPSHOT</version>
         <relativePath>../code-parent/pom.xml</relativePath>
     </parent>
 
@@ -33,7 +33,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <version.os.plugin>1.7.0</version.os.plugin>
+        <version.os.plugin>1.7.1</version.os.plugin>
         <version.protobuf.plugin>0.6.1</version.protobuf.plugin>
     </properties>
 

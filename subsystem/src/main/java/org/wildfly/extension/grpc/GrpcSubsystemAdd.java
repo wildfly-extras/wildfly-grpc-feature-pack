@@ -17,6 +17,7 @@ package org.wildfly.extension.grpc;
 
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
@@ -31,7 +32,8 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
     static GrpcSubsystemAdd INSTANCE = new GrpcSubsystemAdd();
 
     @Override
-    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model) {
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model)
+            throws OperationFailedException {
         ServiceTarget serviceTarget = context.getServiceTarget();
         ServiceBuilder<?> builder = serviceTarget.addService(GrpcSubsystemService.SERVICE_NAME);
         builder.setInstance(new GrpcSubsystemService());
@@ -49,5 +51,22 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
                         DEPLOYMENT_PRIORITY, new GrpcDeploymentProcessor());
             }
         }, OperationContext.Stage.RUNTIME);
+
+        GrpcServerConfig serverConfig = createServerConfig(operation, context);
+        GrpcServerConfigService.install(serviceTarget, serverConfig);
+    }
+
+    private static GrpcServerConfig createServerConfig(ModelNode configuration, OperationContext context)
+            throws OperationFailedException {
+        final GrpcServerConfig config = new GrpcServerConfig();
+        if (configuration.hasDefined(GrpcConstants.GRPC_SERVER_HOST)) {
+            config.setWildflyGrpcServerHost(
+                    GrpcAttribute.GRPC_SERVER_HOST.resolveModelAttribute(context, configuration));
+        }
+        if (configuration.hasDefined(GrpcConstants.GRPC_SERVER_PORT)) {
+            config.setWildflyGrpcServerPort(
+                    GrpcAttribute.GRPC_SERVER_PORT.resolveModelAttribute(context, configuration));
+        }
+        return config;
     }
 }

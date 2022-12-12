@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-examples-chat</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -90,7 +90,7 @@
                     <feature-packs>
                         <feature-pack>
                             <groupId>org.wildfly</groupId>
-                            <artifactId>wildfly-galleon-pack</artifactId>
+                            <artifactId>wildfly-preview-feature-pack</artifactId>
                             <version>${version.wildfly}</version>
                         </feature-pack>
                         <feature-pack>

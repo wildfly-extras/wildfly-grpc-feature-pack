@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-code-parent</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.4-SNAPSHOT</version>
         <relativePath>../code-parent/pom.xml</relativePath>
     </parent>
 
@@ -62,7 +62,7 @@
                     <feature-packs>
                         <feature-pack>
                             <groupId>org.wildfly</groupId>
-                            <artifactId>wildfly-galleon-pack</artifactId>
+                            <artifactId>wildfly-preview-feature-pack</artifactId>
                             <version>${version.wildfly}</version>
                         </feature-pack>
                         <feature-pack>
@@ -78,7 +78,6 @@
                         <layer>grpc</layer>
                     </layers>
                     <galleon-options>
-                        <jboss-maven-dist/>
                         <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
                     </galleon-options>
                     <provisioning-dir>${project.build.finalName}</provisioning-dir>

@@ -18,10 +18,7 @@
 
 # --------------------------------------------------
 #
-# Formats the source code by applying
-#   - license-maven-plugin
-#   - formatter-maven-plugin
-#   - impsort-maven-plugin
+# Bumps the version in Maven POMs and GWT modules
 #
 # --------------------------------------------------
 
@@ -39,12 +36,15 @@ cd "${script_dir}"
 usage() {
   cat <<EOF
 USAGE:
-    $(basename "${BASH_SOURCE[0]}") [FLAGS]
+    $(basename "${BASH_SOURCE[0]}") [FLAGS] <version>
 
 FLAGS:
     -h, --help          Prints help information
     -v, --version       Prints version information
     --no-color          Uses plain text output
+
+ARGS:
+    <version>           The new version
 EOF
   exit
 }
@@ -90,12 +90,18 @@ parse_params() {
     shift
   done
 
+  ARGS=("$@")
+  [[ ${#ARGS[@]} -eq 0 ]] && die "Missing new version"
+  NEW_VERSION=${ARGS[0]}
+
   return 0
 }
 
 parse_params "$@"
 setup_colors
-mvn -P examples \
-  com.mycila:license-maven-plugin:format \
-  net.revelc.code.formatter:formatter-maven-plugin:format \
-  net.revelc.code:impsort-maven-plugin:sort
+
+msg "Update version to ${CYAN}${NEW_VERSION}${NOFORMAT}"
+mvn --quiet versions:set -DnewVersion="${NEW_VERSION}" &> /dev/null
+msg "    ${YELLOW}✓${NOFORMAT} Maven POMs"
+sed -i '' "s/location=\"org\.wildfly\.extras\.grpc:wildfly-grpc-feature-pack:.*\"/location=\"org.wildfly.extras.grpc:wildfly-grpc-feature-pack:$NEW_VERSION\"/" provision.xml
+msg "    ${YELLOW}✓${NOFORMAT} provision.xml"

@@ -20,12 +20,20 @@ import org.jboss.as.controller.PersistentResourceXMLParser;
 
 import static org.jboss.as.controller.PersistentResourceXMLDescription.builder;
 
+/**
+ */
 public class GrpcSubsystemParser_1_0 extends PersistentResourceXMLParser {
-
     public static final String NAMESPACE = "urn:wildfly:grpc:1.0";
 
-    private static final PersistentResourceXMLDescription xmlDescription = builder(
-            GrpcSubsystemDefinition.INSTANCE.getPathElement(), GrpcSubsystemSchema.GRPC_1_0.getUriString()).build();
+    private static final PersistentResourceXMLDescription xmlDescription;
+
+    static {
+        xmlDescription = builder(GrpcSubsystemDefinition.INSTANCE.getPathElement(), GrpcSubsystemSchema.GRPC_1_0.getUriString())
+                .addAttributes(
+                        GrpcAttribute.GRPC_SERVER_HOST,
+                        GrpcAttribute.GRPC_SERVER_PORT)
+                .build();
+    }
 
     @Override
     public PersistentResourceXMLDescription getParserDescription() {

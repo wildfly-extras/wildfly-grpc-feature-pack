@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-code-parent</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.4-SNAPSHOT</version>
         <relativePath>../code-parent/pom.xml</relativePath>
     </parent>
 
@@ -41,7 +41,7 @@
         <!-- Other feature pack dependencies -->
         <dependency>
             <groupId>org.wildfly</groupId>
-            <artifactId>wildfly-galleon-pack</artifactId>
+            <artifactId>wildfly-preview-feature-pack</artifactId>
             <version>${version.wildfly}</version>
             <type>zip</type>
         </dependency>
@@ -195,7 +195,6 @@
                         </goals>
                         <phase>prepare-package</phase>
                         <configuration>
-                            <jakarta-transform>${jakarta-ee}</jakarta-transform>
                             <fork-embedded>${galleon.fork.embedded}</fork-embedded>
                         </configuration>
                     </execution>
