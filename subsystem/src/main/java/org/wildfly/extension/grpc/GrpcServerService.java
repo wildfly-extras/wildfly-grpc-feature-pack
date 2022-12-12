@@ -50,7 +50,7 @@ public class GrpcServerService implements Service {
     private static final long SHUTDOWN_TIMEOUT = 3; // seconds
     private static final String HOST = "localhost"; // TODO make configurable
     private static final int PORT = 9555; // TODO make configurable
-    private static final String KEY_MANAGER = "applicationKM";
+    private static final String KEY_MANAGER = "grpcKM";
 
     public static void install(ServiceTarget serviceTarget, DeploymentUnit deploymentUnit,
             Map<String, String> serviceClasses, ClassLoader classLoader) {
@@ -110,9 +110,13 @@ public class GrpcServerService implements Service {
         GrpcLogger.LOGGER.serverListening(name, HOST, PORT);
         NettyServerBuilder serverBuilder = NettyServerBuilder.forPort(PORT);
         // TODO configure SSL
-        if (false) {
-            serverBuilder.sslContext(GrpcSslContexts.configure(SslContextBuilder.forServer(keyManager.get())).build());
-        }
+        // if (false) {
+        // serverBuilder.sslContext(GrpcSslContexts.configure(SslContextBuilder.forServer(keyManager.get())).build());
+        // }
+        SslContextBuilder contextBuilder = SslContextBuilder.forServer(keyManager.get());
+        contextBuilder = GrpcSslContexts.configure(contextBuilder);
+        serverBuilder.sslContext(contextBuilder.build());
+
         for (String serviceClass : serviceClasses.values()) {
             serverBuilder.addService(newService(serviceClass));
             GrpcLogger.LOGGER.registerService(serviceClass);
