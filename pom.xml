@@ -89,7 +89,7 @@
         <version.protobuf>4.0.0-rc-2</version.protobuf>
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
         <version.wildfly.common>1.6.0.Final</version.wildfly.common>
-        <version.wildfly.core>19.0.0.Final</version.wildfly.core>
+        <version.wildfly.core>19.0.1.Final</version.wildfly.core>
         <version.wildfly>27.0.0.Final</version.wildfly>
 
         <!-- Plugin versions -->
