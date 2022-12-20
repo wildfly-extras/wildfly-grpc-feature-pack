@@ -65,7 +65,11 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
         // config.getConfigValue("wildfly.grpc.server.host").getValue());
 
         ServiceTarget serviceTarget = phaseContext.getServiceTarget();
-        GrpcServerService.install(serviceTarget, deploymentUnit, serviceClasses, module.getClassLoader());
+        try {
+            GrpcServerService.install(serviceTarget, deploymentUnit, serviceClasses, module.getClassLoader());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void processManagement(DeploymentUnit deploymentUnit, Map<String, String> grpcServiceClasses) {

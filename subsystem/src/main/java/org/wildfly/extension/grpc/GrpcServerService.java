@@ -16,7 +16,9 @@
 package org.wildfly.extension.grpc;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -50,45 +52,54 @@ public class GrpcServerService implements Service {
     private static final long SHUTDOWN_TIMEOUT = 3; // seconds
     private static final String HOST = "localhost"; // TODO make configurable
     private static final int PORT = 9555; // TODO make configurable
-    private static final String KEY_MANAGER = "grpcKM";
+    private static final String KEY_MANAGER = "grpcKM"; // TODO make configurable
+    private static GrpcServerService grpcServerService;
+    private static Object monitor = new Object();
 
-    public static void install(ServiceTarget serviceTarget, DeploymentUnit deploymentUnit,
-            Map<String, String> serviceClasses, ClassLoader classLoader) {
-        // setup service
-        ServiceName serviceName = deploymentUnit.getServiceName().append(SERVICE_NAME);
-        ServiceBuilder<?> serviceBuilder = serviceTarget.addService(serviceName);
-        Consumer<GrpcServerService> serviceConsumer = serviceBuilder.provides(serviceName);
+    public static void install(ServiceTarget serviceTarget, DeploymentUnit deploymentUnit, Map<String, String> serviceClasses,
+            ClassLoader classLoader) throws Exception {
+        if (grpcServerService == null) {
+            synchronized (monitor) {
+                if (grpcServerService == null) {
+                    // setup service
+                    ServiceName serviceName = deploymentUnit.getServiceName().append(SERVICE_NAME);
+                    ServiceBuilder<?> serviceBuilder = serviceTarget.addService(serviceName);
+                    Consumer<GrpcServerService> serviceConsumer = serviceBuilder.provides(serviceName);
 
-        // wire dependencies
-        Supplier<ExecutorService> executorSupplier = Services.requireServerExecutor(serviceBuilder);
-        CapabilityServiceSupport css = deploymentUnit.getAttachment(Attachments.CAPABILITY_SERVICE_SUPPORT);
-        ServiceName keyManagerName = css.getCapabilityServiceName(Capabilities.KEY_MANAGER_CAPABILITY, KEY_MANAGER);
-        Supplier<KeyManager> keyManagerSupplier = serviceBuilder.requires(keyManagerName);
+                    // wire dependencies
+                    Supplier<ExecutorService> executorSupplier = Services.requireServerExecutor(serviceBuilder);
+                    CapabilityServiceSupport css = deploymentUnit.getAttachment(Attachments.CAPABILITY_SERVICE_SUPPORT);
+                    ServiceName keyManagerName = css.getCapabilityServiceName(Capabilities.KEY_MANAGER_CAPABILITY, KEY_MANAGER);
+                    Supplier<KeyManager> keyManagerSupplier = serviceBuilder.requires(keyManagerName);
 
-        // install service
-        GrpcServerService service = new GrpcServerService(deploymentUnit.getName(), serviceConsumer, executorSupplier,
-                keyManagerSupplier, serviceClasses, classLoader);
-        serviceBuilder.setInstance(service);
-        serviceBuilder.install();
+                    // install service
+                    grpcServerService = new GrpcServerService(deploymentUnit.getName(), serviceConsumer, executorSupplier,
+                            keyManagerSupplier, serviceClasses, classLoader);
+                    serviceBuilder.setInstance(grpcServerService);
+                    serviceBuilder.install();
+                    return;
+                }
+            }
+        }
+        grpcServerService.addServiceClasses(serviceClasses, classLoader);
     }
 
     private final String name;
     private final Consumer<GrpcServerService> serverService;
     private final Supplier<ExecutorService> executorService;
     private final Supplier<KeyManager> keyManager;
-    private final Map<String, String> serviceClasses;
-    private final ClassLoader classLoader;
+    private final Set<BindableService> serviceClasses = new HashSet<BindableService>();
     private Server server;
 
-    private GrpcServerService(String name, Consumer<GrpcServerService> serverService,
-            Supplier<ExecutorService> executorService, Supplier<KeyManager> keyManager,
-            Map<String, String> serviceClasses, ClassLoader classLoader) {
+    private GrpcServerService(String name, Consumer<GrpcServerService> serverService, Supplier<ExecutorService> executorService,
+            Supplier<KeyManager> keyManager, Map<String, String> serviceClasses, ClassLoader classLoader) throws Exception {
         this.name = name;
         this.serverService = serverService;
         this.executorService = executorService;
         this.keyManager = keyManager;
-        this.serviceClasses = serviceClasses;
-        this.classLoader = classLoader;
+        for (String serviceClass : serviceClasses.values()) {
+            this.serviceClasses.add(newService(serviceClass, classLoader));
+        }
     }
 
     @Override
@@ -105,27 +116,28 @@ public class GrpcServerService implements Service {
         serverService.accept(this);
     }
 
-    private void startServer()
-            throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    void addServiceClasses(Map<String, String> serviceClasses, ClassLoader classLoader) throws Exception {
+        for (String serviceClass : serviceClasses.values()) {
+            this.serviceClasses.add(newService(serviceClass, classLoader));
+        }
+    }
+
+    private void startServer() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         GrpcLogger.LOGGER.serverListening(name, HOST, PORT);
         NettyServerBuilder serverBuilder = NettyServerBuilder.forPort(PORT);
-        // TODO configure SSL
-        // if (false) {
-        // serverBuilder.sslContext(GrpcSslContexts.configure(SslContextBuilder.forServer(keyManager.get())).build());
-        // }
         SslContextBuilder contextBuilder = SslContextBuilder.forServer(keyManager.get());
         contextBuilder = GrpcSslContexts.configure(contextBuilder);
         serverBuilder.sslContext(contextBuilder.build());
 
-        for (String serviceClass : serviceClasses.values()) {
-            serverBuilder.addService(newService(serviceClass));
+        for (BindableService serviceClass : serviceClasses) {
+            serverBuilder.addService(serviceClass);
             GrpcLogger.LOGGER.registerService(serviceClass);
         }
         server = serverBuilder.build().start();
     }
 
     @SuppressWarnings("deprecation")
-    private BindableService newService(String serviceClass)
+    private BindableService newService(String serviceClass, ClassLoader classLoader)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Class<?> clazz = classLoader.loadClass(serviceClass);
         Object instance = clazz.newInstance();

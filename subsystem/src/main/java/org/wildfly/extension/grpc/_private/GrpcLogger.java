@@ -21,6 +21,8 @@ import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
+import io.grpc.BindableService;
+
 import static org.jboss.logging.Logger.Level.INFO;
 
 @MessageLogger(projectCode = "WFLYGRPC", length = 4)
@@ -46,5 +48,5 @@ public interface GrpcLogger extends BasicLogger {
 
     @LogMessage(level = INFO)
     @Message(id = 5, value = "gRPC service %s registered")
-    void registerService(String name);
+    void registerService(BindableService name);
 }
