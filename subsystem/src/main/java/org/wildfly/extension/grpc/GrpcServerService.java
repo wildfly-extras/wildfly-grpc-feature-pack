@@ -60,18 +60,33 @@ public class GrpcServerService implements Service {
     private static GrpcServerService grpcServerService;
     private static KeyManager keyManager;
     private static Object monitor = new Object();
+    private static boolean needsRestart;
 
     static void configure(ModelNode configuration, OperationContext context) throws OperationFailedException {
-        HOST = GrpcSubsystemDefinition.GRPC_SERVER_HOST.resolveModelAttribute(context, configuration).asString();
-        PORT = GrpcSubsystemDefinition.GRPC_SERVER_PORT.resolveModelAttribute(context, configuration).asIntOrNull();
-        KEY_MANAGER_NAME = GrpcSubsystemDefinition.GRPC_KEY_MANAGER.resolveModelAttribute(context, configuration).asString();
+        String host = GrpcSubsystemDefinition.GRPC_SERVER_HOST.resolveModelAttribute(context, configuration).asString();
+        if ((host != null && !host.equals(HOST)) || (HOST != null && !HOST.equals(host))) {
+            HOST = host;
+            needsRestart = true;
+        }
+        String keyManagerName = GrpcSubsystemDefinition.GRPC_KEY_MANAGER.resolveModelAttribute(context, configuration)
+                .asString();
+        if ((keyManagerName != null && !keyManagerName.equals(KEY_MANAGER_NAME))
+                || (KEY_MANAGER_NAME != null && !KEY_MANAGER_NAME.equals(keyManagerName))) {
+            KEY_MANAGER_NAME = keyManagerName;
+            needsRestart = true;
+        }
+        int port = GrpcSubsystemDefinition.GRPC_SERVER_PORT.resolveModelAttribute(context, configuration).asIntOrNull();
+        if (port != PORT) {
+            PORT = port;
+            needsRestart = true;
+        }
     }
 
     public static void install(ServiceTarget serviceTarget, DeploymentUnit deploymentUnit, Map<String, String> serviceClasses,
             ClassLoader classLoader) throws Exception {
-        if (grpcServerService == null) {
+        if (grpcServerService == null || needsRestart) {
             synchronized (monitor) {
-                if (grpcServerService == null) {
+                if (grpcServerService == null || needsRestart) {
                     // setup service
                     ServiceName serviceName = deploymentUnit.getServiceName().append(SERVICE_NAME);
                     ServiceBuilder<?> serviceBuilder = serviceTarget.addService(serviceName);
@@ -87,6 +102,12 @@ public class GrpcServerService implements Service {
                         if (keyManagerSupplier != null) {
                             keyManager = keyManagerSupplier.get();
                         }
+                    } else {
+                        keyManager = null;
+                    }
+                    // stop running service
+                    if (grpcServerService != null) {
+                        grpcServerService.stopServer();
                     }
                     // install service
                     grpcServerService = new GrpcServerService(deploymentUnit.getName(), serviceConsumer, executorSupplier,
@@ -139,7 +160,7 @@ public class GrpcServerService implements Service {
     private void startServer() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         GrpcLogger.LOGGER.serverListening(name, HOST, PORT);
         NettyServerBuilder serverBuilder = NettyServerBuilder.forPort(PORT);
-        if (keyManager != null) {
+        if (keyManager != null && !"".equals(keyManager)) {
             SslContextBuilder contextBuilder = SslContextBuilder.forServer(keyManager);
             contextBuilder = GrpcSslContexts.configure(contextBuilder);
             serverBuilder.sslContext(contextBuilder.build());
