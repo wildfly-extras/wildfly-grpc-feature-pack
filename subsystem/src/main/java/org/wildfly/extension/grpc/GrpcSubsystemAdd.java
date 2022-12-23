@@ -49,6 +49,6 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
                         DEPLOYMENT_PRIORITY, new GrpcDeploymentProcessor());
             }
         }, OperationContext.Stage.RUNTIME);
-
+        GrpcServerService.configure(operation, context);
     }
 }

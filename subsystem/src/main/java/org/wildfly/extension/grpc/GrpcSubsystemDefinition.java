@@ -31,10 +31,19 @@ import org.jboss.dmr.ModelType;
 
 public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
 
+    static final SimpleAttributeDefinition GRPC_KEY_MANAGER = new SimpleAttributeDefinitionBuilder(
+            "key-manager", ModelType.STRING)
+            .setAllowExpression(true)
+            .setDefaultValue(new ModelNode("applicationKM"))
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new ModelTypeValidator(ModelType.STRING, false))
+            .build();
+
     static final SimpleAttributeDefinition GRPC_SERVER_HOST = new SimpleAttributeDefinitionBuilder(
             "server-host", ModelType.STRING)
             .setAllowExpression(true)
-            .setDefaultValue(new ModelNode("0.0.0.0"))
+            .setDefaultValue(new ModelNode("localhost"))
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new ModelTypeValidator(ModelType.STRING, false))
@@ -50,6 +59,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final List<AttributeDefinition> ATTRIBUTES = List.of(
+            GRPC_KEY_MANAGER,
             GRPC_SERVER_HOST,
             GRPC_SERVER_PORT);
 

@@ -34,6 +34,8 @@
         <module name="org.jboss.as.network"/>
         <module name="org.jboss.staxmapper"/>
         <module name="org.wildfly.security.manager"/>
+        <module name="io.netty.netty-codec" optional="true"/>
+        <module name="io.netty.netty-handler" optional="true"/>
         <!--
             Additional module dependencies.
             If they contain any classes that should be exposed to the user's code,

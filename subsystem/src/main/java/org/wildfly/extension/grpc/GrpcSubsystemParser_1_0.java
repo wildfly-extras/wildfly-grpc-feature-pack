@@ -30,6 +30,7 @@ public class GrpcSubsystemParser_1_0 extends PersistentResourceXMLParser {
     static {
         xmlDescription = builder(GrpcSubsystemDefinition.INSTANCE.getPathElement(), GrpcSubsystemSchema.GRPC_1_0.getUriString())
                 .addAttributes(
+                        GrpcSubsystemDefinition.GRPC_KEY_MANAGER,
                         GrpcSubsystemDefinition.GRPC_SERVER_HOST,
                         GrpcSubsystemDefinition.GRPC_SERVER_PORT)
                 .build();
