@@ -31,13 +31,130 @@ import org.jboss.dmr.ModelType;
 
 public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
 
-    static final SimpleAttributeDefinition GRPC_KEY_MANAGER = new SimpleAttributeDefinitionBuilder(
-            "key-manager", ModelType.STRING)
+    static final SimpleAttributeDefinition GRPC_FLOW_CONTROL_WINDOW = new SimpleAttributeDefinitionBuilder(
+            "flow-control-window", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_HANDSHAKE_TIMEOUT = new SimpleAttributeDefinitionBuilder(
+            "handshake-timeout", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_INITIAL_FLOW_CONTROL_WINDOW = new SimpleAttributeDefinitionBuilder(
+            "initial-flow-control-window", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_KEEP_ALIVE_TIME = new SimpleAttributeDefinitionBuilder(
+            "keep-alive-time", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_KEEP_ALIVE_TIMEOUT = new SimpleAttributeDefinitionBuilder(
+            "keep-alive-timeout", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_KEY_MANAGER_NAME = new SimpleAttributeDefinitionBuilder(
+            "key-manager-name", ModelType.STRING)
             .setAllowExpression(true)
             .setDefaultValue(new ModelNode("applicationKM"))
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new ModelTypeValidator(ModelType.STRING, false))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION = new SimpleAttributeDefinitionBuilder(
+            "max-concurrent-calls-per-connection", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_MAX_CONNECTION_AGE = new SimpleAttributeDefinitionBuilder(
+            "max-connection-age", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_MAX_CONNECTION_AGE_GRACE = new SimpleAttributeDefinitionBuilder(
+            "max-connection-age-grace", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_MAX_CONNECTION_IDLE = new SimpleAttributeDefinitionBuilder(
+            "max-connection-idle", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_MAX_INBOUND_MESSAGE_SIZE = new SimpleAttributeDefinitionBuilder(
+            "max-inbound-message-size", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_MAX_INBOUND_METADATA_SIZE = new SimpleAttributeDefinitionBuilder(
+            "max-inbound-metadata-size", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_PERMIT_KEEP_ALIVE_TIME = new SimpleAttributeDefinitionBuilder(
+            "permit-keep-alive-time", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS = new SimpleAttributeDefinitionBuilder(
+            "permit-keep-alive-without-calls", ModelType.BOOLEAN)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new ModelTypeValidator(ModelType.BOOLEAN, false))
             .build();
 
     static final SimpleAttributeDefinition GRPC_SERVER_HOST = new SimpleAttributeDefinitionBuilder(
@@ -59,7 +176,20 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final List<AttributeDefinition> ATTRIBUTES = List.of(
-            GRPC_KEY_MANAGER,
+            GRPC_FLOW_CONTROL_WINDOW,
+            GRPC_HANDSHAKE_TIMEOUT,
+            GRPC_INITIAL_FLOW_CONTROL_WINDOW,
+            GRPC_KEEP_ALIVE_TIME,
+            GRPC_KEEP_ALIVE_TIMEOUT,
+            GRPC_KEY_MANAGER_NAME,
+            GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION,
+            GRPC_MAX_CONNECTION_AGE,
+            GRPC_MAX_CONNECTION_AGE_GRACE,
+            GRPC_MAX_CONNECTION_IDLE,
+            GRPC_MAX_INBOUND_MESSAGE_SIZE,
+            GRPC_MAX_INBOUND_METADATA_SIZE,
+            GRPC_PERMIT_KEEP_ALIVE_TIME,
+            GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
             GRPC_SERVER_HOST,
             GRPC_SERVER_PORT);
 

@@ -30,7 +30,20 @@ public class GrpcSubsystemParser_1_0 extends PersistentResourceXMLParser {
     static {
         xmlDescription = builder(GrpcSubsystemDefinition.INSTANCE.getPathElement(), GrpcSubsystemSchema.GRPC_1_0.getUriString())
                 .addAttributes(
-                        GrpcSubsystemDefinition.GRPC_KEY_MANAGER,
+                        GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW,
+                        GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT,
+                        GrpcSubsystemDefinition.GRPC_INITIAL_FLOW_CONTROL_WINDOW,
+                        GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME,
+                        GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT,
+                        GrpcSubsystemDefinition.GRPC_KEY_MANAGER_NAME,
+                        GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION,
+                        GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE,
+                        GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE,
+                        GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE,
+                        GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE,
+                        GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE,
+                        GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME,
+                        GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
                         GrpcSubsystemDefinition.GRPC_SERVER_HOST,
                         GrpcSubsystemDefinition.GRPC_SERVER_PORT)
                 .build();

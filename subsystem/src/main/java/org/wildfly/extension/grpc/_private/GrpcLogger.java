@@ -21,7 +21,7 @@ import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
-import static org.jboss.logging.Logger.Level.INFO;
+import static org.jboss.logging.Logger.Level.*;
 
 @MessageLogger(projectCode = "WFLYGRPC", length = 4)
 public interface GrpcLogger extends BasicLogger {
@@ -47,4 +47,8 @@ public interface GrpcLogger extends BasicLogger {
     @LogMessage(level = INFO)
     @Message(id = 5, value = "gRPC service %s registered")
     void registerService(String name);
+
+    @LogMessage(level = ERROR)
+    @Message(id = 6, value = "unknown Attribute: %s")
+    void unknownAttribute(String attribute);
 }
