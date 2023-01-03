@@ -175,6 +175,15 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .setValidator(new IntRangeValidator(0, 65535, false, true))
             .build();
 
+    static final SimpleAttributeDefinition GRPC_SHUTDOWN_TIMEOUT = new SimpleAttributeDefinitionBuilder(
+            "shutdown-timeout", ModelType.INT)
+            .setAllowExpression(true)
+            .setDefaultValue(new ModelNode(3))
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new IntRangeValidator(0, Integer.MAX_VALUE, false, true))
+            .build();
+
     static final List<AttributeDefinition> ATTRIBUTES = List.of(
             GRPC_FLOW_CONTROL_WINDOW,
             GRPC_HANDSHAKE_TIMEOUT,
@@ -191,7 +200,8 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             GRPC_PERMIT_KEEP_ALIVE_TIME,
             GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
             GRPC_SERVER_HOST,
-            GRPC_SERVER_PORT);
+            GRPC_SERVER_PORT,
+            GRPC_SHUTDOWN_TIMEOUT);
 
     // This must be initialized last to ensure the other static attributes are created first
     static final GrpcSubsystemDefinition INSTANCE = new GrpcSubsystemDefinition();

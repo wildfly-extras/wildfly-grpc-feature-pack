@@ -55,7 +55,6 @@ public class GrpcServerService implements Service {
 
     public static final ServiceName SERVICE_NAME = ServiceName.of("grpc-server");
 
-    private static final long SHUTDOWN_TIMEOUT = 3; // seconds
     private static GrpcServerService grpcServerService;
     private static KeyManager keyManager;
     private static Object monitor = new Object();
@@ -78,9 +77,10 @@ public class GrpcServerService implements Service {
     private static boolean PERMIT_KEEP_ALIVE_WITHOUT_CALLS;
     private static String SERVER_HOST;
     private static int SERVER_PORT;
+    private static int SHUTDOWN_TIMEOUT;
 
     enum Attribute {
-        FLOW_CONTROL_WINDOW, HANDSHAKE_TIMEOUT, INITIAL_FLOW_CONTROL_WINDOW, KEEP_ALIVE_TIME, KEEP_ALIVE_TIMEOUT, KEY_MANAGER_NAME, MAX_CONCURRENT_CALLS_PER_CONNECTION, MAX_CONNECTION_AGE, MAX_CONNECTION_AGE_GRACE, MAX_CONNECTION_IDLE, MAX_INBOUND_MESSAGE_SIZE, MAX_INBOUND_METADATA_SIZE, PERMIT_KEEP_ALIVE_TIME, PERMIT_KEEP_ALIVE_WITHOUT_CALLS, SERVER_HOST, SERVER_PORT
+        FLOW_CONTROL_WINDOW, HANDSHAKE_TIMEOUT, INITIAL_FLOW_CONTROL_WINDOW, KEEP_ALIVE_TIME, KEEP_ALIVE_TIMEOUT, KEY_MANAGER_NAME, MAX_CONCURRENT_CALLS_PER_CONNECTION, MAX_CONNECTION_AGE, MAX_CONNECTION_AGE_GRACE, MAX_CONNECTION_IDLE, MAX_INBOUND_MESSAGE_SIZE, MAX_INBOUND_METADATA_SIZE, PERMIT_KEEP_ALIVE_TIME, PERMIT_KEEP_ALIVE_WITHOUT_CALLS, SERVER_HOST, SERVER_PORT, SHUTDOWN_TIMEOUT
     };
 
     static void configure(ModelNode configuration, OperationContext context) throws OperationFailedException {
@@ -115,7 +115,6 @@ public class GrpcServerService implements Service {
         String s = GrpcSubsystemDefinition.GRPC_KEY_MANAGER_NAME.resolveModelAttribute(context, configuration).asStringOrNull();
         if ((s != null && !s.equals(KEY_MANAGER_NAME)) || (KEY_MANAGER_NAME != null && !KEY_MANAGER_NAME.equals(s))) {
             KEY_MANAGER_NAME = s;
-            updates.add(Attribute.KEY_MANAGER_NAME);
         }
         n = GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION.resolveModelAttribute(context, configuration)
                 .asIntOrNull();
@@ -162,12 +161,14 @@ public class GrpcServerService implements Service {
         s = GrpcSubsystemDefinition.GRPC_SERVER_HOST.resolveModelAttribute(context, configuration).asStringOrNull();
         if ((s != null && !s.equals(SERVER_HOST)) || (SERVER_HOST != null && !SERVER_HOST.equals(s))) {
             SERVER_HOST = s;
-            updates.add(Attribute.SERVER_HOST);
         }
         n = GrpcSubsystemDefinition.GRPC_SERVER_PORT.resolveModelAttribute(context, configuration).asIntOrNull();
         if (n != null && n.intValue() != SERVER_PORT) {
             SERVER_PORT = n;
-            updates.add(Attribute.SERVER_PORT);
+        }
+        n = GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT.resolveModelAttribute(context, configuration).asIntOrNull();
+        if (n != null && n.intValue() != SHUTDOWN_TIMEOUT) {
+            SHUTDOWN_TIMEOUT = n;
         }
     }
 
@@ -270,7 +271,7 @@ public class GrpcServerService implements Service {
                 case KEEP_ALIVE_TIMEOUT:
                     serverBuilder.keepAliveTimeout(KEEP_ALIVE_TIMEOUT, SECONDS);
                     break;
-                case KEY_MANAGER_NAME:
+                case KEY_MANAGER_NAME: // Shouldn't be in updates
                     break;
                 case MAX_CONCURRENT_CALLS_PER_CONNECTION:
                     serverBuilder.maxConcurrentCallsPerConnection(MAX_CONCURRENT_CALLS_PER_CONNECTION);
@@ -296,9 +297,11 @@ public class GrpcServerService implements Service {
                 case PERMIT_KEEP_ALIVE_WITHOUT_CALLS:
                     serverBuilder.permitKeepAliveWithoutCalls(PERMIT_KEEP_ALIVE_WITHOUT_CALLS);
                     break;
-                case SERVER_HOST:
+                case SERVER_HOST: // Shouldn't be in updates
                     break;
-                case SERVER_PORT:
+                case SERVER_PORT: // Shouldn't be in updates
+                    break;
+                case SHUTDOWN_TIMEOUT: // Shouldn't be in updates
                     break;
                 default:
                     GrpcLogger.LOGGER.unknownAttribute(attr.toString());

@@ -45,7 +45,8 @@ public class GrpcSubsystemParser_1_0 extends PersistentResourceXMLParser {
                         GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME,
                         GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
                         GrpcSubsystemDefinition.GRPC_SERVER_HOST,
-                        GrpcSubsystemDefinition.GRPC_SERVER_PORT)
+                        GrpcSubsystemDefinition.GRPC_SERVER_PORT,
+                        GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT)
                 .build();
     }
 
