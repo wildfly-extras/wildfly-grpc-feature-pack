@@ -25,6 +25,7 @@ import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.operations.validation.IntRangeValidator;
+import org.jboss.as.controller.operations.validation.LongRangeValidator;
 import org.jboss.as.controller.operations.validation.ModelTypeValidator;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
@@ -41,7 +42,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final SimpleAttributeDefinition GRPC_HANDSHAKE_TIMEOUT = new SimpleAttributeDefinitionBuilder(
-            "handshake-timeout", ModelType.INT)
+            "handshake-timeout", ModelType.LONG)
             .setAllowExpression(true)
             .setDefaultValue(null)
             .setRequired(false)
@@ -59,7 +60,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final SimpleAttributeDefinition GRPC_KEEP_ALIVE_TIME = new SimpleAttributeDefinitionBuilder(
-            "keep-alive-time", ModelType.INT)
+            "keep-alive-time", ModelType.LONG)
             .setAllowExpression(true)
             .setDefaultValue(null)
             .setRequired(false)
@@ -68,7 +69,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final SimpleAttributeDefinition GRPC_KEEP_ALIVE_TIMEOUT = new SimpleAttributeDefinitionBuilder(
-            "keep-alive-timeout", ModelType.INT)
+            "keep-alive-timeout", ModelType.LONG)
             .setAllowExpression(true)
             .setDefaultValue(null)
             .setRequired(false)
@@ -95,7 +96,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final SimpleAttributeDefinition GRPC_MAX_CONNECTION_AGE = new SimpleAttributeDefinitionBuilder(
-            "max-connection-age", ModelType.INT)
+            "max-connection-age", ModelType.LONG)
             .setAllowExpression(true)
             .setDefaultValue(null)
             .setRequired(false)
@@ -104,7 +105,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final SimpleAttributeDefinition GRPC_MAX_CONNECTION_AGE_GRACE = new SimpleAttributeDefinitionBuilder(
-            "max-connection-age-grace", ModelType.INT)
+            "max-connection-age-grace", ModelType.LONG)
             .setAllowExpression(true)
             .setDefaultValue(null)
             .setRequired(false)
@@ -113,7 +114,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final SimpleAttributeDefinition GRPC_MAX_CONNECTION_IDLE = new SimpleAttributeDefinitionBuilder(
-            "max-connection-idle", ModelType.INT)
+            "max-connection-idle", ModelType.LONG)
             .setAllowExpression(true)
             .setDefaultValue(null)
             .setRequired(false)
@@ -140,7 +141,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final SimpleAttributeDefinition GRPC_PERMIT_KEEP_ALIVE_TIME = new SimpleAttributeDefinitionBuilder(
-            "permit-keep-alive-time", ModelType.INT)
+            "permit-keep-alive-time", ModelType.LONG)
             .setAllowExpression(true)
             .setDefaultValue(null)
             .setRequired(false)
@@ -157,6 +158,15 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .setValidator(new ModelTypeValidator(ModelType.BOOLEAN, false))
             .build();
 
+    static final SimpleAttributeDefinition GRPC_PROTOCOL_PROVIDER = new SimpleAttributeDefinitionBuilder(
+            "protocol-provider", ModelType.STRING)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new ModelTypeValidator(ModelType.STRING, false))
+            .build();
+
     static final SimpleAttributeDefinition GRPC_SERVER_HOST = new SimpleAttributeDefinitionBuilder(
             "server-host", ModelType.STRING)
             .setAllowExpression(true)
@@ -167,12 +177,30 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .build();
 
     static final SimpleAttributeDefinition GRPC_SERVER_PORT = new SimpleAttributeDefinitionBuilder(
-            "server-port", ModelType.INT)
+            "server-port", ModelType.LONG)
             .setAllowExpression(true)
             .setDefaultValue(new ModelNode(9555))
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, 65535, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_SESSION_CACHE_SIZE = new SimpleAttributeDefinitionBuilder(
+            "session-cache-size", ModelType.LONG)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new LongRangeValidator(0, Long.MAX_VALUE, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_SESSION_TIMEOUT = new SimpleAttributeDefinitionBuilder(
+            "session-timeout", ModelType.LONG)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new LongRangeValidator(0, Long.MAX_VALUE, false, true))
             .build();
 
     static final SimpleAttributeDefinition GRPC_SHUTDOWN_TIMEOUT = new SimpleAttributeDefinitionBuilder(
@@ -182,6 +210,33 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, Integer.MAX_VALUE, false, true))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_SSL_CONTEXT_NAME = new SimpleAttributeDefinitionBuilder(
+            "ssl-context-name", ModelType.STRING)
+            .setAllowExpression(true)
+            .setDefaultValue(new ModelNode("applicationSSC"))
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new ModelTypeValidator(ModelType.STRING, false))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_START_TLS = new SimpleAttributeDefinitionBuilder(
+            "start-tls", ModelType.BOOLEAN)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new ModelTypeValidator(ModelType.BOOLEAN, false))
+            .build();
+
+    static final SimpleAttributeDefinition GRPC_TRUST_MANAGER_NAME = new SimpleAttributeDefinitionBuilder(
+            "trust-manager-name", ModelType.STRING)
+            .setAllowExpression(true)
+            .setDefaultValue(null)
+            .setRequired(false)
+            .setRestartAllServices()
+            .setValidator(new ModelTypeValidator(ModelType.STRING, false))
             .build();
 
     static final List<AttributeDefinition> ATTRIBUTES = List.of(
@@ -199,9 +254,15 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             GRPC_MAX_INBOUND_METADATA_SIZE,
             GRPC_PERMIT_KEEP_ALIVE_TIME,
             GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
+            GRPC_PROTOCOL_PROVIDER,
             GRPC_SERVER_HOST,
             GRPC_SERVER_PORT,
-            GRPC_SHUTDOWN_TIMEOUT);
+            GRPC_SESSION_CACHE_SIZE,
+            GRPC_SESSION_TIMEOUT,
+            GRPC_SHUTDOWN_TIMEOUT,
+            GRPC_SSL_CONTEXT_NAME,
+            GRPC_START_TLS,
+            GRPC_TRUST_MANAGER_NAME);
 
     // This must be initialized last to ensure the other static attributes are created first
     static final GrpcSubsystemDefinition INSTANCE = new GrpcSubsystemDefinition();

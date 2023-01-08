@@ -44,9 +44,15 @@ public class GrpcSubsystemParser_1_0 extends PersistentResourceXMLParser {
                         GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE,
                         GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME,
                         GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
+                        GrpcSubsystemDefinition.GRPC_PROTOCOL_PROVIDER,
                         GrpcSubsystemDefinition.GRPC_SERVER_HOST,
                         GrpcSubsystemDefinition.GRPC_SERVER_PORT,
-                        GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT)
+                        GrpcSubsystemDefinition.GRPC_SESSION_CACHE_SIZE,
+                        GrpcSubsystemDefinition.GRPC_SESSION_TIMEOUT,
+                        GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT,
+                        GrpcSubsystemDefinition.GRPC_SSL_CONTEXT_NAME,
+                        GrpcSubsystemDefinition.GRPC_START_TLS,
+                        GrpcSubsystemDefinition.GRPC_TRUST_MANAGER_NAME)
                 .build();
     }
 
