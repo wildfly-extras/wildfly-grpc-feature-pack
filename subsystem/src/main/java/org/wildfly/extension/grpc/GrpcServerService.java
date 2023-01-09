@@ -270,7 +270,7 @@ public class GrpcServerService implements Service {
                     } else {
                         keyManager = null;
                     }
-                    if (SSL_CONTEXT_NAME != null && !"".equals(SSL_CONTEXT_NAME)) {
+                    if (keyManager != null && SSL_CONTEXT_NAME != null && !"".equals(SSL_CONTEXT_NAME)) {
                         ServiceName sslContextName = css.getCapabilityServiceName(Capabilities.SSL_CONTEXT_CAPABILITY,
                                 SSL_CONTEXT_NAME);
                         Supplier<SSLContext> sslContextSupplier = serviceBuilder.requires(sslContextName);
@@ -399,6 +399,7 @@ public class GrpcServerService implements Service {
                 case SHUTDOWN_TIMEOUT: // Shouldn't be in serverUpdates
                     break;
                 case TRUST_MANAGER_NAME: // Shouldn't be in serverUpdates
+                    break;
 
                 default:
                     GrpcLogger.LOGGER.unknownAttribute(attr.toString());
