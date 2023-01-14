@@ -219,8 +219,8 @@ Most of the following descriptions are derived from the javadoc on the setter me
 * *shutdown-timeout*: Sets the time that the server should wait to become terminated, giving up if the timeout
    is reached. The type is `int`, and the default is 3 seconds.
 
-* *ssl-context-name*: Refers to an SSL Context defined in the Elytron subsystem. The type is `String` and the
-   default value is "applicationSSC".
+* *ssl-context-name*: Refers to an SSL Context defined in the Elytron subsystem. The type is `String` and no value
+   is set by default.
   
 * *start-tls*: Sets whether the first write request shouldn't be encrypted. The type is `boolean` and the default
    depends on the `SslContext` implementation.
