@@ -280,7 +280,7 @@ public class GrpcServerService implements Service {
                     } else {
                         sslContext = null;
                     }
-                    if (TRUST_MANAGER_NAME != null && !"".equals(TRUST_MANAGER_NAME)) {
+                    if (keyManager != null && TRUST_MANAGER_NAME != null && !"".equals(TRUST_MANAGER_NAME)) {
                         ServiceName trustManagerName = css.getCapabilityServiceName(Capabilities.TRUST_MANAGER_CAPABILITY,
                                 TRUST_MANAGER_NAME);
                         Supplier<TrustManager> trustManagerSupplier = serviceBuilder.requires(trustManagerName);

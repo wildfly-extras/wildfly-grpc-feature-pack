@@ -215,7 +215,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_SSL_CONTEXT_NAME = new SimpleAttributeDefinitionBuilder(
             "ssl-context-name", ModelType.STRING)
             .setAllowExpression(true)
-            .setDefaultValue(new ModelNode("applicationSSC"))
+            .setDefaultValue(null)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new ModelTypeValidator(ModelType.STRING, false))

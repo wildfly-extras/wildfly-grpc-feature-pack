@@ -238,7 +238,7 @@ The grpc subsystem mainly depends on Elytron (https://docs.wildfly.org/27/WildFl
 for SSL/TLS configuration. For example, the parameter "key-manager-name"
 is used to retrieve a key manager from Elytron. If gRPC communication is meant to take place over SSL/TLS connections,
 then "key-manager-name" is required. Conversely, if non-secure connections are desired, then "key-manager-name" must be
-set to null. The default value is "applicationKM", which comes in WildFly out of the box.
+set to "". The default value is "applicationKM", which comes in WildFly out of the box.
 
 The parameter "ssl-context-name" refers to an SSL context configured in Elytron. If "ssl-context-name" is not null,
 then the SSL context can be used to supply the following additional values:
@@ -248,7 +248,7 @@ then the SSL context can be used to supply the following additional values:
 * SSL context provider
 
 If set, the "protocol-provider" parameter overrides the value retrieved from the SSL context. The default value of 
-"ssl-context-name" is "applicationSSC", which comes in WildFly out of the box.
+"ssl-context-name" is null.
 
 The parameter "trust-manager-name" refers to a trust manager configured in Elytron, which is necessary only if
 client identities are meant to be verified. By default it is set to null.

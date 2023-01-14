@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]
+then
+    echo "give an SSL value, example"
+    exit 1
+fi
+
+SSL=$1
+EXAMPLE=$2
+HOME=build/target/wildfly-27.0.0.Final-grpc-0.0.4-SNAPSHOT
+
+cp examples/$EXAMPLE/service/target/wildfly-grpc-examples-$EXAMPLE-service-0.0.4-SNAPSHOT.jar $HOME/standalone/deployments
+if [ $SSL == "none" ];
+then
+    cp ssl/standalone.xml.none $HOME/standalone/configuration/standalone.xml
+elif [ $SSL == "oneway" ];
+then
+    cp ssl/server.keystore.jks $HOME/standalone/configuration
+    cp ssl/standalone.xml.oneway $HOME/standalone/configuration/standalone.xml
+elif [ $SSL == "twoway" ];
+then
+    cp ssl/server.keystore.jks $HOME/standalone/configuration
+    cp ssl/server.truststore.jks $HOME/standalone/configuration
+    cp ssl/standalone.xml.twoway $HOME/standalone/configuration/standalone.xml
+else
+	echo "Don't recognize $SSL"
+	exit
+fi
