@@ -15,14 +15,19 @@
  */
 package org.wildfly.extension.grpc.example.helloworld;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.grpc.Channel;
+import io.grpc.ChannelCredentials;
+import io.grpc.Grpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
+import io.grpc.TlsChannelCredentials;
 
 public class GreeterClient {
 
@@ -65,29 +70,47 @@ public class GreeterClient {
         String user = "world";
         // Access a service running on the local machine on port 50051
         String target = "localhost:9555";
+        String ssl = "none";
+        ManagedChannel channel = null;
+
         // Allow passing in the user and target strings as command line arguments
         if (args.length > 0) {
             if ("--help".equals(args[0])) {
                 System.err.println("Usage: [name [target]]");
                 System.err.println("");
                 System.err.println("  name    The name you wish to be greeted by. Defaults to " + user);
+                System.err.println("  ssl     none, oneway, or twoway");
                 System.err.println("  target  The server to connect to. Defaults to " + target);
                 System.exit(1);
             }
             user = args[0];
+            ssl = args[1];
         }
-        if (args.length > 1) {
-            target = args[1];
+        if (args.length > 2) {
+            target = args[2];
         }
 
-        // Create a communication channel to the server, known as a Channel. Channels are thread-safe
-        // and reusable. It is common to create channels at the beginning of your application and reuse
-        // them until the application shuts down.
-        ManagedChannel channel = ManagedChannelBuilder.forTarget(target)
-                // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
-                // needing certificates.
-                .usePlaintext()
-                .build();
+        ClassLoader classLoader = GreeterClient.class.getClassLoader();
+        if ("none".equals(ssl)) {
+            channel = ManagedChannelBuilder.forTarget(target)
+                    // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
+                    // needing certificates.
+                    .usePlaintext().build();
+        } else if ("oneway".equals(ssl)) {
+            InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
+            ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
+            channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
+        } else if ("twoway".equals(ssl)) {
+            InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
+            InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
+            InputStream key = classLoader.getResourceAsStream("client.key.pem");
+            ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).keyManager(keyStore, key)
+                    .build();
+            channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
+        } else {
+            System.err.println("unrecognized ssl value: " + ssl);
+        }
+
         try {
             GreeterClient client = new GreeterClient(channel);
             client.greet(user);
