@@ -15,4 +15,4 @@
      limitations under the License.
 
 -->
-<subsystem xmlns="urn:wildfly:grpc:1.0"/>
+<subsystem xmlns="urn:wildfly:grpc:1.0" server-host="localhost" server-port="10999"/>
