@@ -8,12 +8,16 @@ fi
 
 SSL=$1
 EXAMPLE=$2
-HOME=build/target/wildfly-27.0.0.Final-grpc-0.0.4-SNAPSHOT
+HOME=build/target/wildfly-27.0.*.Final-grpc-*-SNAPSHOT
+
+echo SSL: $SSL
+echo EXAMPLE: $EXAMPLE
 
 cp examples/$EXAMPLE/service/target/wildfly-grpc-examples-$EXAMPLE-service-0.0.4-SNAPSHOT.jar $HOME/standalone/deployments
 if [ $SSL == "none" ];
 then
     cp ssl/standalone.xml.none $HOME/standalone/configuration/standalone.xml
+    echo cp ssl/standalone.xml.none $HOME/standalone/configuration/standalone.xml
 elif [ $SSL == "oneway" ];
 then
     cp ssl/server.keystore.jks $HOME/standalone/configuration

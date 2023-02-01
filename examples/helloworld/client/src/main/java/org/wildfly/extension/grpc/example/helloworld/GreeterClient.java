@@ -15,7 +15,6 @@
  */
 package org.wildfly.extension.grpc.example.helloworld;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;

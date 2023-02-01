@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-code-parent</artifactId>
-        <version>0.0.4-SNAPSHOT</version>
+        <version>0.0.5-SNAPSHOT</version>
         <relativePath>../code-parent/pom.xml</relativePath>
     </parent>
 
@@ -121,6 +121,11 @@
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
             <artifactId>netty-codec-http</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -142,6 +147,11 @@
         <dependency>
             <groupId>io.perfmark</groupId>
             <artifactId>perfmark-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

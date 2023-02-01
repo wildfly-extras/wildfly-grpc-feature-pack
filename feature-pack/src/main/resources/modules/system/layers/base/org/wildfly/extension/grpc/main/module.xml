@@ -34,6 +34,7 @@
         <module name="org.jboss.as.network"/>
         <module name="org.jboss.staxmapper"/>
         <module name="org.wildfly.security.manager"/>
+        <module name="io.netty.netty-common"/>
         <module name="io.netty.netty-codec" optional="true"/>
         <module name="io.netty.netty-handler" optional="true"/>
         <!--
