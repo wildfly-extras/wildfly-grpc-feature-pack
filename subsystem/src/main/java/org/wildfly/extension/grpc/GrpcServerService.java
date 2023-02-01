@@ -55,6 +55,8 @@ import io.grpc.netty.NettyServerBuilder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.JdkLoggerFactory;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -105,6 +107,9 @@ public class GrpcServerService implements Service {
     };
 
     static void configure(ModelNode configuration, OperationContext context) throws OperationFailedException {
+        // Initialize the Netty logger factory
+        InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
+
         serverUpdates.clear();
         Integer n = GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, configuration)
                 .asIntOrNull();

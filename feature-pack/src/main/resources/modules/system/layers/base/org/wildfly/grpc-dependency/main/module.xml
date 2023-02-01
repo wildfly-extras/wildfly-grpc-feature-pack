@@ -42,6 +42,7 @@
         <module name="org.jboss.weld.core"/>
         <module name="org.jboss.weld.spi"/>
         <module name="io.netty.netty-buffer"/>
+        <module name="io.netty.netty-codec"/>
         <module name="io.netty.netty-codec-http"/>
         <module name="io.netty.netty-codec-http2"/>
         <module name="io.netty.netty-common"/>
