@@ -8,7 +8,7 @@ fi
 
 SSL=$1
 EXAMPLE=$2
-HOME=build/target/wildfly-27.0.*.Final-grpc-*-SNAPSHOT
+HOME=build/target/wildfly-*-grpc-*-SNAPSHOT
 
 echo SSL: $SSL
 echo EXAMPLE: $EXAMPLE
