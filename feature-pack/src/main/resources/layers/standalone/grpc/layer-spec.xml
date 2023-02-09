@@ -18,7 +18,7 @@
 -->
 <layer-spec xmlns="urn:jboss:galleon:layer-spec:1.0" name="grpc">
     <dependencies>
-        <layer name="cdi"/>
+        <layer name="cdi" />
     </dependencies>
-    <feature-group name="grpc"/>
+    <feature-group name="grpc" />
 </layer-spec>
