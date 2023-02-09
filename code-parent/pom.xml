@@ -158,6 +158,8 @@
                     <artifactId>formatter-maven-plugin</artifactId>
                     <configuration>
                         <configFile>etc/eclipse-formatter-config.xml</configFile>
+                        <configXmlFile>etc/xml.properties</configXmlFile>
+                        <includeResources>true</includeResources>
                     </configuration>
                     <dependencies>
                         <dependency>

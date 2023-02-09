@@ -154,6 +154,7 @@
                     <inherited>false</inherited>
                     <configuration>
                         <configFile>build-config/src/main/resources/etc/eclipse-formatter-config.xml</configFile>
+                        <configXmlFile>build-config/src/main/resources/etc/xml.properties</configXmlFile>
                     </configuration>
                 </plugin>
                 <plugin>
