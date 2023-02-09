@@ -214,6 +214,22 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>format-pom</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                        <configuration>
+                            <directories>
+                                <directory>${project.basedir}</directory>
+                            </directories>
+                            <includeResources>false</includeResources>
+                            <includes>
+                                <include>pom.xml</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>formatter-check</id>
                         <phase>verify</phase>
                         <goals>
