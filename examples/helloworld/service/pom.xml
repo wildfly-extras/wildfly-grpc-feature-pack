@@ -16,8 +16,7 @@
      limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -116,8 +115,7 @@
                                 <configuration>
                                     <target>
                                         <copy tofile="${wildfly.home}/standalone/configuration/standalone.xml"
-                                            failonerror="true"
-                                            overwrite="true"
+                                            failonerror="true" overwrite="true"
                                             file="${root.directory}/ssl/standalone.xml.none" />
                                     </target>
                                 </configuration>
@@ -148,13 +146,10 @@
                                 <configuration>
                                     <target>
                                         <copy tofile="${wildfly.home}/standalone/configuration/standalone.xml"
-                                            failonerror="true"
-                                            overwrite="true"
+                                            failonerror="true" overwrite="true"
                                             file="${root.directory}/ssl/standalone.xml.oneway" />
-                                        <copy todir="${wildfly.home}/standalone/configuration"
-                                            failonerror="true"
-                                            overwrite="true"
-                                            file="${root.directory}/ssl/server.keystore.jks" />
+                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
+                                            overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -185,17 +180,12 @@
                                 <configuration>
                                     <target>
                                         <copy tofile="${wildfly.home}/standalone/configuration/standalone.xml"
-                                            failonerror="true"
-                                            overwrite="true"
+                                            failonerror="true" overwrite="true"
                                             file="${root.directory}/ssl/standalone.xml.twoway" />
-                                        <copy todir="${wildfly.home}/standalone/configuration"
-                                            failonerror="true"
-                                            overwrite="true"
-                                            file="${root.directory}/ssl/server.keystore.jks" />
-                                        <copy todir="${wildfly.home}/standalone/configuration"
-                                            failonerror="true"
-                                            overwrite="true"
-                                            file="${root.directory}/ssl/server.truststore.jks" />
+                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
+                                            overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
+                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
+                                            overwrite="true" file="${root.directory}/ssl/server.truststore.jks" />
                                     </target>
                                 </configuration>
                                 <goals>

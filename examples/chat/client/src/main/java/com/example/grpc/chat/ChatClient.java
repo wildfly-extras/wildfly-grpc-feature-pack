@@ -15,12 +15,17 @@
  */
 package com.example.grpc.chat;
 
+import java.io.InputStream;
+
 import org.wildfly.extension.grpc.example.chat.ChatMessage;
 import org.wildfly.extension.grpc.example.chat.ChatMessageFromServer;
 import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc;
 
+import io.grpc.ChannelCredentials;
+import io.grpc.Grpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.TlsChannelCredentials;
 import io.grpc.stub.StreamObserver;
 
 import javafx.application.Application;
@@ -36,6 +41,8 @@ import javafx.stage.Stage;
 
 public class ChatClient extends Application {
 
+    private static ManagedChannel channel = null;
+
     private final ObservableList<String> messages = FXCollections.observableArrayList();
     private final ListView<String> messagesView = new ListView<>();
     private final TextField name = new TextField("name");
@@ -43,6 +50,7 @@ public class ChatClient extends Application {
     private final Button send = new Button();
 
     public static void main(String[] args) {
+        setup(args);
         launch(args);
     }
 
@@ -66,7 +74,6 @@ public class ChatClient extends Application {
 
         primaryStage.show();
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9555).usePlaintext().build();
         ChatServiceGrpc.ChatServiceStub chatService = ChatServiceGrpc.newStub(channel);
         StreamObserver<ChatMessage> chat = chatService.chat(new StreamObserver<>() {
             @Override
@@ -97,5 +104,45 @@ public class ChatClient extends Application {
             chat.onCompleted();
             channel.shutdown();
         });
+    }
+
+    private static void setup(String[] args) {
+        String target = "localhost:9555";
+        String ssl = "none";
+
+        // Allow passing in the user and target strings as command line arguments
+        if (args.length > 0) {
+            if ("--help".equals(args[0])) {
+                System.err.println("Usage: [ssl]");
+                System.err.println("");
+                System.err.println("  ssl     none, oneway, or twoway");
+                System.exit(1);
+            }
+            ssl = args[0];
+        }
+        try {
+            ClassLoader classLoader = ChatClient.class.getClassLoader();
+            if ("none".equals(ssl)) {
+                channel = ManagedChannelBuilder.forTarget(target)
+                        // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
+                        // needing certificates.
+                        .usePlaintext().build();
+            } else if ("oneway".equals(ssl)) {
+                InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
+                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
+                channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
+            } else if ("twoway".equals(ssl)) {
+                InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
+                InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
+                InputStream key = classLoader.getResourceAsStream("client.key.pem");
+                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).keyManager(keyStore, key)
+                        .build();
+                channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
+            } else {
+                System.err.println("unrecognized ssl value: " + ssl);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

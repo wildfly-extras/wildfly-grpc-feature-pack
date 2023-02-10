@@ -75,7 +75,7 @@ public class GreeterClient {
         // Allow passing in the user and target strings as command line arguments
         if (args.length > 0) {
             if ("--help".equals(args[0])) {
-                System.err.println("Usage: [name [target]]");
+                System.err.println("Usage: [name ssl [target]]");
                 System.err.println("");
                 System.err.println("  name    The name you wish to be greeted by. Defaults to " + user);
                 System.err.println("  ssl     none, oneway, or twoway");
