@@ -30,6 +30,11 @@
     <artifactId>wildfly-grpc-examples-helloworld-service</artifactId>
     <name>WildFly gRPC :: Examples :: Hello World :: Service</name>
 
+    <properties>
+        <root.directory>${basedir}/../../..</root.directory>
+        <wildfly.home>${root.directory}/build/target/wildfly-${version.wildfly}-grpc-${version}</wildfly.home>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -86,35 +91,111 @@
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
-                    <feature-packs>
-                        <feature-pack>
-                            <groupId>org.wildfly</groupId>
-                            <artifactId>wildfly-preview-feature-pack</artifactId>
-                            <version>${version.wildfly}</version>
-                        </feature-pack>
-                        <feature-pack>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>wildfly-grpc-feature-pack</artifactId>
-                            <version>${project.version}</version>
-                        </feature-pack>
-                    </feature-packs>
-                    <layers>
-                        <layer>jaxrs</layer>
-                        <layer>grpc</layer>
-                        <layer>management</layer>
-                    </layers>
-                    <galleon-options>
-                        <jboss-fork-embedded>true</jboss-fork-embedded>
-                    </galleon-options>
+                    <jboss-home>${wildfly.home}</jboss-home>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>package</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>ssl-none</id>
+            <activation>
+                <property>
+                    <name>ssl</name>
+                    <value>none</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>process-test-resources</phase>
+                                <configuration>
+                                    <target>
+                                        <copy tofile="${wildfly.home}/standalone/configuration/standalone.xml"
+                                            failonerror="true" overwrite="true"
+                                            file="${root.directory}/ssl/standalone.xml.none" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>ssl-oneway</id>
+            <activation>
+                <property>
+                    <name>ssl</name>
+                    <value>oneway</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>process-test-resources</phase>
+                                <configuration>
+                                    <target>
+                                        <copy tofile="${wildfly.home}/standalone/configuration/standalone.xml"
+                                            failonerror="true" overwrite="true"
+                                            file="${root.directory}/ssl/standalone.xml.oneway" />
+                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
+                                            overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>ssl-twoway</id>
+            <activation>
+                <property>
+                    <name>ssl</name>
+                    <value>twoway</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <phase>process-test-resources</phase>
+                                <configuration>
+                                    <target>
+                                        <copy tofile="${wildfly.home}/standalone/configuration/standalone.xml"
+                                            failonerror="true" overwrite="true"
+                                            file="${root.directory}/ssl/standalone.xml.twoway" />
+                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
+                                            overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
+                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
+                                            overwrite="true" file="${root.directory}/ssl/server.truststore.jks" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

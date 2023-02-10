@@ -30,6 +30,10 @@
     <artifactId>wildfly-grpc-examples-chat-client</artifactId>
     <name>WildFly gRPC :: Examples :: Chat :: Client</name>
 
+    <properties>
+        <exec.args>none</exec.args>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -52,6 +56,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.example.grpc.chat.ChatClient</mainClass>
+                    <commandlineArgs>${exec.args}</commandlineArgs>
                 </configuration>
             </plugin>
             <plugin>
