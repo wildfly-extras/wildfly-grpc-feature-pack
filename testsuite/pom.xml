@@ -16,9 +16,8 @@
      limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -33,7 +32,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <debug.jvm.args/>
+        <debug.jvm.args />
 
         <!-- Used to provide an absolute location for the distribution under test. -->
         <jboss.dist>${project.basedir}/target/wildfly</jboss.dist>
@@ -42,8 +41,10 @@
         <!-- IP address defaults. -->
         <node0>127.0.0.1</node0>
         <node1>127.0.0.1</node1>
-        <mcast>230.0.0.4</mcast> <!-- Default multicast address. -->
-        <mcast.ttl>0</mcast.ttl> <!-- Multicast TTL. -->
+        <mcast>230.0.0.4</mcast>
+        <!-- Default multicast address. -->
+        <mcast.ttl>0</mcast.ttl>
+        <!-- Multicast TTL. -->
         <port-offset>0</port-offset>
 
         <!-- IP stack configs. -->
@@ -72,7 +73,7 @@
 
         <!-- Common surefire arguments -->
         <surefire.memory.args>-Xmx512m -XX:MetaspaceSize=128m</surefire.memory.args>
-        <surefire.jpda.args/>
+        <surefire.jpda.args />
         <as.debug.port>8787</as.debug.port>
         <modular.jdk.testsuite.args />
         <surefire.system.args>${modular.jdk.testsuite.args} ${surefire.memory.args} ${surefire.jpda.args} -Djboss.dist=${jboss.dist} -Dmaven.repo.local=${settings.localRepository}</surefire.system.args>
@@ -117,7 +118,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <!-- Don't compile src/main/java - nothing to do. -->
-                    <executions><execution><id>default-compile</id><phase>none</phase></execution></executions>
+                    <executions>
+                        <execution>
+                            <id>default-compile</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
                 </plugin>
                 <!--
                    Sets general surefire system properties.
@@ -151,28 +157,47 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <executions>
-                        <execution><id>default-site</id><phase>none</phase></execution></executions>
+                        <execution>
+                            <id>default-site</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <!-- Don't create jars - nothing to do. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <executions><execution><id>default-jar</id><phase>none</phase></execution></executions>
+                    <executions>
+                        <execution>
+                            <id>default-jar</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <!-- Don't create source jars - nothing to do. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <executions><execution><id>attach-sources</id><phase>none</phase></execution></executions>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <!-- Don't install - nothing to do. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <executions><execution><id>default-install</id><phase>none</phase></execution></executions>
+                    <executions>
+                        <execution>
+                            <id>default-install</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
