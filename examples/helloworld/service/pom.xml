@@ -32,7 +32,7 @@
 
     <properties>
         <root.directory>${basedir}/../../..</root.directory>
-        <wildfly.home>${root.directory}/build/target/wildfly-${version.wildfly}-grpc-${version}</wildfly.home>
+        <wildfly.home>${root.directory}/build/target/wildfly</wildfly.home>
     </properties>
 
     <dependencies>

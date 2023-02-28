@@ -23,16 +23,7 @@
 
     <resources>
         <artifact name="${org.wildfly.extras.grpc:wildfly-grpc-api}" />
-        <artifact name="${io.grpc:grpc-api}" />
-        <artifact name="${io.grpc:grpc-context}" />
-        <artifact name="${io.grpc:grpc-core}" />
         <artifact name="${io.grpc:grpc-netty}" />
-        <artifact name="${io.grpc:grpc-protobuf}" />
-        <artifact name="${io.grpc:grpc-protobuf-lite}" />
-        <artifact name="${io.grpc:grpc-stub}" />
-        <artifact name="${io.perfmark:perfmark-api}" />
-        <artifact name="${com.google.protobuf:protobuf-java}" />
-        <artifact name="${com.google.protobuf:protobuf-java-util}" />
     </resources>
 
     <dependencies>
@@ -41,6 +32,7 @@
         <module name="org.jboss.weld.api" />
         <module name="org.jboss.weld.core" />
         <module name="org.jboss.weld.spi" />
+        <module name="io.grpc" export="true"/>
         <module name="io.netty.netty-buffer" />
         <module name="io.netty.netty-codec" />
         <module name="io.netty.netty-codec-http" />
