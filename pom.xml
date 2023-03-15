@@ -134,6 +134,7 @@
         <module>code-parent</module>
         <module>feature-pack</module>
         <module>subsystem</module>
+        <module>testsuite</module>
     </modules>
 
     <!-- No dependencies! Dependencies are managed in code-parent -->
@@ -447,12 +448,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>testsuite</id>
-            <modules>
-                <module>testsuite</module>
-            </modules>
         </profile>
     </profiles>
 
