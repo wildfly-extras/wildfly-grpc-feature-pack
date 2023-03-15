@@ -132,8 +132,8 @@
         <module>build</module>
         <module>build-config</module>
         <module>code-parent</module>
-        <module>feature-pack</module>
         <module>subsystem</module>
+        <module>galleon-pack</module>
         <module>testsuite</module>
     </modules>
 
