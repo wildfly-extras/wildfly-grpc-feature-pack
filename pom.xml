@@ -466,7 +466,7 @@
                 <enabled>true</enabled>
                 <updatePolicy>never</updatePolicy>
             </snapshots>
-            <id>jboss-public-repository-group</id>
+            <id>jboss-public-repository</id>
             <name>JBoss Public Repository Group</name>
             <url>${maven.repository.url}</url>
             <layout>default</layout>
