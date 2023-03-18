@@ -27,11 +27,10 @@
     </resources>
 
     <dependencies>
+        <module name="com.google.guava" />
+        <module name="com.google.protobuf"/>
+        <module name="jakarta.enterprise.api" />
         <module name="java.logging" />
-        <module name="javax.enterprise.api" />
-        <module name="org.jboss.weld.api" />
-        <module name="org.jboss.weld.core" />
-        <module name="org.jboss.weld.spi" />
         <module name="io.grpc" export="true"/>
         <module name="io.netty.netty-buffer" />
         <module name="io.netty.netty-codec" />
@@ -40,6 +39,8 @@
         <module name="io.netty.netty-common" />
         <module name="io.netty.netty-handler" />
         <module name="io.netty.netty-transport" />
-        <module name="com.google.guava" />
+        <module name="org.jboss.weld.api" />
+        <module name="org.jboss.weld.core" />
+        <module name="org.jboss.weld.spi" />
     </dependencies>
 </module>

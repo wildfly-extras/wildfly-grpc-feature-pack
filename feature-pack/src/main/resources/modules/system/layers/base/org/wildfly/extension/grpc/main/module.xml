@@ -35,14 +35,14 @@
         <module name="org.jboss.staxmapper" />
         <module name="org.wildfly.security.manager" />
         <module name="io.netty.netty-common" />
-        <module name="io.netty.netty-codec" optional="true" />
-        <module name="io.netty.netty-handler" optional="true" />
+        <module name="io.netty.netty-codec" />
+        <module name="io.netty.netty-handler" />
         <!--
             Additional module dependencies.
             If they contain any classes that should be exposed to the user's code,
             (e.g. in a deployment) make sure you add them in the subsystem's
             DependencyProcessor too
         -->
-        <module name="org.wildfly.grpc-dependency" />
+        <module name="org.wildfly.grpc-dependency" export="true"/>
     </dependencies>
 </module>
