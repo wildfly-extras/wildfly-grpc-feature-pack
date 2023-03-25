@@ -31,9 +31,6 @@
     <name>WildFly gRPC :: Build</name>
     <packaging>pom</packaging>
     <properties>
-        <server.test.feature.pack.groupId>org.wildfly</server.test.feature.pack.groupId>
-        <server.test.feature.pack.artifactId>wildfly-preview-feature-pack</server.test.feature.pack.artifactId>
-        <server.test.feature.pack.version>27.0.1.Final</server.test.feature.pack.version>
         <wildfly.grpc.test.feature.pack.groupId>org.wildfly.extras.grpc</wildfly.grpc.test.feature.pack.groupId>
         <wildfly.grpc.test.feature.pack.artifactId>wildfly-grpc-feature-pack</wildfly.grpc.test.feature.pack.artifactId>
         <wildfly.grpc.test.feature.pack.version>0.0.5-SNAPSHOT</wildfly.grpc.test.feature.pack.version>
@@ -107,8 +104,8 @@
                     <feature-packs>
                         <feature-pack>
                             <groupId>org.wildfly</groupId>
-                            <artifactId>wildfly-preview-feature-pack</artifactId>
-                            <version>${server.test.feature.pack.version}</version>
+                            <artifactId>wildfly-galleon-pack</artifactId>
+                            <version>${version.wildfly}</version>
                             <inherit-configs>false</inherit-configs>
                             <included-configs>
                                 <config>

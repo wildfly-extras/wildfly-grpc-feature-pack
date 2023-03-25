@@ -132,8 +132,9 @@
         <module>build</module>
         <module>build-config</module>
         <module>code-parent</module>
-        <module>feature-pack</module>
         <module>subsystem</module>
+        <module>galleon-pack</module>
+        <module>testsuite</module>
     </modules>
 
     <!-- No dependencies! Dependencies are managed in code-parent -->
@@ -448,12 +449,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>testsuite</id>
-            <modules>
-                <module>testsuite</module>
-            </modules>
-        </profile>
     </profiles>
 
     <repositories>
@@ -466,7 +461,7 @@
                 <enabled>true</enabled>
                 <updatePolicy>never</updatePolicy>
             </snapshots>
-            <id>jboss-public-repository-group</id>
+            <id>jboss-public-repository</id>
             <name>JBoss Public Repository Group</name>
             <url>${maven.repository.url}</url>
             <layout>default</layout>

@@ -53,7 +53,7 @@
                     <feature-packs>
                         <feature-pack>
                             <groupId>org.wildfly</groupId>
-                            <artifactId>wildfly-preview-feature-pack</artifactId>
+                            <artifactId>wildfly-galleon-pack</artifactId>
                             <version>${version.wildfly}</version>
                         </feature-pack>
                         <feature-pack>
