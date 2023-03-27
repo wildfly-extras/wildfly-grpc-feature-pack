@@ -54,37 +54,6 @@
             </exclusions>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>download</id>
-            <activation>
-                <property>
-                    <name>!server.home</name>
-                </property>
-            </activation>
-            <properties>
-                <jboss.home>${project.build.directory}${file.separator}wildfly</jboss.home>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jboss.galleon</groupId>
-                        <artifactId>galleon-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>server-provisioning</id>
-                                <phase>generate-test-resources</phase>
-                                <goals>
-                                    <goal>provision</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <build>
         <finalName>${server.name}</finalName>
         <plugins>
