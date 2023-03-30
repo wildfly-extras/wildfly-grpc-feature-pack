@@ -15,11 +15,8 @@
  */
 package org.wildfly.extension.grpc.example.helloworld;
 
-import org.wildfly.grpc.GrpcService;
-
 import io.grpc.stub.StreamObserver;
 
-@GrpcService
 public class GreeterServiceImpl extends GreeterGrpc.GreeterImplBase {
 
     @Override
