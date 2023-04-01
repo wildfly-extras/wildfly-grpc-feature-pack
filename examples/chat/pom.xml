@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-examples</artifactId>
-        <version>0.0.8</version>
+        <version>0.0.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,7 +33,7 @@
 
     <properties>
         <version.javafx>19.0.2.1</version.javafx>
-        <version.javafx.plugin>0.0.8</version.javafx.plugin>
+        <version.javafx.plugin>0.0.8-SNAPSHOT</version.javafx.plugin>
     </properties>
 
     <modules>
