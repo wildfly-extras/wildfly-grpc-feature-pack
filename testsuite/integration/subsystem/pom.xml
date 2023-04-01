@@ -37,11 +37,6 @@
             <type>pom</type>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wildfly-grpc-api</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>

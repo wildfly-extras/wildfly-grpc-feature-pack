@@ -32,14 +32,10 @@
 
     <properties>
         <root.directory>${basedir}/../../..</root.directory>
-        <wildfly.home>${root.directory}/build/target/wildfly</wildfly.home>
+        <wildfly.home>${root.directory}/testsuite/integration/subsystem/target/wildfly</wildfly.home>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wildfly-grpc-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>wildfly-grpc-examples-chat-proto</artifactId>
