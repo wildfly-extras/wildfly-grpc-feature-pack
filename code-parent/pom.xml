@@ -253,22 +253,6 @@
             <plugins>
                 <!-- Ordered by artifactID -->
                 <plugin>
-                    <groupId>net.revelc.code.formatter</groupId>
-                    <artifactId>formatter-maven-plugin</artifactId>
-                    <configuration>
-                        <configFile>etc/eclipse-formatter-config.xml</configFile>
-                        <configXmlFile>etc/xml.properties</configXmlFile>
-                        <includeResources>true</includeResources>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>wildfly-grpc-build-config</artifactId>
-                            <version>${project.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-                <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <configuration>
@@ -306,13 +290,6 @@
                 <artifactId>formatter-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>formatter-format</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>format-pom</id>
                         <phase>process-sources</phase>
                         <goals>
@@ -328,34 +305,11 @@
                             </includes>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>formatter-check</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>validate</goal>
-                        </goals>
-                    </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>net.revelc.code</groupId>
                 <artifactId>impsort-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>impsort-sort</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>sort</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>impsort-check</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
