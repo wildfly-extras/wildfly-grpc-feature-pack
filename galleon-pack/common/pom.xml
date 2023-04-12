@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-galleon-pack-parent</artifactId>
-        <version>0.0.5-SNAPSHOT</version>
+        <version>0.0.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -32,10 +32,6 @@
 
     <dependencies>
         <!-- module and copy artifact dependencies -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wildfly-grpc-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>wildfly-grpc-subsystem</artifactId>

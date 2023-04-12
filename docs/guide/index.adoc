@@ -117,16 +117,10 @@ logger.info("Greeting: " + response.getMessage());
 
 The WildFly subsystem grpc allows WildFly to expose multiple gRPC services. It uses a 
 `io.grpc.netty.NettyServerBuilder` to create an `io.grpc.Server` and then registers all of the
-gRPC services that it discovers in available deployments. A gRPC service is detected by the
-presence of an `org.wildfly.grpc.GrpcService` annotation from wildfly-grpc-feature-pack/api.
-For example,
-
-```
-@GrpcService
-public class GreeterServiceImpl extends GreeterGrpc.GreeterImplBase {
-    ...
-}
-```
+gRPC services that it discovers in available deployments. A gRPC service is a class that
+implements `io.grpc.BindableService`. See, for example, the inner class
+`GreeterGrpc.GreeterImplBase`, which is subclassed by
+`org.wildfly.extension.grpc.example.helloworld.GreeterServiceImpl`.
 
 `NettyServerBuilder` extends `io.grpc.internal.AbstractServerImplBuilder<NettyServerBuilder>`
 which extends `io.grpcl.ServerBuilder`. All of these have a number of parameters, and they are

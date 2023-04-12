@@ -18,13 +18,10 @@ package org.wildfly.extension.grpc.example.chat;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.wildfly.grpc.GrpcService;
-
 import io.grpc.stub.StreamObserver;
 
 import com.google.protobuf.Timestamp;
 
-@GrpcService
 public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
 
     private static final Set<StreamObserver<ChatMessageFromServer>> observers = ConcurrentHashMap.newKeySet();

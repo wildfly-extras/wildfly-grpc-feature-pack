@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-examples-helloworld</artifactId>
-        <version>0.0.5-SNAPSHOT</version>
+        <version>0.0.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -32,14 +32,10 @@
 
     <properties>
         <root.directory>${basedir}/../../..</root.directory>
-        <wildfly.home>${root.directory}/build/target/wildfly</wildfly.home>
+        <wildfly.home>${root.directory}/testsuite/integration/subsystem/target/wildfly</wildfly.home>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wildfly-grpc-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>wildfly-grpc-examples-helloworld-proto</artifactId>

@@ -22,7 +22,6 @@
     </properties>
 
     <resources>
-        <artifact name="${org.wildfly.extras.grpc:wildfly-grpc-api}" />
         <artifact name="${io.grpc:grpc-netty}" />
     </resources>
 

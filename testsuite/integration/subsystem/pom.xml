@@ -23,7 +23,7 @@
     <parent>
         <artifactId>wildfly-grpc-testsuite-integration</artifactId>
         <groupId>org.wildfly.extras.grpc</groupId>
-        <version>0.0.5-SNAPSHOT</version>
+        <version>0.0.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -36,11 +36,6 @@
             <artifactId>wildfly-grpc-feature-pack</artifactId>
             <type>pom</type>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wildfly-grpc-api</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

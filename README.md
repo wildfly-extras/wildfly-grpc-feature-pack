@@ -1,8 +1,8 @@
 # WildFly gRPC
 
-Feature pack to bring gRPC support to WildFly. Currently, the feature pack supports the deployment of gRPC services annotated with a custom annotation: `org.wildfly.grpc.GrpcService`. 
+Feature pack to bring gRPC support to WildFly. gRPC services are registered against a gRPC server listening, by default, to port 9555.
 
-gRPC services are registered against a gRPC server listening to port 9555. Only gRPC services are supported at the moment. Support for gRPC clients is coming soon.
+Only gRPC services are supported at the moment. Support for gRPC clients is coming soon.
 
 # Get Started
 
@@ -13,21 +13,14 @@ mvn install
 ```
 
 This will build everything, and run the testsuite. A WildFly server with the gRPC subsystem will be created in
-the `build/target` directory.
-
-## Profiles
-
-The maven build supports the following profiles:
-
-- `examples`: Builds the examples
-- `testsuite`: Runs the test suite
+the `testsuite/integration/subsystem/target` directory.
 
 # Examples
 
 Each example consists of three modules:
 
 1. Proto: Contains the proto definitions 
-2. Service: Contains the gRPC service annotated with `@GrpcService`
+2. Service: Contains the gRPC service
 3. Client: Contains a client to call the deployed gRPC service
 
 Before running the examples, please make sure that all necessary dependencies are available in your local maven repository:
@@ -65,7 +58,7 @@ Alternatively you could also use tools like [BloomRPC](https://github.com/uw-lab
 or [gRPCurl](https://github.com/fullstorydev/grpcurl) to invoke the service:
 
 ```shell
-grpcurl \
+grpcurl \ # plaintext
   -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
   -plaintext \
   -d '{"name":"Bob"}' \
@@ -73,7 +66,7 @@ grpcurl \
 ```
 or
 ```shell
-grpcurl \
+grpcurl \ # oneway
   -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
   -cacert examples/helloworld/client/src/main/resources/client.truststore.pem \
   -d '{"name":"Bob"}' \
@@ -81,7 +74,7 @@ grpcurl \
 ```
 or
 ```shell
-grpcurl \
+grpcurl \ # twoway
   -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
   -cacert examples/helloworld/client/src/main/resources/client.truststore.pem \
   -cert examples/helloworld/client/src/main/resources/client.keystore.pem \

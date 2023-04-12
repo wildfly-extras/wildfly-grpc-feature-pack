@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
@@ -249,8 +249,8 @@ public class GrpcServerService implements Service {
         }
     }
 
-    public static void install(ServiceTarget serviceTarget, DeploymentUnit deploymentUnit, Map<String, String> serviceClasses,
-            ClassLoader classLoader) throws Exception {
+    public static void install(ServiceTarget serviceTarget, DeploymentUnit deploymentUnit, List<Class<?>> serviceClasses)
+            throws Exception {
         if (grpcServerService == null || (restart && !serverRestarting)) {
             synchronized (monitor) {
                 if (grpcServerService == null || (restart && !serverRestarting)) {
@@ -301,30 +301,31 @@ public class GrpcServerService implements Service {
                     }
                     // install service
                     grpcServerService = new GrpcServerService(deploymentUnit.getName(), serviceConsumer, executorSupplier,
-                            serviceClasses, classLoader);
+                            serviceClasses);
                     serviceBuilder.setInstance(grpcServerService);
                     serviceBuilder.install();
                     return;
                 }
             }
         }
-        grpcServerService.addServiceClasses(serviceClasses, classLoader);
+        grpcServerService.addServiceClasses(serviceClasses);
     }
 
     private final String name;
     private final Consumer<GrpcServerService> serverService;
     private final Supplier<ExecutorService> executorService;
-    private final Set<String> serviceClasses = new HashSet<String>();
+    private final Set<Class<?>> serviceClasses = new HashSet<Class<?>>();
     private final Set<BindableService> services = new HashSet<BindableService>();
     private Server server;
 
-    private GrpcServerService(String name, Consumer<GrpcServerService> serverService, Supplier<ExecutorService> executorService,
-            Map<String, String> serviceClasses, ClassLoader classLoader) throws Exception {
+    private GrpcServerService(String name, Consumer<GrpcServerService> serverService,
+            Supplier<ExecutorService> executorService,
+            List<Class<?>> serviceClasses) throws Exception {
         this.name = name;
         this.serverService = serverService;
         this.executorService = executorService;
-        for (String serviceClass : serviceClasses.values()) {
-            newService(serviceClass, classLoader, this.serviceClasses, services);
+        for (Class<?> serviceClass : serviceClasses) {
+            newService(serviceClass, this.serviceClasses, services);
         }
     }
 
@@ -343,9 +344,9 @@ public class GrpcServerService implements Service {
         serverService.accept(this);
     }
 
-    void addServiceClasses(Map<String, String> serviceClasses, ClassLoader classLoader) throws Exception {
-        for (String serviceClass : serviceClasses.values()) {
-            newService(serviceClass, classLoader, this.serviceClasses, services);
+    void addServiceClasses(List<Class<?>> serviceClasses) throws Exception {
+        for (Class<?> serviceClass : serviceClasses) {
+            newService(serviceClass, this.serviceClasses, services);
         }
     }
 
@@ -424,18 +425,13 @@ public class GrpcServerService implements Service {
     }
 
     @SuppressWarnings("deprecation")
-    private void newService(String serviceClass, ClassLoader classLoader, Set<String> serviceClasses,
-            Set<BindableService> services)
+    private void newService(Class<?> serviceClass, Set<Class<?>> serviceClasses, Set<BindableService> services)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (serviceClasses.contains(serviceClass)) {
             return;
         }
         serviceClasses.add(serviceClass);
-        Class<?> clazz = classLoader.loadClass(serviceClass);
-        Object instance = clazz.newInstance();
-        if (!(instance instanceof BindableService)) {
-            throw new ClassCastException("gRPC service " + serviceClass + " is not a BindableService!");
-        }
+        Object instance = serviceClass.newInstance();
         services.add((BindableService) instance);
     }
 
