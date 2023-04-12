@@ -18,9 +18,9 @@ package org.wildfly.extension.grpc.example.chat;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.grpc.stub.StreamObserver;
-
 import com.google.protobuf.Timestamp;
+
+import io.grpc.stub.StreamObserver;
 
 public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
 
