@@ -28,6 +28,9 @@ pom.xml.next
 target
 **/target
 
+# Formatting cache directory
+.cache
+
 # eclipse
 .project
 .settings
