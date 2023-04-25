@@ -12,8 +12,49 @@ To build the feature pack, simply run
 mvn install
 ```
 
-This will build everything, and run the testsuite. A WildFly server with the gRPC subsystem will be created in
-the `testsuite/integration/subsystem/target` directory.
+This will build everything, and run the testsuite.
+
+Once built you can provision a server with gRPC support using Galleon provisioning. An example using the 
+`org.wildfly.plugins:wildfly-maven-plugin`:
+
+```xml
+<plugin>
+    <groupId>org.wildfly.plugins</groupId>
+    <artifactId>wildfly-maven-plugin</artifactId>
+    <configuration>
+        <feature-packs>
+            <feature-pack>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-galleon-pack</artifactId>
+                <version>${version.wildfly}</version>
+            </feature-pack>
+            <feature-pack>
+                <groupId>org.wildfly.extras.grpc</groupId>
+                <artifactId>wildfly-grpc-feature-pack</artifactId>
+                <version>${version.wildfly.grpc}</version>
+            </feature-pack>
+        </feature-packs>
+        <layers>
+            <layer>core-server</layer>
+            <layer>web-server</layer>
+            <layer>grpc</layer>
+        </layers>
+        <galleon-options>
+            <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+        </galleon-options>
+        <provisioning-dir>wildfly</provisioning-dir>
+        <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
+        <offline>true</offline>
+    </configuration>
+</plugin>
+```
+
+You can also configure this with the Galleon CLI tool:
+
+```bash
+galleon.sh install org.wildfly:wildfly-galleon-pack:$WILDFLY_VERSION --dir=wildfly-grpc
+galleon.sh install org.wildfly.extras.grpc:wildfly-grpc-feature-pack:$GRPC_VERSION --dir=wildfly-grpc
+```
 
 # Examples
 

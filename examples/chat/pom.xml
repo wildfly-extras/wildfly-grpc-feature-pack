@@ -32,7 +32,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <version.javafx>20</version.javafx>
+        <version.javafx>11.0.2</version.javafx>
         <version.javafx.plugin>0.0.8</version.javafx.plugin>
     </properties>
 
