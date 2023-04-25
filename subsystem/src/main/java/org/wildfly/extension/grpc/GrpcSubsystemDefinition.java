@@ -80,7 +80,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_KEY_MANAGER_NAME = new SimpleAttributeDefinitionBuilder(
             "key-manager-name", ModelType.STRING)
             .setAllowExpression(true)
-            .setDefaultValue(new ModelNode("applicationKM"))
+            .setDefaultValue(null)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new ModelTypeValidator(ModelType.STRING, false))
