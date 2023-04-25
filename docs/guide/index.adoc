@@ -153,8 +153,8 @@ Most of the following descriptions are derived from the javadoc on the setter me
 * *keep-alive-timeout*: Sets a custom keepalive timeout, the timeout for keepalive ping requests. An unreasonably small
    value might be increased. The default is 20 seconds. The type is `long` and the unit is seconds.
 
-* *key-manager-name*: Refers to a key manager defined in the Elytron subsystem. The type is `String`, and the default value
-   is "applicationKM".
+* *key-manager-name*: Refers to a key manager defined in the Elytron subsystem. The type is `String`, and no key manager is
+   set by default.
 
 * *max-concurrent-calls-per-connection*: The maximum number of concurrent calls permitted for each incoming connection. Defaults to no
    limit. The type is `int`.
@@ -224,7 +224,7 @@ Most of the following descriptions are derived from the javadoc on the setter me
    
 *Note.* Most of these parameters have default values set in the gRPC runtime, and the grpc subsystem leaves them alone
 by default. Six of them, "key-manager-name", "server-host", "server-port", "shutdown-timeout", "ssl-context-name", and
-"trust-manager-name", are explicitly set by the grpc subsystem to the values described above.
+"trust-manager-name", are explicitly set by the grpc subsystem to the values described above or left unset.
    
 ### Security
 
@@ -232,7 +232,8 @@ The grpc subsystem mainly depends on Elytron (https://docs.wildfly.org/27/WildFl
 for SSL/TLS configuration. For example, the parameter "key-manager-name"
 is used to retrieve a key manager from Elytron. If gRPC communication is meant to take place over SSL/TLS connections,
 then "key-manager-name" is required. Conversely, if non-secure connections are desired, then "key-manager-name" must be
-set to "". The default value is "applicationKM", which comes in WildFly out of the box.
+set to "" or null. By default, "key-manager-name" is set to null; i.e., the default
+connection uses plaintext.
 
 The parameter "ssl-context-name" refers to an SSL context configured in Elytron. If "ssl-context-name" is not null,
 then the SSL context can be used to supply the following additional values:
@@ -249,3 +250,61 @@ client identities are meant to be verified. By default it is set to null.
 
 The parameters "session-cache-size", "session-timeout", and "start-tls" also apply to SSL/TLS connections. No default
 values are set by the grpc subsystem.
+
+Suppose you have a keystore server.keystore.jks and a truststore server.truststore.jks in
+standalone/configuration. Then you want something like the following, extracted from the definition
+of the elytron subsystem in
+ssl/standalone.xml.twoway, which is used by the helloworld and chat examples:
+
+```
+<tls>
+     <key-stores>
+         <key-store name="key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428">
+             <credential-reference clear-text="secret"/>
+             <implementation type="JKS"/>
+             <file required="false" path="server.keystore.jks" relative-to="jboss.server.config.dir"/>
+         </key-store>
+         <key-store name="trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1">
+             <credential-reference clear-text="secret"/>
+             <implementation type="JKS"/>
+             <file required="false" path="server.truststore.jks" relative-to="jboss.server.config.dir"/>
+         </key-store>
+     </key-stores>
+     <key-managers>
+         <key-manager name="key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428" key-store="key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428">
+             <credential-reference clear-text="secret"/>
+         </key-manager>
+     </key-managers>
+     <trust-managers>
+         <trust-manager name="key-manager-trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1" key-store="trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1"/>
+     </trust-managers>
+</tls>
+```
+Given those definitions, you can configure the grpc subsystem as follows:
+```
+<subsystem xmlns="urn:wildfly:grpc:1.0"
+    key-manager-name="key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428"
+    trust-manager-name="key-manager-trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1"/>
+
+```
+This sets up the server for connections in which identities are checked on both the server and client sides.
+
+Now, on the client side, take a look at `GreeterClient` in the helloworld example:
+```
+if ("none".equals(ssl)) {
+    channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
+} else if ("oneway".equals(ssl)) {
+    InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
+    ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
+    channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
+} else if ("twoway".equals(ssl)) {
+    InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
+    InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
+    InputStream key = classLoader.getResourceAsStream("client.key.pem");
+    ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).keyManager(keyStore, key).build();
+    channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
+} 
+```
+Here, client.truststore.pem, client.keystore.pem, and client.key.pem are in the src/main/resources/ directory.
+Note that, unlike the server runtime, the client expects keystores in pem format.
+
