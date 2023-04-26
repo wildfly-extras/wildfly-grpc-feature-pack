@@ -156,9 +156,6 @@
                         <useDefaultExcludes>true</useDefaultExcludes>
                         <mapping>
                             <proto>JAVADOC_STYLE</proto>
-                            <xml.oneway>XML_STYLE</xml.oneway>
-                            <xml.twoway>XML_STYLE</xml.twoway>
-                            <xml.none>XML_STYLE</xml.none>
                         </mapping>
                         <excludes>
                             <exclude>.cache/*</exclude>

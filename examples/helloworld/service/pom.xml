@@ -32,7 +32,7 @@
 
     <properties>
         <root.directory>${basedir}/../../..</root.directory>
-        <wildfly.home>${root.directory}/testsuite/integration/subsystem/target/wildfly</wildfly.home>
+        <wildfly.home>${project.build.directory}/wildfly</wildfly.home>
     </properties>
 
     <dependencies>
@@ -88,7 +88,39 @@
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
                     <jboss-home>${wildfly.home}</jboss-home>
+                    <provisioningDir>${wildfly.home}</provisioningDir>
+                    <feature-packs>
+                        <feature-pack>
+                            <groupId>org.wildfly</groupId>
+                            <artifactId>wildfly-galleon-pack</artifactId>
+                            <version>${version.wildfly}</version>
+                        </feature-pack>
+                        <feature-pack>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>wildfly-grpc-feature-pack</artifactId>
+                            <version>${project.version}</version>
+                        </feature-pack>
+                    </feature-packs>
+                    <layers>
+                        <layer>core-server</layer>
+                        <layer>web-server</layer>
+                        <!-- Layers from this FP  -->
+                        <layer>grpc</layer>
+                    </layers>
+                    <galleon-options>
+                        <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+                    </galleon-options>
+                    <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>provision-server</id>
+                        <goals>
+                            <goal>provision</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -104,20 +136,25 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <phase>process-test-resources</phase>
-                                <configuration>
-                                    <target>
-                                        <copy tofile="${wildfly.home}/standalone/configuration/standalone.xml"
-                                            failonerror="true" overwrite="true"
-                                            file="${root.directory}/ssl/standalone.xml.none" />
-                                    </target>
-                                </configuration>
                                 <goals>
-                                    <goal>run</goal>
+                                    <goal>execute-commands</goal>
                                 </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <offline>true</offline>
+                                    <scripts>
+                                        <script>${root.directory}/ssl/configure-elytron.cli</script>
+                                    </scripts>
+                                    <commands>
+                                        <command>embed-server</command>
+                                        <command>/subsystem=grpc:write-attribute(name=key-manager-name, value="")</command>
+                                        <command>stop-embedded-server</command>
+                                    </commands>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -135,15 +172,35 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>execute-commands</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <offline>true</offline>
+                                    <scripts>
+                                        <script>${root.directory}/ssl/configure-elytron.cli</script>
+                                    </scripts>
+                                    <commands>
+                                        <command>embed-server</command>
+                                        <command>/subsystem=grpc:write-attribute(name=key-manager-name, value=&quot;key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428&quot;)</command>
+                                        <command>stop-embedded-server</command>
+                                    </commands>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
-                                <phase>process-test-resources</phase>
+                                <phase>package</phase>
                                 <configuration>
                                     <target>
-                                        <copy tofile="${wildfly.home}/standalone/configuration/standalone.xml"
-                                            failonerror="true" overwrite="true"
-                                            file="${root.directory}/ssl/standalone.xml.oneway" />
                                         <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
                                             overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
                                     </target>
@@ -168,16 +225,37 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>execute-commands</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <offline>true</offline>
+                                    <scripts>
+                                        <script>${root.directory}/ssl/configure-elytron.cli</script>
+                                    </scripts>
+                                    <commands>
+                                        <command>embed-server</command>
+                                        <command>/subsystem=grpc:write-attribute(name=key-manager-name, value=&quot;key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428&quot;)</command>
+                                        <command>/subsystem=grpc:write-attribute(name=trust-manager-name, value=&quot;key-manager-trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1&quot;)</command>
+                                        <command>stop-embedded-server</command>
+                                    </commands>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>3.1.0</version>
                         <executions>
                             <execution>
-                                <phase>process-test-resources</phase>
+                                <phase>package</phase>
                                 <configuration>
                                     <target>
-                                        <copy tofile="${wildfly.home}/standalone/configuration/standalone.xml"
-                                            failonerror="true" overwrite="true"
-                                            file="${root.directory}/ssl/standalone.xml.twoway" />
                                         <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
                                             overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
                                         <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
