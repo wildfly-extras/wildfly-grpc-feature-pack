@@ -126,7 +126,7 @@ WORKFLOW_URL="https://github.com/wildfly-extras/wildfly-grpc-feature-pack/action
 is_semver "${RELEASE_VERSION}" || die "Release version is not a semantic version"
 is_semver "${NEXT_VERSION}" || die "Next version is not a semantic version"
 version_gt "${NEXT_VERSION}" "${RELEASE_VERSION}" || die "Next version must be greater than release version"
-git diff-index --quiet HEAD || die "You have uncommitted changes"
+#git diff-index --quiet HEAD || die "You have uncommitted changes"
 [[ $(git tag -l "${TAG}") ]] && die "Tag ${TAG} already defined"
 
 msg ""
@@ -156,7 +156,7 @@ mvn --quiet -DskipModules keepachangelog:release &> /dev/null
 # Maven plugin keepachangelog:release uses the project version from the POM (1.2.3.Final),
 # but action mindsers/changelog-reader-action in release.yml requires a semantic version (1.2.3).
 # So replace [1.2.3.Final] -> [1.2.3] and v1.2.3.Final -> v1.2.3
-sed -E -i '' -e 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' -e 's/v([0-9]+\.[0-9]+\.[0-9]+)\.Final/v\1/g' CHANGELOG.md
+sed -E -i  -e 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' -e 's/v([0-9]+\.[0-9]+\.[0-9]+)\.Final/v\1/g' CHANGELOG.md
 msg "Push changes"
 git commit --quiet -am "Release ${RELEASE_VERSION}"
 for remote in "${GIT_REMOTES[@]}"; do

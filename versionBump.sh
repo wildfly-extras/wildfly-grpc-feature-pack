@@ -103,5 +103,5 @@ setup_colors
 msg "Update version to ${CYAN}${NEW_VERSION}${NOFORMAT}"
 mvn --quiet versions:set -DnewVersion="${NEW_VERSION}" &> /dev/null
 msg "    ${YELLOW}✓${NOFORMAT} Maven POMs"
-sed -i '' "s/location=\"org\.wildfly\.extras\.grpc:wildfly-grpc-feature-pack:.*\"/location=\"org.wildfly.extras.grpc:wildfly-grpc-feature-pack:$NEW_VERSION\"/" provision.xml
+sed -i  "s/location=\"org\.wildfly\.extras\.grpc:wildfly-grpc-feature-pack:.*\"/location=\"org.wildfly.extras.grpc:wildfly-grpc-feature-pack:$NEW_VERSION\"/" provision.xml
 msg "    ${YELLOW}✓${NOFORMAT} provision.xml"
