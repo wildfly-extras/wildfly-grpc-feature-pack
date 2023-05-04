@@ -150,23 +150,27 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>${version.license.plugin}</version>
                     <configuration>
-                        <header>build-config/src/main/resources/etc/license.txt</header>
                         <strictCheck>true</strictCheck>
                         <aggregate>true</aggregate>
                         <useDefaultExcludes>true</useDefaultExcludes>
                         <mapping>
                             <proto>JAVADOC_STYLE</proto>
                         </mapping>
-                        <excludes>
-                            <exclude>.cache/*</exclude>
-                            <exclude>.sdkmanrc</exclude>
-                            <exclude>CODEOWNERS</exclude>
-                            <exclude>LICENSE</exclude>
-                            <exclude>**/*.adoc</exclude>
-                            <exclude>**/*license*.txt</exclude>
-                            <exclude>**/*.c?r</exclude>
-                            <exclude>**/*.pem</exclude>
-                        </excludes>
+                        <licenseSets>
+                            <licenseSet>
+                                <header>build-config/src/main/resources/etc/license.txt</header>
+                                <excludes>
+                                    <exclude>.cache/*</exclude>
+                                    <exclude>.sdkmanrc</exclude>
+                                    <exclude>CODEOWNERS</exclude>
+                                    <exclude>LICENSE</exclude>
+                                    <exclude>**/*.adoc</exclude>
+                                    <exclude>**/*license*.txt</exclude>
+                                    <exclude>**/*.c?r</exclude>
+                                    <exclude>**/*.pem</exclude>
+                                </excludes>
+                            </licenseSet>
+                        </licenseSets>
                     </configuration>
                 </plugin>
                 <plugin>
