@@ -10,18 +10,58 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Add a maven profile `quick-build` that skips (IT) test, formatting, license check, checkstyle and enforcer. It runs the goals `clean install` by default and can be activated by specifying the system property `quickly`: `mvn -Dquickly` 
 
-## [0.1.0] - 2023-04-28
+### Upgrades
+
+- Bump arquillian-junit-core from 1.6.0.Final to 1.7.0.Final
+
+### Fixed
+
+- Fix deprecated license-maven-plugin configuration
 
 ## [0.1.0] - 2023-04-28
 
-## [0.1.0] - 2023-04-28
+This is our first feature complete release of the WildFly gRPC feature pack 🍾🎉🍻. 
+Lots of new features, bug fixes and dependency upgrades went into this release. 
+
+### Added 
+
+- Add the io.grpc module as it will be removed from WildFly (#78)
+- Add to documentation
+- Extended treatment of TLS
+- Support for one-way and two-way SSL/TLS connections
+- Implemented two attributes: "wildfly-grpc-server-port" and "wildfly-grpc-server-host"
+- Add formatting of POM files.
+- Add version for galleon-maven-plugin
+- Add configuration parameters
+- Add examples/helloworld/client/src/main/resources/client.keystore.pem
+- Add attribute: shutdown-timeout
+- Add SSL options to chat example
+
+### Changed
+
+- Migrate to using the `org.wildfly.tools:wildfly-parent` for the parent module (#87)
+- Enable provisioning for the examples instead of relying on a server built in the test suite. Remove the standalone.xml.* pre-configured files in favor of using CLI to configure servers. (#91)
+- Update documentation
+
+### Fixed
+
+- Adjust release script
+
+### Removed
+
+- Remove unneeded configuration options. Use values in the subsystem tests. Rename the attributes as the wildfly-grpc prefix should be implied by being in WildFly in the gRPC subsystem.
+- Removed references to grpc-api; 0.0.7-0.0.8
+- Do not import the WildFly component matrix as in WildFly 28 it's gone. Clean up dependencies no longer required.
 
 ### Upgrades
 
 - Bump grpc-bom from 1.49.1 to 1.49.2
-- Bump wildfly-maven-plugin from 4.0.0.Beta3 to 4.0.0.Beta4
-- Bump wildfly-galleon-maven-plugin from 6.1.0.Final to 6.2.0.Final
-- Bump WildFly from 26.1.0.Final to 27.0.0.Beta1
+- Bump wildfly-maven-plugin from 4.0.0.Beta3 to 4.0.0.Final
+- Bump wildfly-galleon-maven-plugin from 6.1.0.Final to 6.4.1.Final
+- Bump WildFly from 26.1.0.Final to 27.0.1.Final
+- Bump WildFly Core from 19.0.1.Final to 20.0.1.Final
+- Bump grpc-bom from 1.49.1 to 1.54.1
+- Bump galleon-maven-plugin from 5.0.8.Final to 5.0.9.Final
 
 ## [0.0.3] - 2022-09-21
 
@@ -88,8 +128,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 -->
 
 [Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.0...v0.1.0
-[0.1.0]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.0...v0.1.0
 [0.1.0]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.0.3...v0.1.0
 [0.0.3]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.0.1...v0.0.2
