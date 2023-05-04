@@ -70,4 +70,5 @@ jobs:
           name: WildFly gRPC ${{ steps.get-version.outputs.version-without-v }}.Final
           body: ${{ steps.read-changelog.outputs.changes }}
           draft: false
+          discussionCategory: Announcements
           prerelease: false
