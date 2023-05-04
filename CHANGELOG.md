@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Add a maven profile `quick-build` that skips (IT) test, formatting, license check, checkstyle and enforcer. It runs the goals `clean install` by default and can be activated by specifying the system property `quickly`: `mvn -Dquickly` 
+
 ## [0.1.0] - 2023-04-28
 
 ## [0.1.0] - 2023-04-28
