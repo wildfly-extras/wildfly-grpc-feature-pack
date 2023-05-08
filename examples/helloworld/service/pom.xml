@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-examples-helloworld</artifactId>
-        <version>0.1.0.Final</version>
+        <version>0.1.1.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
