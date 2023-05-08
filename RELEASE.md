@@ -32,6 +32,6 @@ ARGS:
 4. Commit and push to upstream (which will trigger the [release workflow](.github/workflows/release.yml) at GitHub):
    1. Deploy to Maven Central
    2. Create a GitHub release with the relevant entries from the changelog
-   3. Announce the release in the discussions
+   3. [Announce](https://github.com/wildfly-extras/wildfly-grpc-feature-pack/discussions/categories/announcements) the release in the discussions
 5. Bump the version to `<next-version>-SNAPSHOT`
 6. Commit and push to upstream
