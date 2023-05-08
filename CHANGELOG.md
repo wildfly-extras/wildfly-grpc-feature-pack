@@ -6,8 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.1.1] - 2023-05-08
-
 ### Added
 
 - Add a maven profile `quick-build` that skips (IT) test, formatting, license check, checkstyle and enforcer. It runs the goals `clean install` by default and can be activated by specifying the system property `quickly`: `mvn -Dquickly` 
@@ -131,8 +129,7 @@ Lots of new features, bug fixes and dependency upgrades went into this release.
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.1...HEAD
-[0.1.1]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.0...v0.1.1
+[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.0.3...v0.1.0
 [0.0.3]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.0.1...v0.0.2

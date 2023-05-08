@@ -23,7 +23,7 @@
     <parent>
         <artifactId>wildfly-grpc-testsuite-integration</artifactId>
         <groupId>org.wildfly.extras.grpc</groupId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>0.1.0.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
