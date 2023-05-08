@@ -28,7 +28,7 @@
 
     <groupId>org.wildfly.extras.grpc</groupId>
     <artifactId>wildfly-grpc-parent</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.0.Final</version>
     <packaging>pom</packaging>
     <name>WildFly gRPC :: Parent</name>
     <description>WildFly gRPC subsystem</description>
