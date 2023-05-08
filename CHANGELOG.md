@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - Fix deprecated license-maven-plugin configuration
+- Exclude test suite from deployment
 
 ## [0.1.0] - 2023-04-28
 
