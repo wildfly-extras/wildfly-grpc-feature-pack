@@ -126,7 +126,7 @@ WORKFLOW_URL="https://github.com/wildfly-extras/wildfly-grpc-feature-pack/action
 is_semver "${RELEASE_VERSION}" || die "Release version is not a semantic version"
 is_semver "${NEXT_VERSION}" || die "Next version is not a semantic version"
 version_gt "${NEXT_VERSION}" "${RELEASE_VERSION}" || die "Next version must be greater than release version"
-#git diff-index --quiet HEAD || die "You have uncommitted changes"
+git diff-index --quiet HEAD || die "You have uncommitted changes"
 [[ $(git tag -l "${TAG}") ]] && die "Tag ${TAG} already defined"
 
 msg ""
