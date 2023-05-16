@@ -36,7 +36,7 @@
         <version.io.netty.netty>4.1.89.Final</version.io.netty.netty>
         <version.io.smallrye.jandex>3.1.1</version.io.smallrye.jandex>
         <version.junit>4.13.2</version.junit>
-        <version.org.jboss.arquillian>1.7.0.Alpha14</version.org.jboss.arquillian>
+        <version.org.jboss.arquillian>1.7.0.Final</version.org.jboss.arquillian>
         <version.org.jboss.logging.jboss-logging>3.5.0.Final</version.org.jboss.logging.jboss-logging>
         <version.org.jboss.logging.jboss-logging-annotations>2.2.1.Final</version.org.jboss.logging.jboss-logging-annotations>
         <version.org.wildfly.arquillian>5.0.0.Alpha6</version.org.wildfly.arquillian>
