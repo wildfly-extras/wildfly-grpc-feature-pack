@@ -33,7 +33,7 @@
     <description>Parent for modules with code. Contains dependencies and plugin management</description>
 
     <properties>
-        <version.io.netty.netty>4.1.89.Final</version.io.netty.netty>
+        <version.io.netty.netty>4.1.94.Final</version.io.netty.netty>
         <version.io.smallrye.jandex>3.1.2</version.io.smallrye.jandex>
         <version.junit>4.13.2</version.junit>
         <version.org.jboss.arquillian>1.7.0.Final</version.org.jboss.arquillian>
