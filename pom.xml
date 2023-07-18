@@ -160,13 +160,14 @@
                             <licenseSet>
                                 <header>build-config/src/main/resources/etc/license.txt</header>
                                 <excludes>
-                                    <exclude>.cache/*</exclude>
+                                    <exclude>**/.cache/*</exclude>
                                     <exclude>.sdkmanrc</exclude>
                                     <exclude>CODEOWNERS</exclude>
                                     <exclude>LICENSE</exclude>
                                     <exclude>**/*.adoc</exclude>
                                     <exclude>**/*license*.txt</exclude>
                                     <exclude>**/*.c?r</exclude>
+                                    <exclude>**/*.cli</exclude>
                                     <exclude>**/*.pem</exclude>
                                 </excludes>
                             </licenseSet>

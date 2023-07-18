@@ -1,4 +1,5 @@
 embed-server
+
 # Given the unique names, assume that if the key store exists, we don't need to create the rest of the resources
 if (outcome != success) of /subsystem=elytron/key-store=key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428:read-resource
     /subsystem=elytron/key-store=key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428:add(credential-reference={clear-text="secret"}, type=JKS, path="server.keystore.jks", relative-to="jboss.server.config.dir", required=false)
