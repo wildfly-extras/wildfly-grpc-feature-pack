@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Galleon layers metadata
+- Enhanced documentation
+
+### Upgrades
+
+- Bump WildFly Core to 21.1.0.Final
+- Bump Galleon to 5.2.0.Final
+- Bump gRPC to 1.56.1
+- Bump JBoss Logging to 3.5.2.Final
+- Bump WildFly Maven plugin to 4.2.0.Alpha1
+- Bump Jandex to 3.1.2
+- Bump Arquillian to 1.7.0.Final
+
 ## [0.1.1] - 2023-05-08
 
 ### Added
