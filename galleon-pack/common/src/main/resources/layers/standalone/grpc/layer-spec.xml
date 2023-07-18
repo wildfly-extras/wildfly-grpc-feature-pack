@@ -16,7 +16,11 @@
      limitations under the License.
 
 -->
-<layer-spec xmlns="urn:jboss:galleon:layer-spec:1.0" name="grpc">
+<layer-spec xmlns="urn:jboss:galleon:layer-spec:2.0" name="grpc">
+    <props>
+        <prop name="org.wildfly.rule.add-on" value="rpc,grpc" />
+        <prop name="org.wildfly.rule.add-on-depends-on" value="none" />
+    </props>
     <dependencies>
         <layer name="cdi" />
     </dependencies>
