@@ -29,7 +29,7 @@
             <include name="docs.licenses"/>
         </packages>
     </feature-pack>
-    <feature-pack location="org.wildfly.extras.grpc:wildfly-grpc-feature-pack:0.1.2-SNAPSHOT">
+    <feature-pack location="org.wildfly.extras.grpc:wildfly-grpc-feature-pack:0.1.2.Final">
         <default-configs inherit="false"/>
         <packages inherit="false">
             <!-- If docs/licenses is desired, uncomment this line -->
