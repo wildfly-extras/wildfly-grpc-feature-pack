@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Upgrades
 
 - Bump WildFly Core to 21.1.0.Final
+- Bump WildFly to 29.0.0.Final
 - Bump Galleon to 5.2.0.Final
 - Bump gRPC to 1.56.1
 - Bump JBoss Logging to 3.5.2.Final
@@ -42,7 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 This is our first feature complete release of the WildFly gRPC feature pack 🍾🎉🍻. 
 Lots of new features, bug fixes and dependency upgrades went into this release. 
 
-### Added 
+### Added
 
 - Add the io.grpc module as it will be removed from WildFly (#78)
 - Add to documentation
@@ -84,7 +85,7 @@ Lots of new features, bug fixes and dependency upgrades went into this release.
 
 ## [0.0.3] - 2022-09-21
 
-### Added 
+### Added
 
 - Enhance [community standards](https://github.com/wildfly-extras/wildfly-grpc-feature-pack/community)
     - Add [CODEOWNERS](CODEOWNERS)
