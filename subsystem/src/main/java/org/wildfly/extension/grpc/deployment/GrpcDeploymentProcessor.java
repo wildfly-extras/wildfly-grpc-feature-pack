@@ -29,45 +29,54 @@ import org.jboss.as.server.deployment.annotation.CompositeIndex;
 import org.jboss.dmr.ModelNode;
 import org.jboss.jandex.DotName;
 import org.jboss.modules.Module;
-import org.jboss.msc.service.ServiceTarget;
 import org.wildfly.extension.grpc.Constants;
 import org.wildfly.extension.grpc.GrpcExtension;
-import org.wildfly.extension.grpc.GrpcServerService;
+import org.wildfly.extension.grpc.WildFlyGrpcDeploymentRegistry;
 
 import io.grpc.BindableService;
 
 public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
 
-    public static final DotName BINDABLE_CLASS = DotName.createSimple(BindableService.class.getName());
+    private static final DotName BINDABLE_CLASS = DotName.createSimple(BindableService.class.getName());
+
+    private final WildFlyGrpcDeploymentRegistry registry;
+
+    public GrpcDeploymentProcessor(final WildFlyGrpcDeploymentRegistry registry) {
+        this.registry = registry;
+    }
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) {
-        ServiceTarget serviceTarget = phaseContext.getServiceTarget();
         DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
         final CompositeIndex index = deploymentUnit.getAttachment(Attachments.COMPOSITE_ANNOTATION_INDEX);
-        List<String> serviceClasses = index.getAllKnownImplementors(BINDABLE_CLASS).stream().map(ci -> ci.name().toString())
+        List<String> serviceClasses = index.getAllKnownImplementors(BINDABLE_CLASS)
+                .stream()
+                .map(ci -> ci.name().toString())
                 .collect(Collectors.toList());
         Module module = deploymentUnit.getAttachment(Attachments.MODULE);
-        List<Class<?>> leaves = getLeaves(serviceClasses, module.getClassLoader());
+        List<Class<? extends BindableService>> leaves = getLeaves(serviceClasses, module.getClassLoader());
         processManagement(deploymentUnit, leaves);
-        try {
-            GrpcServerService.install(serviceTarget, deploymentUnit, getLeaves(serviceClasses, module.getClassLoader()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        for (Class<? extends BindableService> type : getLeaves(serviceClasses, module.getClassLoader())) {
+            registry.addService(deploymentUnit, type);
         }
     }
 
-    private List<Class<?>> getLeaves(List<String> classNames, ClassLoader classLoader) {
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+    @Override
+    public void undeploy(DeploymentUnit context) {
+        registry.removeDeploymentServices(context);
+    }
+
+    private List<Class<? extends BindableService>> getLeaves(List<String> classNames, ClassLoader classLoader) {
+        List<Class<? extends BindableService>> classes = new ArrayList<>();
         try {
             for (String s : classNames) {
-                classes.add(classLoader.loadClass(s));
+                classes.add(classLoader.loadClass(s).asSubclass(BindableService.class));
             }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        List<Class<?>> leaves = new ArrayList<Class<?>>();
-        for (Class<?> clazz : classes) {
+        List<Class<? extends BindableService>> leaves = new ArrayList<>();
+        for (Class<? extends BindableService> clazz : classes) {
             if (isLeaf(clazz, classes)) {
                 leaves.add(clazz);
             }
@@ -75,7 +84,7 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
         return leaves;
     }
 
-    private boolean isLeaf(Class<?> clazz, List<Class<?>> classes) {
+    private boolean isLeaf(Class<?> clazz, List<Class<? extends BindableService>> classes) {
         for (Class<?> c : classes) {
             if (clazz != c && clazz.isAssignableFrom(c)) {
                 return false;
@@ -84,7 +93,7 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
         return true;
     }
 
-    private void processManagement(DeploymentUnit deploymentUnit, List<Class<?>> grpcServiceClasses) {
+    private void processManagement(DeploymentUnit deploymentUnit, List<Class<? extends BindableService>> grpcServiceClasses) {
         DeploymentResourceSupport drs = deploymentUnit.getAttachment(Attachments.DEPLOYMENT_RESOURCE_SUPPORT);
 
         for (Class<?> clazz : grpcServiceClasses) {
@@ -92,9 +101,5 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
                     PathElement.pathElement(Constants.GRPC_SERVICE, clazz.getSimpleName()));
             serviceModel.get(Constants.SERVICE_CLASS).set(clazz.getName());
         }
-    }
-
-    @Override
-    public void undeploy(DeploymentUnit context) {
     }
 }

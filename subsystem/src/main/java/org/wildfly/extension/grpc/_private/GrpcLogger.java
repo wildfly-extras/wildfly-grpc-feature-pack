@@ -17,11 +17,14 @@ package org.wildfly.extension.grpc._private;
 
 import org.jboss.logging.BasicLogger;
 import org.jboss.logging.Logger;
+import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
-import static org.jboss.logging.Logger.Level.*;
+import static org.jboss.logging.Logger.Level.DEBUG;
+import static org.jboss.logging.Logger.Level.ERROR;
+import static org.jboss.logging.Logger.Level.INFO;
 
 @MessageLogger(projectCode = "WFLYGRPC", length = 4)
 public interface GrpcLogger extends BasicLogger {
@@ -29,26 +32,22 @@ public interface GrpcLogger extends BasicLogger {
     GrpcLogger LOGGER = Logger.getMessageLogger(GrpcLogger.class, "org.wildfly.extension.grpc");
 
     @LogMessage(level = INFO)
-    @Message(id = 1, value = "gRPC service starting")
-    void grpcStarting();
+    @Message(id = 1, value = "gRPC server listening on %s:%d")
+    void serverListening(String address, int port);
 
     @LogMessage(level = INFO)
     @Message(id = 2, value = "gRPC service stopping")
     void grpcStopping();
 
-    @LogMessage(level = INFO)
-    @Message(id = 3, value = "gRPC server for %s listening on %s:%d")
-    void serverListening(String name, String address, int port);
-
-    @LogMessage(level = INFO)
-    @Message(id = 4, value = "gRPC server for %s stopping")
-    void serverStopping(String name);
-
-    @LogMessage(level = INFO)
-    @Message(id = 5, value = "gRPC service %s registered")
-    void registerService(String name);
-
     @LogMessage(level = ERROR)
-    @Message(id = 6, value = "unknown Attribute: %s")
-    void unknownAttribute(String attribute);
+    @Message(id = 3, value = "Failed to stop gRPC server")
+    void failedToStopGrpcServer(@Cause Throwable cause);
+
+    @Message(id = 4, value = "Failed to register %s for deployment %s")
+    RuntimeException failedToRegisterService(@Cause Throwable cause, String serviceName, String deployment);
+
+    @LogMessage(level = DEBUG)
+    @Message(id = 5, value = "Registering gRPC service %s for deployment %s.")
+    void registerService(String serviceName, String deploymentName);
+
 }
