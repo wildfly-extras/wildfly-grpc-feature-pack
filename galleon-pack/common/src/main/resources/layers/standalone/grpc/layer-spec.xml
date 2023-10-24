@@ -20,6 +20,7 @@
     <props>
         <prop name="org.wildfly.rule.add-on" value="rpc,grpc" />
         <prop name="org.wildfly.rule.add-on-depends-on" value="none" />
+        <prop name="org.wildfly.rule.add-on-description" value="Support for gRPC." />
     </props>
     <dependencies>
         <layer name="cdi" />
