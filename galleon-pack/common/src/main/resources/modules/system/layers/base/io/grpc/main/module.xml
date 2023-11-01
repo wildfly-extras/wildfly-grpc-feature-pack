@@ -30,6 +30,7 @@
         <artifact name="${io.grpc:grpc-core}" />
         <artifact name="${io.grpc:grpc-protobuf-lite}" />
         <artifact name="${io.grpc:grpc-stub}" />
+        <artifact name="${io.grpc:grpc-util}" />
     </resources>
 
     <dependencies>
