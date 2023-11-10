@@ -82,7 +82,7 @@
 
     <properties>
         <!-- Dependency versions -->
-        <version.arquillian.junit>1.7.1.Final</version.arquillian.junit>
+        <version.arquillian.junit>1.7.2.Final</version.arquillian.junit>
         <version.grpc>1.59.0</version.grpc>
         <version.javax.annotation>1.3.2</version.javax.annotation>
         <version.perfmark>0.26.0</version.perfmark>
