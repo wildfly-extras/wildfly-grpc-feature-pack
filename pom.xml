@@ -90,7 +90,7 @@
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
         <version.wildfly.common>1.7.0.Final</version.wildfly.common>
         <version.wildfly.core>22.0.2.Final</version.wildfly.core>
-        <version.wildfly>30.0.0.Final</version.wildfly>
+        <version.wildfly>30.0.1.Final</version.wildfly>
 
         <!-- Plugin versions -->
         <version.checkstyle.plugin>3.1.1</version.checkstyle.plugin>
