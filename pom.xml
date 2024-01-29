@@ -86,7 +86,7 @@
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
         <version.grpc>1.61.0</version.grpc>
         <version.javax.annotation>1.3.2</version.javax.annotation>
-        <version.kotlin.stdlib>1.7.10</version.kotlin.stdlib>
+        <version.kotlin.stdlib>1.9.22</version.kotlin.stdlib>
         <version.okhttp>4.12.0</version.okhttp>
         <version.perfmark>0.27.0</version.perfmark>
         <version.protobuf>4.26.0-RC1</version.protobuf>
