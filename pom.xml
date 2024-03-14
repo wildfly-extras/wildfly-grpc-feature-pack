@@ -89,7 +89,7 @@
         <version.kotlin.stdlib>1.9.23</version.kotlin.stdlib>
         <version.okhttp>4.12.0</version.okhttp>
         <version.perfmark>0.27.0</version.perfmark>
-        <version.protobuf>4.26.0-RC3</version.protobuf>
+        <version.protobuf>4.26.0</version.protobuf>
         <version.wildfly.common>1.7.0.Final</version.wildfly.common>
         <version.wildfly.core>23.0.3.Final</version.wildfly.core>
         <version.wildfly>31.0.1.Final</version.wildfly>
