@@ -60,7 +60,7 @@
             <plugin>
                 <groupId>org.jboss.galleon</groupId>
                 <artifactId>galleon-maven-plugin</artifactId>
-                <version>5.2.2.Final</version>
+                <version>6.0.0.Final</version>
                 <configuration>
                     <installDir>${project.build.directory}${file.separator}wildfly</installDir>
                     <skip>${galleon.skip}</skip>
