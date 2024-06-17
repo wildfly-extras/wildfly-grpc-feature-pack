@@ -97,7 +97,7 @@
         <!-- Plugin versions -->
         <version.checkstyle.plugin>3.1.1</version.checkstyle.plugin>
         <version.enforcer.plugin>3.0.0-M3</version.enforcer.plugin>
-        <version.galleon.plugin>6.5.4.Final</version.galleon.plugin>
+        <version.galleon.plugin>7.1.0.Final</version.galleon.plugin>
         <version.keepachangelog>2.1.1</version.keepachangelog>
         <version.license.plugin>4.5</version.license.plugin>
         <version.nexus.staging.plugin>1.7.0</version.nexus.staging.plugin>
