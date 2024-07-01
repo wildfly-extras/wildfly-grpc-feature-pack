@@ -84,7 +84,7 @@
         <!-- Dependency versions -->
         <version.arquillian.junit>1.8.0.Final</version.arquillian.junit>
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
-        <version.grpc>1.64.0</version.grpc>
+        <version.grpc>1.65.0</version.grpc>
         <version.javax.annotation>1.3.2</version.javax.annotation>
         <version.kotlin.stdlib>2.0.0</version.kotlin.stdlib>
         <version.okhttp>4.12.0</version.okhttp>
