@@ -30,7 +30,7 @@
     <name>WildFly gRPC :: Docs</name>
 
     <properties>
-
+        <jboss.home>${project.build.directory}/wildfly</jboss.home>
     </properties>
 
     <build>
@@ -93,7 +93,69 @@
                     </execution>
                 </executions>
             </plugin-->
+            <plugin>
+                <groupId>org.jboss.galleon</groupId>
+                <artifactId>galleon-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>server-provisioning</id>
+                        <goals>
+                            <goal>provision</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <install-dir>${jboss.home}</install-dir>
+                            <record-state>false</record-state>
+                            <log-time>${galleon.log.time}</log-time>
+                            <feature-packs>
+                                <feature-pack>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>wildfly-grpc-feature-pack</artifactId>
+                                    <version>${project.version}</version>
+                                    <inherit-configs>false</inherit-configs>
+                                    <excluded-packages>
+                                        <name>docs</name>
+                                        <name>docs.licenses.merge</name>
+                                    </excluded-packages>
+                                    <included-configs>
+                                        <config>
+                                            <model>standalone</model>
+                                        </config>
+                                    </included-configs>
+                                </feature-pack>
+                            </feature-packs>
+                            <plugin-options>
+                                <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+                            </plugin-options>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jboss.wildscribe</groupId>
+                <artifactId>wildscribe-maven-plugin</artifactId>
+                <version>3.0.0.Final</version>
+                <configuration>
+                    <jboss-home>${jboss.home}</jboss-home>
+                    <display-name>${full.dist.product.release.name}</display-name>
+                    <display-version>${product.docs.server.version}</display-version>
+                    <site-dir>${project.build.directory}/generated-docs/wildscribe</site-dir>
+                    <required-extensions>
+                        <required-extension>org.wildfly.extension.grpc</required-extension>
+                    </required-extensions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-site</id>
+                        <goals>
+                            <goal>generate-site</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+        
     </build>
 
     <!-- Generate the changelog -->
@@ -135,4 +197,3 @@
         </profile>
     </profiles-->
 </project>
-
