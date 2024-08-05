@@ -146,14 +146,6 @@
                                 <phase>package</phase>
                                 <configuration>
                                     <offline>true</offline>
-                                    <scripts>
-                                        <script>${root.directory}/ssl/configure-elytron.cli</script>
-                                    </scripts>
-                                    <commands>
-                                        <command>embed-server</command>
-                                        <command>/subsystem=grpc:write-attribute(name=key-manager-name, value="")</command>
-                                        <command>stop-embedded-server</command>
-                                    </commands>
                                 </configuration>
                             </execution>
                         </executions>
@@ -183,13 +175,8 @@
                                 <configuration>
                                     <offline>true</offline>
                                     <scripts>
-                                        <script>${root.directory}/ssl/configure-elytron.cli</script>
+                                        <script>${root.directory}/ssl/configure-elytron-oneway.cli</script>
                                     </scripts>
-                                    <commands>
-                                        <command>embed-server</command>
-                                        <command>/subsystem=grpc:write-attribute(name=key-manager-name, value=&quot;key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428&quot;)</command>
-                                        <command>stop-embedded-server</command>
-                                    </commands>
                                 </configuration>
                             </execution>
                         </executions>
@@ -236,14 +223,8 @@
                                 <configuration>
                                     <offline>true</offline>
                                     <scripts>
-                                        <script>${root.directory}/ssl/configure-elytron.cli</script>
+                                        <script>${root.directory}/ssl/configure-elytron-twoway.cli</script>
                                     </scripts>
-                                    <commands>
-                                        <command>embed-server</command>
-                                        <command>/subsystem=grpc:write-attribute(name=key-manager-name, value=&quot;key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428&quot;)</command>
-                                        <command>/subsystem=grpc:write-attribute(name=trust-manager-name, value=&quot;key-manager-trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1&quot;)</command>
-                                        <command>stop-embedded-server</command>
-                                    </commands>
                                 </configuration>
                             </execution>
                         </executions>
