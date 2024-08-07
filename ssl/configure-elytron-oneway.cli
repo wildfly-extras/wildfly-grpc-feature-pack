@@ -8,6 +8,7 @@ if (outcome != success) of /subsystem=elytron/key-store=key-store-afcdd1f8-d1a7-
     /subsystem=elytron/trust-manager=key-manager-trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1:add(key-store="trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1")
     /subsystem=elytron/server-ssl-context=ssl-context-afcdd1f8-d1a7-4137-aa13-c45237e32428:add(cipher-suite-filter=DEFAULT, protocols=["TLSv1.2"], want-client-auth="false", need-client-auth="true", authentication-optional="false", use-cipher-suites-order="false", key-manager="key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428", trust-manager="key-manager-trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1")
     /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, ssl-context="ssl-context-afcdd1f8-d1a7-4137-aa13-c45237e32428")
+    /subsystem=grpc:write-attribute(name=key-manager-name, value="key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428")
 end-if
 
 stop-embedded-server

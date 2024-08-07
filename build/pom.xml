@@ -33,7 +33,7 @@
     <properties>
         <wildfly.grpc.test.feature.pack.groupId>org.wildfly.extras.grpc</wildfly.grpc.test.feature.pack.groupId>
         <wildfly.grpc.test.feature.pack.artifactId>wildfly-grpc-feature-pack</wildfly.grpc.test.feature.pack.artifactId>
-        <wildfly.grpc.test.feature.pack.version>0.0.8-SNAPSHOT</wildfly.grpc.test.feature.pack.version>
+        <wildfly.grpc.test.feature.pack.version>0.1.4-SNAPSHOT</wildfly.grpc.test.feature.pack.version>
     </properties>
     <dependencies>
         <dependency>
