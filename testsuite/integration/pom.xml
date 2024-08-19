@@ -42,6 +42,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-dmr</artifactId>
+            <version>1.7.0.Final</version>
+		</dependency>
+        <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
@@ -62,9 +67,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+			<groupId>org.wildfly.arquillian</groupId>
+			<artifactId>wildfly-arquillian-common</artifactId>
+			<version>5.1.0.Beta4</version>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
             <groupId>org.wildfly.arquillian</groupId>
             <artifactId>wildfly-arquillian-container-managed</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-controller-client</artifactId>
+            <version>25.0.0.Final</version>
+		</dependency>
     </dependencies>
 </project>
