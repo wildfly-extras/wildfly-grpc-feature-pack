@@ -92,7 +92,7 @@
         <version.protobuf>4.27.3</version.protobuf>
         <version.proto-google-common-protos>2.42.0</version.proto-google-common-protos>
         <version.wildfly.common>2.0.0</version.wildfly.common>
-        <version.wildfly.core>25.0.0.Final</version.wildfly.core>
+        <version.wildfly.core>25.0.1.Final</version.wildfly.core>
         <version.wildfly>33.0.0.Final</version.wildfly>
 
         <!-- Plugin versions -->
