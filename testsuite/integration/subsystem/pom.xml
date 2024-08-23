@@ -97,6 +97,7 @@
 							<clearOutputDirectory>true</clearOutputDirectory>
 							<includes>
 								<include>helloworld.proto</include>
+								<include>chat.proto</include>
 							</includes>
 						</configuration>
 					</execution>

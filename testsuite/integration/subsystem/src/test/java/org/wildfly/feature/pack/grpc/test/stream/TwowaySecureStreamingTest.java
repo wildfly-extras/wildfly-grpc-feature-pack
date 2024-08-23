@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.wildfly.feature.pack.grpc.test.helloworld;
+package org.wildfly.feature.pack.grpc.test.stream;
 
 import java.io.InputStream;
 
@@ -31,6 +31,8 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.wildfly.extension.grpc.example.chat.ChatMessage;
+import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc;
 import org.wildfly.feature.pack.grpc.test.utility.ServerReload;
 
 import io.grpc.ChannelCredentials;
@@ -38,9 +40,9 @@ import io.grpc.Grpc;
 import io.grpc.TlsChannelCredentials;
 
 @RunWith(Arquillian.class)
-@ServerSetup(TwowaySecureHelloWorldTest.SslServerSetupTask.class)
+@ServerSetup(TwowaySecureStreamingTest.SslServerSetupTask.class)
 @RunAsClient
-public class TwowaySecureHelloWorldTest extends HelloWorldParent {
+public class TwowaySecureStreamingTest extends StreamingTestParent {
 
     public static class SslServerSetupTask extends SnapshotServerSetupTask {
 
@@ -130,9 +132,8 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
     @Deployment
     public static Archive<?> createTestArchive() {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "TestClient.war");
-        war.addClasses(TwowaySecureHelloWorldTest.class, GreeterServiceImpl.class);
-        war.addPackage(HelloRequest.class.getPackage());
-        war.addClass(GreeterGrpc.class);
+        war.addClasses(OnewaySecureStreamingTest.class, ChatServiceImpl.class);
+        war.addPackage(ChatMessage.class.getPackage());
         war.addAsWebInfResource("web.xml");
         // war.as(ZipExporter.class).exportTo(
         // new File("/tmp/hello.war"), true);
@@ -141,8 +142,7 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-
-        ClassLoader classLoader = TwowaySecureHelloWorldTest.class.getClassLoader();
+        ClassLoader classLoader = TwowaySecureStreamingTest.class.getClassLoader();
         InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
         InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
         InputStream key = classLoader.getResourceAsStream("client.key.pem");
@@ -151,6 +151,6 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
                 .keyManager(keyStore, key)
                 .build();
         channel = Grpc.newChannelBuilderForAddress(TARGET_HOST, TARGET_PORT, creds).build();
-        blockingStub = GreeterGrpc.newBlockingStub(channel);
+        stub = ChatServiceGrpc.newStub(channel);
     }
 }
