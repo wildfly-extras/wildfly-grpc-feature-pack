@@ -134,7 +134,6 @@ public class TwowaySecureStreamingTest extends StreamingTestParent {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "TestClient.war");
         war.addClasses(OnewaySecureStreamingTest.class, ChatServiceImpl.class);
         war.addPackage(ChatMessage.class.getPackage());
-        war.addAsWebInfResource("web.xml");
         // war.as(ZipExporter.class).exportTo(
         // new File("/tmp/hello.war"), true);
         return war;
