@@ -36,7 +36,6 @@ public class PlaintextHelloWorldTest extends HelloWorldParent {
         war.addClasses(PlaintextHelloWorldTest.class, GreeterServiceImpl.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
-        war.addAsWebInfResource("web.xml");
         // war.as(ZipExporter.class).exportTo(
         // new File("/tmp/hello.war"), true);
         return war;

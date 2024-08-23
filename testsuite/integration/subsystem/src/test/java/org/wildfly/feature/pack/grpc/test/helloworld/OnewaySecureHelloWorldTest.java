@@ -15,7 +15,6 @@
  */
 package org.wildfly.feature.pack.grpc.test.helloworld;
 
-import java.io.File;
 import java.io.InputStream;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -29,7 +28,6 @@ import org.jboss.as.controller.client.helpers.Operations.CompositeOperationBuild
 import org.jboss.dmr.ModelNode;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -118,9 +116,8 @@ public class OnewaySecureHelloWorldTest extends HelloWorldParent {
         war.addClasses(OnewaySecureHelloWorldTest.class, GreeterServiceImpl.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
-        war.addAsWebInfResource("web.xml");
-//        war.as(ZipExporter.class).exportTo(
-//                new File("/tmp/hello.war"), true);
+        // war.as(ZipExporter.class).exportTo(
+        // new File("/tmp/hello.war"), true);
         return war;
     }
 
