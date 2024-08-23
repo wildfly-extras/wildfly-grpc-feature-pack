@@ -34,7 +34,7 @@ public class PlaintextStreamingTest extends StreamingTestParent {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-        WebArchive war = ShrinkWrap.create(WebArchive.class, "TestClient.war");
+        WebArchive war = ShrinkWrap.create(WebArchive.class, "PlaintextStreamingTest.war");
         war.addClasses(PlaintextStreamingTest.class, ChatServiceImpl.class);
         war.addPackage(ChatMessage.class.getPackage());
         // war.as(ZipExporter.class).exportTo(
