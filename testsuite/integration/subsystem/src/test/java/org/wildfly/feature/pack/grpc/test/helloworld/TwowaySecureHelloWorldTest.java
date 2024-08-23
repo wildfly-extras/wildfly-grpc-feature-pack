@@ -129,7 +129,7 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-        WebArchive war = ShrinkWrap.create(WebArchive.class, "TestClient.war");
+        WebArchive war = ShrinkWrap.create(WebArchive.class, "TwowaySecureHelloWorldTest.war");
         war.addClasses(TwowaySecureHelloWorldTest.class, GreeterServiceImpl.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);

@@ -45,7 +45,6 @@ public class StreamingTestParent {
     @Test
     public void streamingTest() throws InterruptedException {
 
-        System.out.println("#######START EXAMPLE#######: BidirectionalStreaming");
         final CountDownLatch finishLatch = new CountDownLatch(1);
         StreamObserver<ChatMessage> responseObserver = new StreamObserver<ChatMessage>() {
 

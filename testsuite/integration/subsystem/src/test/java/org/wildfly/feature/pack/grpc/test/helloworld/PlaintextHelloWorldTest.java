@@ -32,7 +32,7 @@ public class PlaintextHelloWorldTest extends HelloWorldParent {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-        WebArchive war = ShrinkWrap.create(WebArchive.class, "TestClient.war");
+        WebArchive war = ShrinkWrap.create(WebArchive.class, "PlaintextHelloWorldTest.war");
         war.addClasses(PlaintextHelloWorldTest.class, GreeterServiceImpl.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
