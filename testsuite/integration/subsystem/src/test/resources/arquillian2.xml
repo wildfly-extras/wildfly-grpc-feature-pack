@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+     Copyright 2022 Red Hat
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         https://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<arquillian xmlns="http://jboss.org/schema/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://jboss.org/schema/arquillian
+        http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <!-- Uncomment the <defaultProtocol/> element to instruct Arquillian to execute tests using the Servlet protocol.
+                                                                                                                                                                                                                 By default the JBoss AS 7 adapters use the JMX protocol -->
+    <!--
+    <defaultProtocol type="Servlet 3.0"/>
+    -->
+
+    <!-- Uncomment the <engine> element to instruct Arquillian to write the archives for each test to the target location
+                                                                                                                                                                                                                 on disk before deploying them to the server. -->
+    <!--
+    <engine>
+        <property name="deploymentExportPath">target/deployments</property>
+    </engine>
+    -->
+
+    <container qualifier="remote" default="true">
+        <protocol type="Servlet 3.0" />
+        <configuration>
+            <property name="jbossHome">target/wildfly</property>
+            <property name="javaVmArguments">-Xmx512m -XX:MaxPermSize=128m -Xverify:none -XX:+UseFastAccessorMethods
+                -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y
+        </property>
+        </configuration>
+    </container>
+
+</arquillian>
