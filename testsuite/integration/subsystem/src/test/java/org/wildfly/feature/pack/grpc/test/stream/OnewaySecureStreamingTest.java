@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.wildfly.feature.pack.grpc.test.helloworld;
+package org.wildfly.feature.pack.grpc.test.stream;
 
 import java.io.InputStream;
 
@@ -31,6 +31,8 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.wildfly.extension.grpc.example.chat.ChatMessage;
+import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc;
 import org.wildfly.feature.pack.grpc.test.utility.ServerReload;
 
 import io.grpc.ChannelCredentials;
@@ -38,9 +40,9 @@ import io.grpc.Grpc;
 import io.grpc.TlsChannelCredentials;
 
 @RunWith(Arquillian.class)
-@ServerSetup(TwowaySecureHelloWorldTest.SslServerSetupTask.class)
+@ServerSetup(OnewaySecureStreamingTest.SslServerSetupTask.class)
 @RunAsClient
-public class TwowaySecureHelloWorldTest extends HelloWorldParent {
+public class OnewaySecureStreamingTest extends StreamingTestParent {
 
     public static class SslServerSetupTask extends SnapshotServerSetupTask {
 
@@ -66,28 +68,12 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
         op.get("required").set(false);
         builder.addStep(op);
 
-        // /subsystem=elytron/key-store=grpc-trust-store:add(credential-reference={clear-text="secret"}, type=JKS,
-        // required=false, path="server.truststore.jks", relative-to="jboss.server.config.dir")
-        address = Operations.createAddress("subsystem", "elytron", "key-store", "grpc-trust-store");
-        op = Operations.createAddOperation(address);
-        op.get("credential-reference").set(credentialRef);
-        op.get("type").set("JKS");
-        op.get("path").set("./../../ssl/server.truststore.jks");
-        // op.get("relative-to").set("jboss.server.config.dir");
-        builder.addStep(op);
-
         // /subsystem=elytron/key-manager=grpc-key-manager:add(key-store=grpc-key-store,
         // credential-reference={clear-text="secret"})
         address = Operations.createAddress("subsystem", "elytron", "key-manager", "grpc-key-manager");
         op = Operations.createAddOperation(address);
         op.get("key-store").set("grpc-key-store");
         op.get("credential-reference").set(credentialRef);
-        builder.addStep(op);
-
-        // /subsystem=elytron/trust-manager=grpc-key-store-trust-manager:add(key-store="grpc-trust-store")
-        address = Operations.createAddress("subsystem", "elytron", "trust-manager", "grpc-key-store-trust-manager");
-        op = Operations.createAddOperation(address);
-        op.get("key-store").set("grpc-trust-store");
         builder.addStep(op);
 
         // /subsystem=elytron/server-ssl-context=grpc-ssl-context:add(cipher-suite-filter=DEFAULT, protocols=["TLSv1.2"],
@@ -105,7 +91,6 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
         op.get("authentication-optional").set(false);
         op.get("use-cipher-suites-order").set(false);
         op.get("key-manager").set("grpc-key-manager");
-        op.get("trust-manager").set("grpc-key-store-trust-manager");
         builder.addStep(op);
 
         // /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https,
@@ -130,27 +115,19 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
     @Deployment
     public static Archive<?> createTestArchive() {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "TestClient.war");
-        war.addClasses(TwowaySecureHelloWorldTest.class, GreeterServiceImpl.class);
-        war.addPackage(HelloRequest.class.getPackage());
-        war.addClass(GreeterGrpc.class);
+        war.addClasses(OnewaySecureStreamingTest.class, ChatServiceImpl.class);
+        war.addPackage(ChatMessage.class.getPackage());
         war.addAsWebInfResource("web.xml");
-        // war.as(ZipExporter.class).exportTo(
-        // new File("/tmp/hello.war"), true);
+//        war.as(ZipExporter.class).exportTo(
+//                new File("/tmp/hello.war"), true);
         return war;
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-
-        ClassLoader classLoader = TwowaySecureHelloWorldTest.class.getClassLoader();
-        InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
-        InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
-        InputStream key = classLoader.getResourceAsStream("client.key.pem");
-        ChannelCredentials creds = TlsChannelCredentials.newBuilder()
-                .trustManager(trustStore)
-                .keyManager(keyStore, key)
-                .build();
+        InputStream trustStore = OnewaySecureStreamingTest.class.getClassLoader().getResourceAsStream("client.truststore.pem");
+        ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
         channel = Grpc.newChannelBuilderForAddress(TARGET_HOST, TARGET_PORT, creds).build();
-        blockingStub = GreeterGrpc.newBlockingStub(channel);
+        stub = ChatServiceGrpc.newStub(channel);
     }
 }

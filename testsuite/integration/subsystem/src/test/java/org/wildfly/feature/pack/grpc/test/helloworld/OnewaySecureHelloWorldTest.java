@@ -33,6 +33,7 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.wildfly.feature.pack.grpc.test.utility.ServerReload;
 
 import io.grpc.ChannelCredentials;
 import io.grpc.Grpc;
@@ -118,8 +119,8 @@ public class OnewaySecureHelloWorldTest extends HelloWorldParent {
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
         war.addAsWebInfResource("web.xml");
-        war.as(ZipExporter.class).exportTo(
-                new File("/tmp/hello.war"), true);
+//        war.as(ZipExporter.class).exportTo(
+//                new File("/tmp/hello.war"), true);
         return war;
     }
 

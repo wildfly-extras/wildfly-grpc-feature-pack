@@ -15,11 +15,8 @@
  */
 package org.wildfly.feature.pack.grpc.test.helloworld;
 
-import org.junit.Test;
-
 import io.grpc.stub.StreamObserver;
 
-//org.wildfly.feature.pack.grpc.test.helloworld.GreeterServiceImpl
 public class GreeterServiceImpl extends GreeterGrpc.GreeterImplBase {
 
     @Override
@@ -28,10 +25,5 @@ public class GreeterServiceImpl extends GreeterGrpc.GreeterImplBase {
         String message = "Hello " + name;
         responseObserver.onNext(HelloReply.newBuilder().setMessage(message).build());
         responseObserver.onCompleted();
-    }
-
-    public void test(Test t, StreamObserver<Test> obs) {
-        obs.onNext(t);
-        obs.onCompleted();
     }
 }

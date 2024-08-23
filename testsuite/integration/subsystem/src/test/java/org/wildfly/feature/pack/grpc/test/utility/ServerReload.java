@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.wildfly.feature.pack.grpc.test.helloworld;
+package org.wildfly.feature.pack.grpc.test.utility;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
