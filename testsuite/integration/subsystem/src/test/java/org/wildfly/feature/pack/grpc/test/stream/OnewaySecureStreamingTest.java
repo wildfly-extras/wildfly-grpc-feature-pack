@@ -118,7 +118,7 @@ public class OnewaySecureStreamingTest extends StreamingTestParent {
         war.addClasses(OnewaySecureStreamingTest.class, ChatServiceImpl.class);
         war.addPackage(ChatMessage.class.getPackage());
         // war.as(ZipExporter.class).exportTo(
-        //    new File("/tmp/hello.war"), true);
+        // new File("/tmp/hello.war"), true);
         return war;
     }
 

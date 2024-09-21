@@ -96,7 +96,10 @@
 								/home/rsigal/tmp/wildfly.grpc.v014/wildfly-grpc-feature-pack/testsuite/integration/subsystem/src/main/proto/</protoSourceRoot>
 							<clearOutputDirectory>true</clearOutputDirectory>
 							<includes>
+								<include>message.proto</include>
 								<include>helloworld.proto</include>
+								<include>helloworld1.proto</include>
+								<include>helloworld2.proto</include>
 								<include>chat.proto</include>
 							</includes>
 						</configuration>

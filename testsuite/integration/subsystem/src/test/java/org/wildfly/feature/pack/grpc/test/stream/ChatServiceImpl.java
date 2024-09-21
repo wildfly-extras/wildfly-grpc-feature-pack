@@ -43,4 +43,12 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
             }
         };
     }
+
+    public void greet(org.wildfly.extension.grpc.example.chat.ChatMessage request,
+            io.grpc.stub.StreamObserver<org.wildfly.extension.grpc.example.chat.ChatMessage> responseObserver) {
+        String name = request.getMessage();
+        String message = "yeah yeah " + name;
+        responseObserver.onNext(ChatMessage.newBuilder().setMessage(message).build());
+        responseObserver.onCompleted();
+    }
 }

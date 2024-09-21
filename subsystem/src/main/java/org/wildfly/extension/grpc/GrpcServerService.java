@@ -19,9 +19,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -40,7 +40,11 @@ import org.jboss.msc.service.StopContext;
 import org.wildfly.extension.grpc._private.GrpcLogger;
 
 import io.grpc.BindableService;
+import io.grpc.InternalServerInterceptors;
 import io.grpc.Server;
+import io.grpc.ServerCallHandler;
+import io.grpc.ServerInterceptor;
+import io.grpc.ServerMethodDefinition;
 import io.grpc.ServerServiceDefinition;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
@@ -113,7 +117,8 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
     }
 
     @Override
-    public void addService(final DeploymentUnit deployment, final Class<? extends BindableService> serviceType) {
+    public void addService(final DeploymentUnit deployment, final Class<? extends BindableService> serviceType,
+            List<ServerInterceptor> interceptors) {
         final String deploymentName = deployment.getName();
         GrpcLogger.LOGGER.registerService(serviceType.getName(), deploymentName);
         // We must have a no-arg constructor
@@ -123,7 +128,7 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
                 final Constructor<? extends BindableService> constructor = serviceType.getConstructor();
                 bindableService = constructor.newInstance();
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw GrpcLogger.LOGGER.failedToRegisterService(e, serviceType.getName(), deploymentName);
+                throw GrpcLogger.LOGGER.failedToRegister(e, serviceType.getName(), deploymentName);
             }
         } else {
             bindableService = AccessController.doPrivileged((PrivilegedAction<BindableService>) () -> {
@@ -132,13 +137,11 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
                     return constructor.newInstance();
                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
                         | IllegalAccessException e) {
-                    throw GrpcLogger.LOGGER.failedToRegisterService(e, serviceType.getName(), deploymentName);
+                    throw GrpcLogger.LOGGER.failedToRegister(e, serviceType.getName(), deploymentName);
                 }
             });
         }
-        final Collection<ServerServiceDefinition> defs = deploymentServices.computeIfAbsent(deploymentName,
-                (c) -> new ArrayList<>());
-        defs.add(registry.addService(bindableService));
+        registry.addService(installInterceptors(bindableService.bindService(), interceptors));
     }
 
     @Override
@@ -173,5 +176,27 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
         }
         sslContextBuilder.startTls(configuration.isStartTls());
         return GrpcSslContexts.configure(sslContextBuilder).build();
+    }
+
+    private static BindableService installInterceptors(ServerServiceDefinition ssd, List<ServerInterceptor> interceptors) {
+        ServerServiceDefinition.Builder builder = ServerServiceDefinition.builder(ssd.getServiceDescriptor());
+        for (ServerMethodDefinition<?, ?> smd : ssd.getMethods()) {
+            builder.addMethod(wrapMethod(smd, interceptors));
+        }
+        return new BindableService() {
+            public ServerServiceDefinition bindService() {
+                return builder.build();
+            }
+        };
+    }
+
+    private static <ReqT, RespT> ServerMethodDefinition<?, ?> wrapMethod(ServerMethodDefinition<ReqT, RespT> method,
+            List<ServerInterceptor> interceptors) {
+        ServerCallHandler<ReqT, RespT> handler = method.getServerCallHandler();
+        for (ServerInterceptor interceptor : interceptors) {
+            handler = InternalServerInterceptors.interceptCallHandlerCreate(interceptor, handler);
+        }
+        ServerMethodDefinition<ReqT, RespT> interceptedDef = method.withServerCallHandler(handler);
+        return interceptedDef;
     }
 }

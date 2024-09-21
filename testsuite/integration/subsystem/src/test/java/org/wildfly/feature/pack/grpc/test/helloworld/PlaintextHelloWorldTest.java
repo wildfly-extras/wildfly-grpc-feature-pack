@@ -23,8 +23,10 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.wildfly.feature.pack.grpc.InterceptorTracker;
 
 import io.grpc.ManagedChannelBuilder;
+import messages.HelloRequest;
 
 @RunWith(Arquillian.class)
 @RunAsClient
@@ -36,6 +38,7 @@ public class PlaintextHelloWorldTest extends HelloWorldParent {
         war.addClasses(PlaintextHelloWorldTest.class, GreeterServiceImpl.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
+        war.addClass(InterceptorTracker.class);
         // war.as(ZipExporter.class).exportTo(
         // new File("/tmp/hello.war"), true);
         return war;

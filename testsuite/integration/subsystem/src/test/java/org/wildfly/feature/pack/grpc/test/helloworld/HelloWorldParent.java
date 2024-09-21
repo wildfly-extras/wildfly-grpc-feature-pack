@@ -22,6 +22,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import io.grpc.ManagedChannel;
+import messages.HelloReply;
+import messages.HelloRequest;
 
 public class HelloWorldParent {
 

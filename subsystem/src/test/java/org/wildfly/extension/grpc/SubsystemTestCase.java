@@ -44,7 +44,7 @@ public class SubsystemTestCase extends AbstractSubsystemBaseTest {
     protected AdditionalInitialization createAdditionalInitialization() {
         return AdditionalInitialization.withCapabilities("org.wildfly.weld");
     }
-    
+
     @Test
     public void testExpressions() throws Exception {
         standardSubsystemTest("grpc-subsystem-expressions.xml", false);

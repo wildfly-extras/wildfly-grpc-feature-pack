@@ -43,11 +43,26 @@ public interface GrpcLogger extends BasicLogger {
     @Message(id = 3, value = "Failed to stop gRPC server")
     void failedToStopGrpcServer(@Cause Throwable cause);
 
-    @Message(id = 4, value = "Failed to register %s for deployment %s")
-    RuntimeException failedToRegisterService(@Cause Throwable cause, String serviceName, String deployment);
+    @Message(id = 4, value = "Failed to register %s")
+    RuntimeException failedToRegister(@Cause Throwable cause, String serviceName);
+
+    @Message(id = 5, value = "Failed to register %s for deployment %s")
+    RuntimeException failedToRegister(@Cause Throwable cause, String serviceName, String deployment);
 
     @LogMessage(level = DEBUG)
-    @Message(id = 5, value = "Registering gRPC service %s for deployment %s.")
+    @Message(id = 6, value = "Registering gRPC service %s for deployment %s.")
     void registerService(String serviceName, String deploymentName);
+
+    @LogMessage(level = DEBUG)
+    @Message(id = 7, value = "Registering global gRPC ServerInterceptor %s.")
+    void registerServerInterceptor(String interceptorName);
+
+    @LogMessage(level = DEBUG)
+    @Message(id = 8, value = "Registering gRPC ServerInterceptor %s for deployment %s.")
+    void registerServerInterceptor(String interceptorName, String deploymentName);
+
+    @LogMessage(level = ERROR)
+    @Message(id = 9, value = "Method %s is not implemented.")
+    void methodNotImplemented(String methodName);
 
 }

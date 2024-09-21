@@ -15,13 +15,14 @@
  */
 package org.wildfly.feature.pack.grpc.test.helloworld;
 
+import org.wildfly.extension.grpc.example.helloworld1.Greeter1Grpc.Greeter1ImplBase;
 import org.wildfly.feature.pack.grpc.InterceptorTracker;
 
 import io.grpc.stub.StreamObserver;
 import messages.HelloReply;
 import messages.HelloRequest;
 
-public class GreeterServiceImpl extends GreeterGrpc.GreeterImplBase {
+public class GreeterServiceImpl1 extends Greeter1ImplBase {
 
     @Override
     public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {

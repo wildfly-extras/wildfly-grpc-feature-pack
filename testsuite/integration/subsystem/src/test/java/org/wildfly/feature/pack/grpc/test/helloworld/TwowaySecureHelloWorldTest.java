@@ -31,11 +31,13 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.wildfly.feature.pack.grpc.InterceptorTracker;
 import org.wildfly.feature.pack.grpc.test.utility.ServerReload;
 
 import io.grpc.ChannelCredentials;
 import io.grpc.Grpc;
 import io.grpc.TlsChannelCredentials;
+import messages.HelloRequest;
 
 @RunWith(Arquillian.class)
 @ServerSetup(TwowaySecureHelloWorldTest.SslServerSetupTask.class)
@@ -133,6 +135,7 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
         war.addClasses(TwowaySecureHelloWorldTest.class, GreeterServiceImpl.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
+        war.addClass(InterceptorTracker.class);
         // war.as(ZipExporter.class).exportTo(
         // new File("/tmp/hello.war"), true);
         return war;
