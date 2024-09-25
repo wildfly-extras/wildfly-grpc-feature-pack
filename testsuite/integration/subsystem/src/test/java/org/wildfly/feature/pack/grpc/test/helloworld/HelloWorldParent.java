@@ -25,6 +25,11 @@ import io.grpc.ManagedChannel;
 import messages.HelloReply;
 import messages.HelloRequest;
 
+/**
+ * The subclasses of {@link HelloWorldParent} execute {@link #hello hello()}, which
+ * does a simple call and response over connections with various security configurations.
+ *
+ */
 public class HelloWorldParent {
 
     protected static final String TARGET = "localhost:9555";

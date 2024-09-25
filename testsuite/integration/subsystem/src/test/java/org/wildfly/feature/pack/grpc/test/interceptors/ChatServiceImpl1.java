@@ -13,21 +13,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.wildfly.feature.pack.grpc.test.stream;
+package org.wildfly.feature.pack.grpc.test.interceptors;
 
-import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc;
+import java.util.List;
+
+import org.wildfly.extension.grpc.example1.chat1.ChatService1Grpc.ChatService1ImplBase;
+import org.wildfly.feature.pack.grpc.InterceptorTracker;
 
 import chatmessages.ChatMessage;
 import io.grpc.stub.StreamObserver;
 
-public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
+/**
+ * Retrieves the {@code Integer}s from {@link InterceptorTracker} and computes a
+ * result based on each incoming {@link ChatMessage}. The result indicates the order
+ * in which the {@link ServerInterceptor}s are executed.
+ */
+public class ChatServiceImpl1 extends ChatService1ImplBase {
 
     @Override
     public StreamObserver<ChatMessage> chat(final StreamObserver<ChatMessage> responseObserver) {
         return new StreamObserver<ChatMessage>() {
             @Override
             public void onNext(ChatMessage request) {
-                String s = Integer.toString(Integer.valueOf(request.getMessage()) * 2);
+                List<Integer> list = InterceptorTracker.getList();
+                Integer result = Integer.valueOf(request.getMessage());
+                for (int i = 0; i < list.size(); i++) {
+                    result = result * list.get(i) + list.get(i);
+                }
+                String s = Integer.toString(Integer.valueOf(result));
                 ChatMessage cm = ChatMessage.newBuilder().setMessage(s).build();
                 responseObserver.onNext(cm);
             }

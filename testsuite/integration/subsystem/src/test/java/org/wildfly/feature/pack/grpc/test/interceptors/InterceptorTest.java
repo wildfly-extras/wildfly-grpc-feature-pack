@@ -16,6 +16,7 @@
 package org.wildfly.feature.pack.grpc.test.interceptors;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -27,6 +28,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,27 +42,36 @@ import org.wildfly.feature.pack.grpc.TestServerInterceptor0;
 import org.wildfly.feature.pack.grpc.TestServerInterceptor1;
 import org.wildfly.feature.pack.grpc.test.helloworld.GreeterGrpc;
 import org.wildfly.feature.pack.grpc.test.helloworld.GreeterServiceImpl;
-import org.wildfly.feature.pack.grpc.test.helloworld.GreeterServiceImpl1;
-import org.wildfly.feature.pack.grpc.test.helloworld.GreeterServiceImpl2;
-import org.wildfly.feature.pack.grpc.test.helloworld.HelloWorldParent;
 
+import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import messages.HelloReply;
 import messages.HelloRequest;
 
-/*
- * Verifies that ServerInterceptors are
+/**
+ * Run simple unary calls to verify that {@link ServerInterceptor}s are
+ * <ol>
+ * <li>recognized in deployments;</li>
+ * <li>segregated so that they apply only to methods in the same WAR; and</li>
+ * <li>executed in order as determined by the {@link org.wildfly.extension.grpc.Priority} annotation.</li>
+ * </ol>
  *
- *  1. recognized in deployments;
- *  2. segregated so that they apply only to methods in the same WAR; and
- *  3. executed in order as determined by the org.wildfly.extension.grpc.Priority annotation.
+ * Three WARs are transferred to the server. war.war has no {@link ServerInterceptor}s, war1.war has one, and war2.war has
+ * three. The service implementations keep track of which {@link ServerInterceptor}s are executed. Each of
+ * {@link hello hello()}, {@link hello1 hello1()}, and {@link hello2 hello2()} makes an invocation on
+ * {@link GreeterServiceImpl GreeterServiceImpl}, {@link GreeterServiceImpl1 GreeterServiceImpl1} and
+ * {@link GreeterServiceImpl2 GreeterServiceImpl2} in war.war, war1.war, and war2.war respectively, and test
+ * the returned {@code String}.
  */
 @RunWith(Arquillian.class)
 @RunAsClient
-public class InterceptorTest extends HelloWorldParent {
+public class InterceptorTest {
+    protected static final String TARGET = "localhost:9555";
+
     protected static GreeterGrpc.GreeterBlockingStub blockingStub;
     protected static Greeter1Grpc.Greeter1BlockingStub blockingStub1;
     protected static Greeter2Grpc.Greeter2BlockingStub blockingStub2;
+    protected static ManagedChannel channel = null;
 
     @Deployment
     public static Archive<?> createTestArchive() {
@@ -113,8 +124,13 @@ public class InterceptorTest extends HelloWorldParent {
 
     }
 
-    /*
-     * There are no ServerInterceptors in war.war.
+    @AfterClass
+    public static void afterClass() throws Exception {
+        channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    /**
+     * There are no {@link ServerInterceptor}s in war.war.
      */
     @Test
     public void hello() {
@@ -123,8 +139,8 @@ public class InterceptorTest extends HelloWorldParent {
         Assert.assertEquals("Hello Bob", reply.getMessage());
     }
 
-    /*
-     * There is one ServerInterceptors in war1.war.
+    /**
+     * There is one {@link ServerInterceptor}s in war1.war.
      */
     @Test
     public void hello1() {
@@ -133,8 +149,8 @@ public class InterceptorTest extends HelloWorldParent {
         Assert.assertEquals("Hello Bob+111", reply.getMessage());
     }
 
-    /*
-     * There are three ServerInterceptors in war2.war.
+    /**
+     * There are three {@link ServerInterceptor}s in war2.war.
      */
     @Test
     public void hello2() {

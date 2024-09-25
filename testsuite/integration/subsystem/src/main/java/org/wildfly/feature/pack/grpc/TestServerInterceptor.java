@@ -23,10 +23,6 @@ import io.grpc.ServerInterceptor;
 
 public class TestServerInterceptor implements ServerInterceptor {
 
-    public TestServerInterceptor() {
-        System.out.println("creating " + this);
-    }
-
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
             ServerCall<ReqT, RespT> call,
@@ -45,21 +41,7 @@ public class TestServerInterceptor implements ServerInterceptor {
 
                     @Override
                     public void sendMessage(RespT message) {
-                        System.out.println("HEADERS:");
-                        for (String s : requestHeaders.keys()) {
-                            System.out.println("  " + s);
-                        }
                         super.sendMessage(message);
-                        // call.sendMessage(null);
-                        // if (message instanceof HelloReply) {
-                        // HelloReply reply = (HelloReply) message;
-                        // String s = reply.getMessage() + InterceptorTracker.getFlag();
-                        // System.out.println(this + " returning: " + s);
-                        // reply = HelloReply.newBuilder().setMessage(s).build();
-                        // super.sendMessage((RespT) reply);
-                        // } else {
-                        // super.sendMessage(message);
-                        // }
                     }
                 }, requestHeaders);
 

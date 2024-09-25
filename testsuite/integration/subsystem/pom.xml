@@ -92,15 +92,17 @@
 								com.google.protobuf:protoc:${version.protobuf}:exe:${os.detected.classifier}</protocArtifact>
 							<pluginArtifact>
 								io.grpc:protoc-gen-grpc-java:${version.grpc}:exe:${os.detected.classifier}</pluginArtifact>
-							<protoSourceRoot>
-								/home/rsigal/tmp/wildfly.grpc.v014/wildfly-grpc-feature-pack/testsuite/integration/subsystem/src/main/proto/</protoSourceRoot>
+							<protoSourceRoot>${project.basedir}/src/main/proto/</protoSourceRoot>
 							<clearOutputDirectory>true</clearOutputDirectory>
 							<includes>
 								<include>message.proto</include>
 								<include>helloworld.proto</include>
 								<include>helloworld1.proto</include>
 								<include>helloworld2.proto</include>
+								<include>chatmessage.proto</include>
 								<include>chat.proto</include>
+								<include>chat1.proto</include>
+								<include>chat2.proto</include>
 							</includes>
 						</configuration>
 					</execution>

@@ -26,10 +26,6 @@ import io.grpc.ServerInterceptor;
 @Priority(1)
 public class TestServerInterceptor1 implements ServerInterceptor {
 
-    public TestServerInterceptor1() {
-        System.out.println("creating " + this);
-    }
-
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
             ServerCall<ReqT, RespT> call,
@@ -42,26 +38,8 @@ public class TestServerInterceptor1 implements ServerInterceptor {
                 new SimpleForwardingServerCall<ReqT, RespT>(call) {
 
                     @Override
-                    public void sendHeaders(Metadata responseHeaders) {
-                        super.sendHeaders(responseHeaders);
-                    }
-
-                    @Override
                     public void sendMessage(RespT message) {
-                        System.out.println("HEADERS:");
-                        for (String s : requestHeaders.keys()) {
-                            System.out.println("  " + s);
-                        }
                         super.sendMessage(message);
-                        // if (message instanceof HelloReply) {
-                        // HelloReply reply = (HelloReply) message;
-                        // String s = reply.getMessage() + InterceptorTracker.getFlag();
-                        // System.out.println(this + " returning: " + s);
-                        // reply = HelloReply.newBuilder().setMessage(s).build();
-                        // super.sendMessage((RespT) reply);
-                        // } else {
-                        // super.sendMessage(message);
-                        // }
                     }
                 }, requestHeaders);
 

@@ -16,11 +16,10 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "org.wildfly.extension.grpc.example.chat";
-import "chatmessage.proto";
+option java_package = "chatmessages";
 
-package chat;
+package chatmessages;
 
-service ChatService {
-  rpc chat(stream chatmessages.ChatMessage) returns (stream chatmessages.ChatMessage);
+message ChatMessage {
+  string message = 1;
 }

@@ -24,7 +24,7 @@ import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
 
 @Priority(0)
-public class TestServerInterceptor0 implements ServerInterceptor {
+public class StreamingServerInterceptor0 implements ServerInterceptor {
 
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
@@ -32,17 +32,20 @@ public class TestServerInterceptor0 implements ServerInterceptor {
             final Metadata requestHeaders,
             ServerCallHandler<ReqT, RespT> next) {
 
-        InterceptorTracker.checkin("+000");
+        InterceptorTracker.checkin(5);
 
         return next.startCall(
                 new SimpleForwardingServerCall<ReqT, RespT>(call) {
+
+                    @Override
+                    public void sendHeaders(Metadata responseHeaders) {
+                        super.sendHeaders(responseHeaders);
+                    }
 
                     @Override
                     public void sendMessage(RespT message) {
                         super.sendMessage(message);
                     }
                 }, requestHeaders);
-
     }
-
 }

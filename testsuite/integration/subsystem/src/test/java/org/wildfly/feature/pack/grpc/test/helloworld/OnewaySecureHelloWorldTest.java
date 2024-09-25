@@ -39,6 +39,10 @@ import io.grpc.Grpc;
 import io.grpc.TlsChannelCredentials;
 import messages.HelloRequest;
 
+/**
+ * Executes {@link HelloWorldParent#hello() HelloWorldParent.hello()} over a connection
+ * configured with a keystore on the server side and a truststore on the client side.
+ */
 @RunWith(Arquillian.class)
 @ServerSetup(OnewaySecureHelloWorldTest.SslServerSetupTask.class)
 @RunAsClient

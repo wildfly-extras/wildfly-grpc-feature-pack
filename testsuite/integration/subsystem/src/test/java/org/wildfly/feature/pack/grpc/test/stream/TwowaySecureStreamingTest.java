@@ -31,14 +31,19 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import org.wildfly.extension.grpc.example.chat.ChatMessage;
 import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc;
 import org.wildfly.feature.pack.grpc.test.utility.ServerReload;
 
+import chatmessages.ChatMessage;
 import io.grpc.ChannelCredentials;
 import io.grpc.Grpc;
 import io.grpc.TlsChannelCredentials;
 
+/**
+ * Executes {@link StreamingTestParent#streamingTest() StreamingTestParent.streamingTest()}
+ * over a connection configured with a keystore on both the server side and the client side and a truststore
+ * on both the server and client side.
+ */
 @RunWith(Arquillian.class)
 @ServerSetup(TwowaySecureStreamingTest.SslServerSetupTask.class)
 @RunAsClient
@@ -132,7 +137,7 @@ public class TwowaySecureStreamingTest extends StreamingTestParent {
     @Deployment
     public static Archive<?> createTestArchive() {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "TwowaySecureStreamingTest.war");
-        war.addClasses(OnewaySecureStreamingTest.class, ChatServiceImpl.class);
+        war.addClasses(OnewaySecureStreamingTest.class, ChatServiceImpl.class, ChatServiceGrpc.class);
         war.addPackage(ChatMessage.class.getPackage());
         // war.as(ZipExporter.class).exportTo(
         // new File("/tmp/hello.war"), true);

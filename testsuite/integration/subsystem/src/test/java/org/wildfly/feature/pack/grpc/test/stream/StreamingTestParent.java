@@ -21,13 +21,17 @@ import java.util.concurrent.TimeUnit;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
-import org.wildfly.extension.grpc.example.chat.ChatMessage;
 import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc;
 
+import chatmessages.ChatMessage;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 
-public class StreamingTestParent {
+/**
+ * The subclasses of {@link StreamingTestParent} execute {@link #streamingTest streamingTest()}, which
+ * does a bidirectional streaming interaction over connections with various security configurations.
+ */
+public abstract class StreamingTestParent {
 
     protected static final String TARGET = "localhost:9555";
     protected static final String TARGET_HOST = "localhost";
@@ -82,5 +86,4 @@ public class StreamingTestParent {
         }
         Assert.assertEquals(20, sum);
     }
-
 }

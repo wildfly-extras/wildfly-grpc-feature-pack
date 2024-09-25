@@ -23,6 +23,10 @@ import messages.HelloRequest;
 
 public class GreeterServiceImpl extends GreeterGrpc.GreeterImplBase {
 
+    /**
+     * Retrieves a value from {@link InterceptorTracker} to pass back to client
+     * an indication of the order in which the {@link ServerInterceptor}s executed.
+     */
     @Override
     public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
         String name = request.getName();
