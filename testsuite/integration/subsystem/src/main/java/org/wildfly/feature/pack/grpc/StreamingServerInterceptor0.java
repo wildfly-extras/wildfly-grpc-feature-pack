@@ -15,7 +15,7 @@
  */
 package org.wildfly.feature.pack.grpc;
 
-import org.wildfly.extension.grpc.Priority;
+import jakarta.annotation.Priority;
 
 import io.grpc.ForwardingServerCall.SimpleForwardingServerCall;
 import io.grpc.Metadata;
@@ -36,16 +36,6 @@ public class StreamingServerInterceptor0 implements ServerInterceptor {
 
         return next.startCall(
                 new SimpleForwardingServerCall<ReqT, RespT>(call) {
-
-                    @Override
-                    public void sendHeaders(Metadata responseHeaders) {
-                        super.sendHeaders(responseHeaders);
-                    }
-
-                    @Override
-                    public void sendMessage(RespT message) {
-                        super.sendMessage(message);
-                    }
                 }, requestHeaders);
     }
 }

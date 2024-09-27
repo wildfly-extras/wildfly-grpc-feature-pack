@@ -17,14 +17,15 @@ package org.wildfly.feature.pack.grpc;
 
 import jakarta.annotation.Priority;
 
-import io.grpc.ForwardingServerCall.SimpleForwardingServerCall;
+import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
+import messages.HelloRequest;
 
-@Priority(1)
-public class StreamingServerInterceptor1 implements ServerInterceptor {
+@Priority(-11)
+public class TestServerInterceptor11 implements ServerInterceptor {
 
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
@@ -32,10 +33,23 @@ public class StreamingServerInterceptor1 implements ServerInterceptor {
             final Metadata requestHeaders,
             ServerCallHandler<ReqT, RespT> next) {
 
-        InterceptorTracker.checkin(7);
+        ServerCall.Listener<ReqT> listener = next.startCall(call, requestHeaders);
+        return new TestListener<ReqT>(listener);
+    }
 
-        return next.startCall(
-                new SimpleForwardingServerCall<ReqT, RespT>(call) {
-                }, requestHeaders);
+    static class TestListener<ReqT> extends SimpleForwardingServerCallListener<ReqT> {
+
+        protected TestListener(ServerCall.Listener<ReqT> delegate) {
+            super(delegate);
+        }
+
+        @Override
+        public void onMessage(ReqT message) {
+            HelloRequest request = (HelloRequest) message;
+            messages.HelloRequest.Builder builder = messages.HelloRequest.newBuilder();
+            @SuppressWarnings("unchecked")
+            ReqT reqT = (ReqT) builder.setName("**" + request.getName()).build();
+            delegate().onMessage(reqT);
+        }
     }
 }

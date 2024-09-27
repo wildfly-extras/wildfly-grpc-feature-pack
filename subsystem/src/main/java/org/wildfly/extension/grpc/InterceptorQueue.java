@@ -86,7 +86,7 @@ public class InterceptorQueue extends PriorityQueue<InterceptorQueue.Element> {
     private Integer getPriority(Class<? extends ServerInterceptor> clazz) {
         try {
             for (Annotation an : clazz.getDeclaredAnnotations()) {
-                if ("org.wildfly.extension.grpc.Priority".equals(an.annotationType().getName())) {
+                if ("jakarta.annotation.Priority".equals(an.annotationType().getName())) {
                     Method value = an.annotationType().getMethod("value");
                     value.setAccessible(true);
                     Integer i = (Integer) value.invoke(an);

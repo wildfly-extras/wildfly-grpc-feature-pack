@@ -33,13 +33,14 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.wildfly.extension.grpc.Priority;
 import org.wildfly.extension.grpc.example.helloworld1.Greeter1Grpc;
 import org.wildfly.extension.grpc.example.helloworld2.Greeter2Grpc;
 import org.wildfly.feature.pack.grpc.InterceptorTracker;
 import org.wildfly.feature.pack.grpc.TestServerInterceptor;
 import org.wildfly.feature.pack.grpc.TestServerInterceptor0;
 import org.wildfly.feature.pack.grpc.TestServerInterceptor1;
+import org.wildfly.feature.pack.grpc.TestServerInterceptor10;
+import org.wildfly.feature.pack.grpc.TestServerInterceptor11;
 import org.wildfly.feature.pack.grpc.test.helloworld.GreeterGrpc;
 import org.wildfly.feature.pack.grpc.test.helloworld.GreeterServiceImpl;
 
@@ -57,7 +58,7 @@ import messages.HelloRequest;
  * </ol>
  *
  * Three WARs are transferred to the server. war.war has no {@link ServerInterceptor}s, war1.war has one, and war2.war has
- * three. The service implementations keep track of which {@link ServerInterceptor}s are executed. Each of
+ * five. The service implementations keep track of which {@link ServerInterceptor}s are executed. Each of
  * {@link hello hello()}, {@link hello1 hello1()}, and {@link hello2 hello2()} makes an invocation on
  * {@link GreeterServiceImpl GreeterServiceImpl}, {@link GreeterServiceImpl1 GreeterServiceImpl1} and
  * {@link GreeterServiceImpl2 GreeterServiceImpl2} in war.war, war1.war, and war2.war respectively, and test
@@ -90,7 +91,6 @@ public class InterceptorTest {
         war1.addClass(HelloReply.class);
         war1.addClass(Greeter1Grpc.class);
         war1.addClass(GreeterServiceImpl1.class);
-        war1.addClass(Priority.class);
         war1.addClass(InterceptorTracker.class);
         war1.addClass(TestServerInterceptor1.class);
 
@@ -100,10 +100,11 @@ public class InterceptorTest {
         war2.addClass(HelloReply.class);
         war2.addClass(Greeter2Grpc.class);
         war2.addClass(GreeterServiceImpl2.class);
-        war2.addClass(Priority.class);
         war2.addClass(TestServerInterceptor.class);
         war2.addClass(TestServerInterceptor0.class);
         war2.addClass(TestServerInterceptor1.class);
+        war2.addClass(TestServerInterceptor10.class);
+        war2.addClass(TestServerInterceptor11.class);
         war2.addClass(InterceptorTracker.class);
 
         EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "interceptor.ear");
@@ -156,6 +157,6 @@ public class InterceptorTest {
     public void hello2() {
         HelloRequest request = HelloRequest.newBuilder().setName("Bob").build();
         HelloReply reply = blockingStub2.sayHello(request);
-        Assert.assertEquals("Hello Bob+000+111+xxx", reply.getMessage());
+        Assert.assertEquals("Hello !!**Bob+000+111+xxx", reply.getMessage());
     }
 }

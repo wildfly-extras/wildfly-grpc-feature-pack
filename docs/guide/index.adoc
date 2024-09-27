@@ -308,3 +308,87 @@ if ("none".equals(ssl)) {
 Here, client.truststore.pem, client.keystore.pem, and client.key.pem are in the src/main/resources/ directory.
 Note that, unlike the server runtime, the client expects keystores in pem format.
 
+### Server interceptors
+
+gRPC implementations in some languages, including Java, support a server interceptor concept. (There
+is also a client interceptor concept, but that is not relevant here.) As per usual, gRPC server interceptors wrap
+a call for some cross-cutting purpose. Here is an example in which an `io.grpc.ServerInterceptor` 
+intercepts and modifies the input message before the service implementation executes:
+
+```
+public class TestServerInterceptor1 implements ServerInterceptor {
+
+    @Override
+    public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
+            ServerCall<ReqT, RespT> call,
+            final Metadata requestHeaders,
+            ServerCallHandler<ReqT, RespT> next) {
+
+        ServerCall.Listener<ReqT> listener = next.startCall(call, requestHeaders);
+        return new TestListener<ReqT>(listener);
+    }
+
+    static class TestListener<ReqT> extends SimpleForwardingServerCallListener<ReqT> {
+
+        protected TestListener(ServerCall.Listener<ReqT> delegate) {
+            super(delegate);
+        }
+
+        @Override
+        public void onMessage(ReqT message) {
+            HelloRequest request = (HelloRequest) message;
+            messages.HelloRequest.Builder builder = messages.HelloRequest.newBuilder();
+            @SuppressWarnings("unchecked")
+            ReqT reqT = (ReqT) builder.setName("!!" + request.getName()).build();
+            delegate().onMessage(reqT);
+        }
+    }
+}
+```
+Here is a `ServerInterceptor` that adds another response header after the wrapped
+service implementation executes:
+
+```
+public class StreamingServerInterceptor1 implements ServerInterceptor {
+
+    static final Metadata.Key<String> CUSTOM_HEADER_KEY =
+            Metadata.Key.of("custom_server_header_key", Metadata.ASCII_STRING_MARSHALLER);
+    
+    @Override
+    public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
+            ServerCall<ReqT, RespT> call,
+            final Metadata requestHeaders,
+            ServerCallHandler<ReqT, RespT> next) {
+
+        return next.startCall(
+                new SimpleForwardingServerCall<ReqT, RespT>(call) {
+
+                    @Override
+                    public void sendHeaders(Metadata responseHeaders) {
+                        responseHeaders.put(CUSTOM_HEADER_KEY, "WHAAAT?");
+                        super.sendHeaders(responseHeaders);
+                    }
+                }, requestHeaders);
+    }
+}
+```
+For more information, see (https://grpc.io/docs/guides/interceptors/).
+
+There are some issues that arise in the WildFly context that are not addressed in
+the general case supported by the Java implementation.
+The expectation, in general, is that the management of the
+gRPC server, including registering services and interceptors, is under the control
+of the application. In WildFly, on the other hand, the server is managed by the gRPC
+subsystem. Whenever a WAR with a gRPC service is detected, the gRPC subsystem 
+extracts all of the method implementations and interceptors and registers them with
+the runtime. In the standard treatment, all methods would be wrapped by all interceptors,
+which makes no sense in WildFly. The gRPC subsystem manages the registration so
+that all methods discovered in a WAR are wrapped only by all interceptors discovered
+in *the same WAR*.
+
+Another issue that arises in WildFly is the order of interceptor execution. In the
+usual case, the application registers the interceptors in the desired order. In the gRPC subsystem environment, there has to be another way of ordering
+the interceptors, and the use of the `jakarta.annotation.Priority` annotation is 
+adopted. On the way into the service method, interceptors with lower `@Priority` values 
+run before interceptors with higher `@Priority` values, and after the service
+method they run after interceptors with higher `@Priority` values.

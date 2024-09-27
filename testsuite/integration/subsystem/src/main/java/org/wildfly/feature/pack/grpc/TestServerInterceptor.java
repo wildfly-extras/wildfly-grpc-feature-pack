@@ -38,13 +38,6 @@ public class TestServerInterceptor implements ServerInterceptor {
                     public void sendHeaders(Metadata responseHeaders) {
                         super.sendHeaders(responseHeaders);
                     }
-
-                    @Override
-                    public void sendMessage(RespT message) {
-                        super.sendMessage(message);
-                    }
                 }, requestHeaders);
-
     }
-
 }

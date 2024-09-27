@@ -15,7 +15,7 @@
  */
 package org.wildfly.feature.pack.grpc;
 
-import org.wildfly.extension.grpc.Priority;
+import jakarta.annotation.Priority;
 
 import io.grpc.ForwardingServerCall.SimpleForwardingServerCall;
 import io.grpc.Metadata;
@@ -36,13 +36,6 @@ public class TestServerInterceptor0 implements ServerInterceptor {
 
         return next.startCall(
                 new SimpleForwardingServerCall<ReqT, RespT>(call) {
-
-                    @Override
-                    public void sendMessage(RespT message) {
-                        super.sendMessage(message);
-                    }
                 }, requestHeaders);
-
     }
-
 }

@@ -34,7 +34,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.wildfly.extension.grpc.Priority;
 import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc;
 import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc.ChatServiceImplBase;
 import org.wildfly.extension.grpc.example1.chat1.ChatService1Grpc;
@@ -100,7 +99,6 @@ public class StreamingInterceptorTest {
         war1.addClass(ChatService1Grpc.class);
         war1.addClass(ChatService1ImplBase.class);
         war1.addClass(org.wildfly.extension.grpc.example1.chat1.ChatService1Grpc.AsyncService.class);
-        war1.addClass(Priority.class);
         war1.addClass(InterceptorTracker.class);
         war1.addClass(StreamingServerInterceptor0.class);
 
@@ -111,7 +109,6 @@ public class StreamingInterceptorTest {
         war2.addClass(ChatService2Grpc.class);
         war2.addClass(ChatService2ImplBase.class);
         war2.addClass(org.wildfly.extension.grpc.example2.chat2.ChatService2Grpc.AsyncService.class);
-        war2.addClass(Priority.class);
         war2.addClass(StreamingServerInterceptor.class);
         war2.addClass(StreamingServerInterceptor0.class);
         war2.addClass(StreamingServerInterceptor1.class);
