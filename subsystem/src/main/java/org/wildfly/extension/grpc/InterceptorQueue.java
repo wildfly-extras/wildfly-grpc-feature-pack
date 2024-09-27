@@ -22,6 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 import io.grpc.ServerInterceptor;
 
 /**
@@ -29,6 +31,7 @@ import io.grpc.ServerInterceptor;
  * {@link @Priority} annotation. A {@link ServerInterceptor} with no {@link @Priority} annotation has
  * the lowest priority.
  */
+@NotThreadSafe
 public class InterceptorQueue extends PriorityQueue<InterceptorQueue.Element> {
 
     private static final long serialVersionUID = 1L;
