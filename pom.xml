@@ -117,7 +117,7 @@
         <galleon.fork.embedded>true</galleon.fork.embedded>
         <galleon.log.time>true</galleon.log.time>
         <galleon.wildfly.home>/tmp</galleon.wildfly.home>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <linkXRef>false</linkXRef>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
