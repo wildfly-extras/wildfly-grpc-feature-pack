@@ -18,10 +18,16 @@ package org.wildfly.extension.grpc;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
+import org.jboss.as.controller.descriptions.ParentResourceDescriptionResolver;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.dmr.ModelType;
 
+import static org.wildfly.extension.grpc.GrpcSubsystemRegistrar.RESOLVER;
+
 class GrpcServiceDefinition extends SimpleResourceDefinition {
+
+    static final ParentResourceDescriptionResolver SERVICE_RESOLVER = RESOLVER.createChildResolver("deployment")
+            .createChildResolver("grpc-service");
 
     static final GrpcServiceDefinition INSTANCE = new GrpcServiceDefinition();
 
@@ -29,7 +35,7 @@ class GrpcServiceDefinition extends SimpleResourceDefinition {
             ModelType.STRING, false).setStorageRuntime().build();
 
     public GrpcServiceDefinition() {
-        super(Paths.GRPC_SERVICE, GrpcExtension.getResolver("deployment.grpc-service"));
+        super(Paths.GRPC_SERVICE, SERVICE_RESOLVER);
     }
 
     @Override

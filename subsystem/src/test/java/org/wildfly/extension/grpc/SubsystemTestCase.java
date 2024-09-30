@@ -17,8 +17,14 @@ package org.wildfly.extension.grpc;
 
 import java.io.IOException;
 
+import org.jboss.as.controller.capability.registry.RuntimeCapabilityRegistry;
+import org.jboss.as.controller.extension.ExtensionRegistry;
+import org.jboss.as.controller.registry.ManagementResourceRegistration;
+import org.jboss.as.controller.registry.Resource;
 import org.jboss.as.subsystem.test.AbstractSubsystemBaseTest;
 import org.jboss.as.subsystem.test.AdditionalInitialization;
+import org.jboss.as.subsystem.test.AdditionalInitialization.ManagementAdditionalInitialization;
+import org.jboss.as.version.Stability;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
@@ -26,7 +32,7 @@ import org.jboss.as.subsystem.test.AdditionalInitialization;
 public class SubsystemTestCase extends AbstractSubsystemBaseTest {
 
     public SubsystemTestCase() {
-        super(GrpcExtension.SUBSYSTEM_NAME, new GrpcExtension());
+        super(GrpcExtension.SUBSYSTEM_NAME, new GrpcExtension(), Stability.PREVIEW);
     }
 
     @Override
@@ -41,6 +47,14 @@ public class SubsystemTestCase extends AbstractSubsystemBaseTest {
     }
 
     protected AdditionalInitialization createAdditionalInitialization() {
-        return AdditionalInitialization.withCapabilities("org.wildfly.weld");
+        return new ManagementAdditionalInitialization(Stability.PREVIEW) {
+
+            @Override
+            protected void initializeExtraSubystemsAndModel(ExtensionRegistry extensionRegistry, Resource rootResource,
+                    ManagementResourceRegistration rootRegistration, RuntimeCapabilityRegistry capabilityRegistry) {
+                super.initializeExtraSubystemsAndModel(extensionRegistry, rootResource, rootRegistration, capabilityRegistry);
+                registerCapabilities(capabilityRegistry, "org.wildfly.weld");
+            }
+        };
     }
 }

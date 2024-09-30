@@ -31,6 +31,8 @@ import org.jboss.as.controller.operations.validation.ModelTypeValidator;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
 
+import static org.wildfly.extension.grpc.GrpcSubsystemRegistrar.RESOLVER;
+
 public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
 
     static final SimpleAttributeDefinition GRPC_FLOW_CONTROL_WINDOW = new SimpleAttributeDefinitionBuilder(
@@ -258,7 +260,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final GrpcSubsystemDefinition INSTANCE = new GrpcSubsystemDefinition();
 
     public GrpcSubsystemDefinition() {
-        super(new SimpleResourceDefinition.Parameters(Paths.SUBSYSTEM, GrpcExtension.getResolver())
+        super(new SimpleResourceDefinition.Parameters(Paths.SUBSYSTEM, RESOLVER)
                 .addCapabilities(SERVER_CAPABILITY)
                 .setAddHandler(GrpcSubsystemAdd.INSTANCE)
                 .setRemoveHandler(ReloadRequiredRemoveStepHandler.INSTANCE));

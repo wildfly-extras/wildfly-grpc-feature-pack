@@ -16,8 +16,8 @@
 
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="urn:wildfly:grpc:1.0"
-           xmlns="urn:wildfly:grpc:1.0"
+           targetNamespace="urn:wildfly:grpc:preview:1.0"
+           xmlns="urn:wildfly:grpc:preview:1.0"
            elementFormDefault="qualified"
            attributeFormDefault="unqualified"
            version="1.0">

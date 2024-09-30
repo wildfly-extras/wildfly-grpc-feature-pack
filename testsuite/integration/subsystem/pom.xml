@@ -30,6 +30,10 @@
     <artifactId>wildfly-grpc-testsuite-integration-subsystem</artifactId>
     <name>WildFly gRPC :: Test Suite :: Integration :: Subsystem</name>
 
+    <properties>
+        <server.jboss.args>--stability=preview</server.jboss.args>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -65,6 +69,7 @@
                     </layers>
                     <galleon-options>
                         <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+                        <stability-level>preview</stability-level>
                     </galleon-options>
                     <provisioning-dir>wildfly</provisioning-dir>
                     <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
@@ -87,6 +92,7 @@
                     <systemPropertyVariables combine.children="append">
                         <jboss.install.dir>${jboss.dist}</jboss.install.dir>
                         <server.jvm.args>${server.jvm.args}</server.jvm.args>
+                        <jboss.args>${server.jboss.args}</jboss.args>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
