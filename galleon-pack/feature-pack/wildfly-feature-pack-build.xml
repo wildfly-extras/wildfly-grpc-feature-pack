@@ -36,6 +36,9 @@
             <standalone>
                 <extension>org.wildfly.extension.grpc</extension>
             </standalone>
+            <domain>
+                <extension>org.wildfly.extension.grpc</extension>
+            </domain>
         </extensions>
     </generate-feature-specs>
 </build>
