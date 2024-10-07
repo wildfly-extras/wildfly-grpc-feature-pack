@@ -19,12 +19,11 @@
            targetNamespace="urn:wildfly:grpc:preview:1.0"
            xmlns="urn:wildfly:grpc:preview:1.0"
            elementFormDefault="qualified"
-           attributeFormDefault="unqualified"
            version="1.0">
 
     <!-- The subsystem root element -->
     <xs:element name="subsystem" type="grpc-subsystemType"/>
-
+ 
     <xs:complexType name="grpc-subsystemType">
         <xs:annotation>
             <xs:documentation>
@@ -33,7 +32,40 @@
             ]]>
             </xs:documentation>
         </xs:annotation>
-        <xs:attribute name="server-host" type="xs:string"/>
-        <xs:attribute name="server-port" type="xs:positiveInteger"/>
+            <xs:attribute name="flow-control-window" type="nonnegativeJavaInt"/>
+            <xs:attribute name="handshake-timeout" type="nonnegativeJavaInt" />
+            <xs:attribute name="initial-flow-control-window" type="nonnegativeJavaInt" />
+            <xs:attribute name="keep-alive-time" type="nonnegativeJavaInt" />
+            <xs:attribute name="keep-alive-timeout" type="nonnegativeJavaInt" />
+            <xs:attribute name="key-manager-name" type="xs:string"/>
+            <xs:attribute name="max-concurrent-calls-per-connection" type="nonnegativeJavaInt" />
+            <xs:attribute name="max-connection-age" type="nonnegativeJavaInt" />
+            <xs:attribute name="max-connection-age-grace" type="nonnegativeJavaInt" />
+            <xs:attribute name="max-connection-idle" type="nonnegativeJavaInt" />
+            <xs:attribute name="max-inbound-message-size" type="nonnegativeJavaInt" />
+            <xs:attribute name="max-inbound-metadata-size" type="nonnegativeJavaInt" />
+            <xs:attribute name="permit-keep-alive-time" type="nonnegativeJavaInt" />
+            <xs:attribute name="permit-keep-alive-without-calls" type="xs:boolean" />
+            <xs:attribute name="protocol-provider" type="xs:string"/>
+            <xs:attribute name="server-host" type="xs:string"/>
+            <xs:attribute name="server-port" type="xs:positiveInteger"/>
+            <xs:attribute name="session-cache-size" type="nonnegativeJavaLong" />
+            <xs:attribute name="session-timeout" type="nonnegativeJavaLong" />
+            <xs:attribute name="shutdown-timeout" type="nonnegativeJavaInt" />
+            <xs:attribute name="ssl-context-name" type="xs:string"/>
+            <xs:attribute name="start-tls" type="xs:boolean" />
+            <xs:attribute name="trust-manager-name" type="xs:string"/>
     </xs:complexType>
+    
+    <xs:simpleType name="nonnegativeJavaInt" id="nonnegativeJavaInt">
+        <xs:restriction base="xs:unsignedLong">
+            <xs:maxInclusive value="2147483647"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="nonnegativeJavaLong" id="nonnegativeJavaLong">
+        <xs:restriction base="xs:unsignedLong">
+            <xs:maxInclusive value="9223372036854775807"/>
+        </xs:restriction>
+    </xs:simpleType>
+
 </xs:schema>
