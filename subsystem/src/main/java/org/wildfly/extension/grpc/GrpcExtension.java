@@ -15,49 +15,53 @@
  */
 package org.wildfly.extension.grpc;
 
-import org.jboss.as.controller.Extension;
-import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.ModelVersion;
-import org.jboss.as.controller.SubsystemRegistration;
-import org.jboss.as.controller.descriptions.StandardResourceDescriptionResolver;
-import org.jboss.as.controller.operations.common.GenericSubsystemDescribeHandler;
-import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.registry.ManagementResourceRegistration;
+import org.jboss.as.controller.PathElement;
+import org.jboss.as.controller.SubsystemModel;
+import org.jboss.as.version.Stability;
+import org.wildfly.subsystem.SubsystemConfiguration;
+import org.wildfly.subsystem.SubsystemExtension;
+import org.wildfly.subsystem.SubsystemPersistence;
 
-public class GrpcExtension implements Extension {
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
+
+public class GrpcExtension extends SubsystemExtension<GrpcSubsystemSchema> {
 
     public static final String SUBSYSTEM_NAME = "grpc";
-    public static final ModelVersion VERSION_1_0_0 = ModelVersion.create(1, 0, 0);
-    public static final ModelVersion CURRENT_MODEL_VERSION = VERSION_1_0_0;
-    private static final String RESOURCE_NAME = GrpcExtension.class.getPackage().getName() + ".LocalDescriptions";
+    // TODO - Can we get rid of this path?
+    static final PathElement SUBSYSTEM_PATH = PathElement.pathElement(SUBSYSTEM, SUBSYSTEM_NAME);
 
-    static StandardResourceDescriptionResolver getResolver(final String... keyPrefix) {
-        StringBuilder prefix = new StringBuilder(SUBSYSTEM_NAME);
-        for (String kp : keyPrefix) {
-            prefix.append('.').append(kp);
+    private static final Stability FEATURE_STABILITY = Stability.PREVIEW;
+
+    public GrpcExtension() {
+        super(SubsystemConfiguration.of(SUBSYSTEM_NAME, GrpcSubsystemModel.CURRENT, GrpcSubsystemRegistrar::new),
+                SubsystemPersistence.of(GrpcSubsystemSchema.CURRENT));
+    }
+
+    @Override
+    public Stability getStability() {
+        return FEATURE_STABILITY;
+    }
+
+    /**
+     * Model for the grpc subsystem.
+     */
+    enum GrpcSubsystemModel implements SubsystemModel {
+        VERSION_1_0_0(1, 0, 0),
+        ;
+
+        static final GrpcSubsystemModel CURRENT = VERSION_1_0_0;
+
+        private final ModelVersion version;
+
+        GrpcSubsystemModel(int major, int minor, int micro) {
+            this.version = ModelVersion.create(major, minor, micro);
         }
-        return new StandardResourceDescriptionResolver(prefix.toString(), RESOURCE_NAME,
-                GrpcExtension.class.getClassLoader(), true, false);
+
+        @Override
+        public ModelVersion getVersion() {
+            return version;
+        }
     }
 
-    @Override
-    public void initialize(ExtensionContext extensionContext) {
-        SubsystemRegistration sr = extensionContext.registerSubsystem(SUBSYSTEM_NAME, CURRENT_MODEL_VERSION);
-        sr.registerXMLElementWriter(GrpcSubsystemParser_1_0::new);
-
-        // /subsystem=grpc
-        ManagementResourceRegistration subsystem = sr.registerSubsystemModel(GrpcSubsystemDefinition.INSTANCE);
-        subsystem.registerOperationHandler(GenericSubsystemDescribeHandler.DEFINITION,
-                GenericSubsystemDescribeHandler.INSTANCE, false);
-
-        // /deployment=*/subsystem=grpc
-        ManagementResourceRegistration deployment = sr.registerDeploymentModel(GrpcDeploymentDefinition.INSTANCE);
-        deployment.registerSubModel(GrpcServiceDefinition.INSTANCE);
-    }
-
-    @Override
-    public void initializeParsers(ExtensionParsingContext extensionParsingContext) {
-        extensionParsingContext.setSubsystemXmlMapping(SUBSYSTEM_NAME, GrpcSubsystemParser_1_0.NAMESPACE,
-                GrpcSubsystemParser_1_0::new);
-    }
 }

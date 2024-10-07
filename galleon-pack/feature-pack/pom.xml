@@ -116,6 +116,10 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <fork-embedded>${galleon.fork.embedded}</fork-embedded>
+                            <generate-channel-manifest>true</generate-channel-manifest>
+                            <minimum-stability-level>preview</minimum-stability-level>
+                            <config-stability-level>preview</config-stability-level>
+                            <package-stability-level>preview</package-stability-level>
                         </configuration>
                     </execution>
                 </executions>

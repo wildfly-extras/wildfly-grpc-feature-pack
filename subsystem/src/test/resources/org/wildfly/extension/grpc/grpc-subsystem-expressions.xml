@@ -15,7 +15,7 @@
      limitations under the License.
 
 -->
-<subsystem xmlns="urn:wildfly:grpc:1.0" flow-control-window="${test.flow-control-window:3}"
+<subsystem xmlns="urn:wildfly:grpc:preview:1.0" flow-control-window="${test.flow-control-window:3}"
     handshake-timeout="${test.handshake-timeout:5}" initial-flow-control-window="${test.initial-flow-control-window:7}"
     keep-alive-time="${test.keep-alive-time:11}" keep-alive-timeout="${test.keep-alive-timeout:13}"
     key-manager-name="${test.key-manager-name:aaa}"
