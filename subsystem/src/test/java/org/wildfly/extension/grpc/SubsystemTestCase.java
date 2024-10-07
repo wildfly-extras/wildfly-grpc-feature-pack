@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.jboss.as.subsystem.test.AbstractSubsystemBaseTest;
 import org.jboss.as.subsystem.test.AdditionalInitialization;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
@@ -42,5 +43,10 @@ public class SubsystemTestCase extends AbstractSubsystemBaseTest {
 
     protected AdditionalInitialization createAdditionalInitialization() {
         return AdditionalInitialization.withCapabilities("org.wildfly.weld");
+    }
+
+    @Test
+    public void testExpressions() throws Exception {
+        standardSubsystemTest("grpc-subsystem-expressions.xml", false);
     }
 }

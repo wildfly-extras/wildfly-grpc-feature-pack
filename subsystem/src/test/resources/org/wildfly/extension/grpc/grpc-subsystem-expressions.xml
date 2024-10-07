@@ -1,0 +1,32 @@
+<!--
+
+     Copyright 2022 Red Hat
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         https://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<subsystem xmlns="urn:wildfly:grpc:1.0" flow-control-window="${test.flow-control-window:3}"
+    handshake-timeout="${test.handshake-timeout:5}" initial-flow-control-window="${test.initial-flow-control-window:7}"
+    keep-alive-time="${test.keep-alive-time:11}" keep-alive-timeout="${test.keep-alive-timeout:13}"
+    key-manager-name="${test.key-manager-name:aaa}"
+    max-concurrent-calls-per-connection="${test.max-concurrent-calls-per-connection:17}"
+    max-connection-age="${test.max-connection-age:19}" max-connection-age-grace="${test.max-connection-age-grace:23}"
+    max-connection-idle="${test.max-connection-idle:29}" max-inbound-message-size="${test.max-inbound-message-size:31}"
+    max-inbound-metadata-size="${test.max-inbound-metadata-size:37}"
+    permit-keep-alive-time="${test.permit-keep-alive-time:39}"
+    permit-keep-alive-without-calls="${test.permit-keep-alive-without-calls:true}"
+    protocol-provider="${test.protocol-provider:bbb}" server-host="${test.server-host:ccc}"
+    server-port="${test.server-port:43}" session-cache-size="${test.session-cache-size:47}"
+    session-timeout="${test.session-timeout:51}" shutdown-timeout="${test.shutdown-timeout:53}"
+    ssl-context-name="${test.ssl-context-name:ddd}" start-tls="${test.start-tls:true}"
+    trust-manager-name="${test.trust-manager-name:eee}" />

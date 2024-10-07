@@ -105,8 +105,8 @@
             <artifactId>perfmark-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -118,8 +118,8 @@
 
         <!-- WildFly & JBoss -->
         <dependency>
-            <groupId>io.smallrye</groupId>
-            <artifactId>jandex</artifactId>
+            <groupId>org.jboss.jandex</groupId>
+            <artifactId>jandex-maven-plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
@@ -168,6 +168,23 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jboss.jandex</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+                <version>${version.jandex.maven.plugin}</version>
+                <executions>
+                    <execution>
+                        <id>make-index</id>
+                        <goals>
+                            <goal>jandex</goal>
+                        </goals>
+                        <!-- phase is 'process-classes by default' -->
+                        <configuration>
+                            <!-- Nothing needed here for simple cases -->
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
