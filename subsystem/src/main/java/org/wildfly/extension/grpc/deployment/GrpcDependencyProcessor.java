@@ -41,8 +41,8 @@ public class GrpcDependencyProcessor implements DeploymentUnitProcessor {
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
         // Pull in dependencies needed by deployments in the subsystem
-        moduleSpecification
-                .addSystemDependency(new ModuleDependency(moduleLoader, "org.jboss.jandex", false, false, true, false));
+        // moduleSpecification
+        // .addSystemDependency(new ModuleDependency(moduleLoader, "org.jboss.jandex", false, false, true, false));
 
         // This is needed if running with a security manager, and seems to be needed by arquillian in all cases
         moduleSpecification.addSystemDependency(
