@@ -15,4 +15,10 @@
      limitations under the License.
 
 -->
-<subsystem xmlns="urn:wildfly:grpc:preview:1.0" server-host="localhost" server-port="10999" />
+<subsystem xmlns="urn:wildfly:grpc:preview:1.0" flow-control-window="3" handshake-timeout="5"
+    initial-flow-control-window="7" keep-alive-time="11" keep-alive-timeout="13" key-manager-name="aaa"
+    max-concurrent-calls-per-connection="17" max-connection-age="19" max-connection-age-grace="23"
+    max-connection-idle="29" max-inbound-message-size="31" max-inbound-metadata-size="37" permit-keep-alive-time="39"
+    permit-keep-alive-without-calls="true" protocol-provider="bbb" server-host="ccc" server-port="43"
+    session-cache-size="47" session-timeout="51" shutdown-timeout="53" ssl-context-name="ddd" start-tls="true"
+    trust-manager-name="eee" />
