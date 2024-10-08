@@ -42,8 +42,10 @@ class GrpcSubsystemRegistrar implements SubsystemResourceDefinitionRegistrar {
         // TODO - Need to move DUPs here but can they stay in their add handler for now?
 
         // /deployment=*/subsystem=grpc
-        ManagementResourceRegistration deployment = parent.registerDeploymentModel(GrpcDeploymentDefinition.INSTANCE);
-        deployment.registerSubModel(GrpcServiceDefinition.INSTANCE);
+        if (managementResourceRegistrationContext.isRuntimeOnlyRegistrationValid()) {
+            ManagementResourceRegistration deployment = parent.registerDeploymentModel(GrpcDeploymentDefinition.INSTANCE);
+            deployment.registerSubModel(GrpcServiceDefinition.INSTANCE);
+        }
 
         return registration;
     }

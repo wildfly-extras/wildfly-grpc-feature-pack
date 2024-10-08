@@ -17,7 +17,7 @@
 
 -->
 
-<module xmlns="urn:jboss:module:1.9" name="io.grpc">
+<module xmlns="urn:jboss:module:1.9" name="io.grpc-all">
     <properties>
         <property name="jboss.api" value="private" />
     </properties>

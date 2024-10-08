@@ -31,11 +31,18 @@
     <default-packages>
         <package name="modules.all"/>
     </default-packages>
+    <package-schemas>
+        <group name="org.wildfly.extras.grpc"/>
+    </package-schemas>
+
     <generate-feature-specs>
         <extensions>
             <standalone>
                 <extension>org.wildfly.extension.grpc</extension>
             </standalone>
+            <domain>
+                <extension>org.wildfly.extension.grpc</extension>
+            </domain>
         </extensions>
     </generate-feature-specs>
 </build>
