@@ -84,7 +84,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
 
     static final SimpleAttributeDefinition GRPC_KEY_MANAGER_NAME = new SimpleAttributeDefinitionBuilder(
             "key-manager-name", ModelType.STRING)
-            .setAllowExpression(true)
+            .setAllowExpression(false)
             .setCapabilityReference(Capabilities.KEY_MANAGER_CAPABILITY)
             .setRequired(false)
             .setRestartAllServices()
@@ -218,7 +218,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
 
     static final SimpleAttributeDefinition GRPC_SSL_CONTEXT_NAME = new SimpleAttributeDefinitionBuilder(
             "ssl-context-name", ModelType.STRING)
-            .setAllowExpression(true)
+            .setAllowExpression(false)
             .setCapabilityReference(Capabilities.SSL_CONTEXT_CAPABILITY)
             .setRequired(false)
             .setRestartAllServices()
@@ -236,7 +236,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
 
     static final SimpleAttributeDefinition GRPC_TRUST_MANAGER_NAME = new SimpleAttributeDefinitionBuilder(
             "trust-manager-name", ModelType.STRING)
-            .setAllowExpression(true)
+            .setAllowExpression(false)
             .setCapabilityReference(Capabilities.TRUST_MANAGER_CAPABILITY)
             .setRequired(false)
             .setRestartAllServices()
