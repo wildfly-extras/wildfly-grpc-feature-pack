@@ -64,22 +64,16 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
         NettyServerBuilder serverBuilder = NettyServerBuilder.forAddress(new InetSocketAddress(serverHost, serverPort));
         serverBuilder.fallbackHandlerRegistry(handlerRegistry);
 
-        if (isDefined(GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW, model)) {
-            serverBuilder
-                    .flowControlWindow(GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, model)
-                            .asInt());
-        }
+        serverBuilder
+                .flowControlWindow(GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, model)
+                        .asInt());
 
-        if (isDefined(GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT, model)) {
-            serverBuilder.handshakeTimeout(GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT.resolveModelAttribute(context, model)
-                    .asInt(), TimeUnit.SECONDS);
-        }
+        serverBuilder.handshakeTimeout(GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT.resolveModelAttribute(context, model)
+                .asInt(), TimeUnit.SECONDS);
 
-        if (isDefined(GrpcSubsystemDefinition.GRPC_INITIAL_FLOW_CONTROL_WINDOW, model)) {
-            serverBuilder.initialFlowControlWindow(
-                    GrpcSubsystemDefinition.GRPC_INITIAL_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, model)
-                            .asInt());
-        }
+        serverBuilder.initialFlowControlWindow(
+                GrpcSubsystemDefinition.GRPC_INITIAL_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, model)
+                        .asInt());
 
         if (isDefined(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME, model)) {
             serverBuilder.keepAliveTime(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME.resolveModelAttribute(context, model)
@@ -115,17 +109,13 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
                             .asLong(), TimeUnit.SECONDS);
         }
 
-        if (isDefined(GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE, model)) {
-            serverBuilder.maxInboundMessageSize(
-                    GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE.resolveModelAttribute(context, model)
-                            .asInt());
-        }
+        serverBuilder.maxInboundMessageSize(
+                GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE.resolveModelAttribute(context, model)
+                        .asInt());
 
-        if (isDefined(GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE, model)) {
-            serverBuilder.maxInboundMetadataSize(
-                    GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE.resolveModelAttribute(context, model)
-                            .asInt());
-        }
+        serverBuilder.maxInboundMetadataSize(
+                GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE.resolveModelAttribute(context, model)
+                        .asInt());
 
         if (isDefined(GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME, model)) {
             serverBuilder.permitKeepAliveTime(

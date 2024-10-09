@@ -25,6 +25,7 @@ import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.capability.RuntimeCapability;
+import org.jboss.as.controller.client.helpers.MeasurementUnit;
 import org.jboss.as.controller.operations.validation.IntRangeValidator;
 import org.jboss.as.controller.operations.validation.LongRangeValidator;
 import org.jboss.as.controller.operations.validation.ModelTypeValidator;
@@ -38,6 +39,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_FLOW_CONTROL_WINDOW = new SimpleAttributeDefinitionBuilder(
             "flow-control-window", ModelType.INT)
             .setAllowExpression(true)
+            .setDefaultValue(new ModelNode(1048576))
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -46,6 +48,8 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_HANDSHAKE_TIMEOUT = new SimpleAttributeDefinitionBuilder(
             "handshake-timeout", ModelType.LONG)
             .setAllowExpression(true)
+            .setDefaultValue(new ModelNode(120))
+            .setMeasurementUnit(MeasurementUnit.SECONDS)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -54,6 +58,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_INITIAL_FLOW_CONTROL_WINDOW = new SimpleAttributeDefinitionBuilder(
             "initial-flow-control-window", ModelType.INT)
             .setAllowExpression(true)
+            .setDefaultValue(new ModelNode(1048576))
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -62,6 +67,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_KEEP_ALIVE_TIME = new SimpleAttributeDefinitionBuilder(
             "keep-alive-time", ModelType.LONG)
             .setAllowExpression(true)
+            .setMeasurementUnit(MeasurementUnit.SECONDS)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -70,6 +76,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_KEEP_ALIVE_TIMEOUT = new SimpleAttributeDefinitionBuilder(
             "keep-alive-timeout", ModelType.LONG)
             .setAllowExpression(true)
+            .setMeasurementUnit(MeasurementUnit.SECONDS)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -95,6 +102,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_MAX_CONNECTION_AGE = new SimpleAttributeDefinitionBuilder(
             "max-connection-age", ModelType.LONG)
             .setAllowExpression(true)
+            .setMeasurementUnit(MeasurementUnit.SECONDS)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -103,6 +111,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_MAX_CONNECTION_AGE_GRACE = new SimpleAttributeDefinitionBuilder(
             "max-connection-age-grace", ModelType.LONG)
             .setAllowExpression(true)
+            .setMeasurementUnit(MeasurementUnit.SECONDS)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -111,6 +120,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_MAX_CONNECTION_IDLE = new SimpleAttributeDefinitionBuilder(
             "max-connection-idle", ModelType.LONG)
             .setAllowExpression(true)
+            .setMeasurementUnit(MeasurementUnit.SECONDS)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -119,6 +129,8 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_MAX_INBOUND_MESSAGE_SIZE = new SimpleAttributeDefinitionBuilder(
             "max-inbound-message-size", ModelType.INT)
             .setAllowExpression(true)
+            .setDefaultValue(new ModelNode(4194304))
+            .setMeasurementUnit(MeasurementUnit.BYTES)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -127,6 +139,8 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_MAX_INBOUND_METADATA_SIZE = new SimpleAttributeDefinitionBuilder(
             "max-inbound-metadata-size", ModelType.INT)
             .setAllowExpression(true)
+            .setDefaultValue(new ModelNode(8192))
+            .setMeasurementUnit(MeasurementUnit.BYTES)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
@@ -135,6 +149,8 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition GRPC_PERMIT_KEEP_ALIVE_TIME = new SimpleAttributeDefinitionBuilder(
             "permit-keep-alive-time", ModelType.LONG)
             .setAllowExpression(true)
+            .setDefaultValue(new ModelNode(250))
+            .setMeasurementUnit(MeasurementUnit.SECONDS)
             .setRequired(false)
             .setRestartAllServices()
             .setValidator(new IntRangeValidator(0, false, true))
