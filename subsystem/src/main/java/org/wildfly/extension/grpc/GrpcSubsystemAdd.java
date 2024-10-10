@@ -16,6 +16,7 @@
 package org.wildfly.extension.grpc;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -27,6 +28,7 @@ import org.jboss.as.controller.CapabilityServiceBuilder;
 import org.jboss.as.controller.CapabilityServiceTarget;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.network.SocketBinding;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.Services;
@@ -53,13 +55,15 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
         InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
         // GrpcServerService.configure(operation, context);
 
-        final String serverHost = GrpcSubsystemDefinition.GRPC_SERVER_HOST.resolveModelAttribute(context, model)
+        final CapabilityServiceTarget target = context.getCapabilityServiceTarget();
+        final CapabilityServiceBuilder<?> builder = target.addCapability(GrpcSubsystemDefinition.SERVER_CAPABILITY);
+
+        final String socketBindingRef = GrpcSubsystemDefinition.GRPC_SERVER_SOCKET_BINDING.resolveModelAttribute(context, model)
                 .asString();
+        Supplier<SocketBinding> socketBinding = builder.requiresCapability(Capabilities.SOCKET_BiNDING, SocketBinding.class,
+                socketBindingRef);
 
-        final ServerConfiguration configuration = new ServerConfiguration(serverHost);
-
-        configuration.setServerPort(
-                GrpcSubsystemDefinition.GRPC_SERVER_PORT.resolveModelAttribute(context, model).asInt());
+        final ServerConfiguration configuration = new ServerConfiguration(socketBinding);
 
         configuration
                 .setFlowControlWindow(GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, model)
@@ -109,9 +113,6 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
                 GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS.resolveModelAttribute(context, model)
                         .asBoolean());
 
-        final CapabilityServiceTarget target = context.getCapabilityServiceTarget();
-        final CapabilityServiceBuilder<?> builder = target.addCapability(GrpcSubsystemDefinition.SERVER_CAPABILITY);
-
         configuration.setProtocolProvider(GrpcSubsystemDefinition.GRPC_PROTOCOL_PROVIDER.resolveModelAttribute(context, model)
                 .asStringOrNull())
                 .setSessionCacheSize(GrpcSubsystemDefinition.GRPC_SESSION_CACHE_SIZE.resolveModelAttribute(context, model)
@@ -146,7 +147,7 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
         final Consumer<GrpcServerService> provides = builder.provides(GrpcSubsystemDefinition.SERVER_CAPABILITY);
 
         final GrpcServerService service = new GrpcServerService(provides,
-                Services.requireServerExecutor(builder), configuration);
+                Services.requireServerExecutor(builder), configuration.build());
 
         builder.setInstance(service)
                 .install();

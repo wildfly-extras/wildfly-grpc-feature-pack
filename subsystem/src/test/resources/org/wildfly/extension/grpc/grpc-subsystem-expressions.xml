@@ -24,7 +24,6 @@
     max-inbound-metadata-size="${test.max-inbound-metadata-size:37}"
     permit-keep-alive-time="${test.permit-keep-alive-time:39}"
     permit-keep-alive-without-calls="${test.permit-keep-alive-without-calls:true}"
-    protocol-provider="${test.protocol-provider:bbb}" server-host="${test.server-host:ccc}"
-    server-port="${test.server-port:43}" session-cache-size="${test.session-cache-size:47}"
+    protocol-provider="${test.protocol-provider:bbb}" session-cache-size="${test.session-cache-size:47}"
     session-timeout="${test.session-timeout:51}" shutdown-timeout="${test.shutdown-timeout:53}"
-    start-tls="${test.start-tls:true}" />
+    start-tls="${test.start-tls:true}" socket-binding="grpc" />

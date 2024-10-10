@@ -47,8 +47,7 @@
             <xs:attribute name="permit-keep-alive-time" type="nonnegativeJavaInt" default="250" />
             <xs:attribute name="permit-keep-alive-without-calls" type="xs:boolean" default="false" />
             <xs:attribute name="protocol-provider" type="xs:string"/>
-            <xs:attribute name="server-host" type="xs:string"/>
-            <xs:attribute name="server-port" type="xs:positiveInteger"/>
+            <xs:attribute name="socket-binding" type="xs:string" use="required" />
             <xs:attribute name="session-cache-size" type="nonnegativeJavaLong" />
             <xs:attribute name="session-timeout" type="nonnegativeJavaLong" />
             <xs:attribute name="shutdown-timeout" type="nonnegativeJavaInt" />
