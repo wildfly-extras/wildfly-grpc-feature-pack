@@ -65,4 +65,7 @@ public interface GrpcLogger extends BasicLogger {
     @Message(id = 9, value = "Method %s is not implemented.")
     void methodNotImplemented(String methodName);
 
+    @Message(id = 10, value = "The configuration object has already been built.")
+    IllegalStateException configurationAlreadyBuilt();
+
 }
