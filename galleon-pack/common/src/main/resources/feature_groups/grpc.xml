@@ -17,5 +17,7 @@
 
 -->
 <feature-group-spec name="grpc" xmlns="urn:jboss:galleon:feature-group:1.0">
-    <feature spec="subsystem.grpc" />
+    <feature spec="subsystem.grpc">
+        <param name="socket-binding" value="grpc" />
+    </feature>
 </feature-group-spec>
