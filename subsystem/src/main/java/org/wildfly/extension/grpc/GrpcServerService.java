@@ -17,6 +17,7 @@ package org.wildfly.extension.grpc;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -63,18 +65,16 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
     private final Consumer<GrpcServerService> serverService;
     private final Supplier<ExecutorService> executorService;
-    private final MutableHandlerRegistry registry;
-    private final NettyServerBuilder serverBuilder;
 
     private final ServerConfiguration configuration;
     private final Map<String, Collection<ServerServiceDefinition>> deploymentServices;
+
+    private volatile MutableHandlerRegistry registry;
     private volatile Server server;
 
-    GrpcServerService(final NettyServerBuilder serverBuilder, final MutableHandlerRegistry registry,
-            final Consumer<GrpcServerService> serverService, final Supplier<ExecutorService> executorService,
+    GrpcServerService(final Consumer<GrpcServerService> serverService,
+            final Supplier<ExecutorService> executorService,
             final ServerConfiguration configuration) {
-        this.serverBuilder = serverBuilder;
-        this.registry = registry;
         this.serverService = serverService;
         this.executorService = executorService;
         this.configuration = configuration;
@@ -86,6 +86,38 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
         context.asynchronous();
         executorService.get().submit(() -> {
             try {
+                registry = new MutableHandlerRegistry();
+                NettyServerBuilder serverBuilder = NettyServerBuilder.forAddress(
+                        new InetSocketAddress(configuration.getHostName(), configuration.getServerPort()));
+                serverBuilder.fallbackHandlerRegistry(registry);
+                serverBuilder.flowControlWindow(configuration.getFlowControlWindow());
+                serverBuilder.handshakeTimeout(configuration.getHandshakeTimeout(), TimeUnit.SECONDS);
+                serverBuilder.initialFlowControlWindow(configuration.getInitialFlowControlWindow());
+                if (configuration.getKeepLiveTime() > 0) {
+                    serverBuilder.keepAliveTime(configuration.getKeepLiveTime(), TimeUnit.SECONDS);
+                }
+                if (configuration.getKeepAliveTimeout() > 0) {
+                    serverBuilder.keepAliveTimeout(configuration.getKeepAliveTimeout(), TimeUnit.SECONDS);
+                }
+                if (configuration.getMaxConcurrentCallsPerConnection() > 0) {
+                    serverBuilder.maxConcurrentCallsPerConnection(configuration.getMaxConcurrentCallsPerConnection());
+                }
+                if (configuration.getMaxConnectionAge() > 0) {
+                    serverBuilder.maxConnectionAge(configuration.getMaxConnectionAge(), TimeUnit.SECONDS);
+                }
+                if (configuration.getMaxConnectionAgeGrace() > 0) {
+                    serverBuilder.maxConnectionAgeGrace(configuration.getMaxConnectionAgeGrace(), TimeUnit.SECONDS);
+                }
+                if (configuration.getMaxConnectionIdle() > 0) {
+                    serverBuilder.maxConnectionIdle(configuration.getMaxConnectionIdle(), TimeUnit.SECONDS);
+                }
+                serverBuilder.maxInboundMessageSize(configuration.getMaxInboundMessageSize());
+                serverBuilder.maxInboundMetadataSize(configuration.getMaxInboundMetadataSize());
+                if (configuration.getPermitKeepAliveTime() > 0) {
+                    serverBuilder.permitKeepAliveTime(configuration.getPermitKeepAliveTime(), TimeUnit.SECONDS);
+                }
+                serverBuilder.permitKeepAliveWithoutCalls(configuration.isPermitKeepAliveWithoutCalls());
+
                 if (configuration.getKeyManager() != null) {
                     final SSLContext sslContext = configuration.getSslContext() == null ? null
                             : configuration.getSslContext()

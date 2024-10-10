@@ -15,8 +15,6 @@
  */
 package org.wildfly.extension.grpc;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import javax.net.ssl.KeyManager;
@@ -37,8 +35,6 @@ import org.jboss.dmr.ModelNode;
 import org.wildfly.extension.grpc.deployment.GrpcDependencyProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcDeploymentProcessor;
 
-import io.grpc.netty.NettyServerBuilder;
-import io.grpc.util.MutableHandlerRegistry;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.JdkLoggerFactory;
 
@@ -59,78 +55,62 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         final String serverHost = GrpcSubsystemDefinition.GRPC_SERVER_HOST.resolveModelAttribute(context, model)
                 .asString();
-        final MutableHandlerRegistry handlerRegistry = new MutableHandlerRegistry();
-        final int serverPort = GrpcSubsystemDefinition.GRPC_SERVER_PORT.resolveModelAttribute(context, model).asInt();
-        NettyServerBuilder serverBuilder = NettyServerBuilder.forAddress(new InetSocketAddress(serverHost, serverPort));
-        serverBuilder.fallbackHandlerRegistry(handlerRegistry);
 
-        serverBuilder
-                .flowControlWindow(GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, model)
+        final ServerConfiguration configuration = new ServerConfiguration(serverHost);
+
+        configuration.setServerPort(
+                GrpcSubsystemDefinition.GRPC_SERVER_PORT.resolveModelAttribute(context, model).asInt());
+
+        configuration
+                .setFlowControlWindow(GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, model)
                         .asInt());
-
-        serverBuilder.handshakeTimeout(GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT.resolveModelAttribute(context, model)
-                .asInt(), TimeUnit.SECONDS);
-
-        serverBuilder.initialFlowControlWindow(
+        configuration.setHandshakeTimeout(GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT.resolveModelAttribute(context, model)
+                .asInt());
+        configuration.setInitialFlowControlWindow(
                 GrpcSubsystemDefinition.GRPC_INITIAL_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, model)
                         .asInt());
-
-        if (isDefined(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME, model)) {
-            serverBuilder.keepAliveTime(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME.resolveModelAttribute(context, model)
-                    .asLong(), TimeUnit.SECONDS);
-        }
-
-        if (isDefined(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT, model)) {
-            serverBuilder.keepAliveTimeout(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT.resolveModelAttribute(context, model)
-                    .asLong(), TimeUnit.SECONDS);
-        }
-
-        if (isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION, model)) {
-            serverBuilder.maxConcurrentCallsPerConnection(
-                    GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION.resolveModelAttribute(context, model)
-                            .asInt());
-        }
-
-        if (isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE, model)) {
-            serverBuilder.maxConnectionAge(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE.resolveModelAttribute(context, model)
-                    .asLong(), TimeUnit.SECONDS);
-        }
-
-        if (isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE, model)) {
-            serverBuilder.maxConnectionAgeGrace(
-                    GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE.resolveModelAttribute(context, model)
-                            .asLong(),
-                    TimeUnit.SECONDS);
-        }
-
-        if (isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE, model)) {
-            serverBuilder
-                    .maxConnectionIdle(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE.resolveModelAttribute(context, model)
-                            .asLong(), TimeUnit.SECONDS);
-        }
-
-        serverBuilder.maxInboundMessageSize(
+        configuration
+                .setKeepLiveTime(isDefined(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME, model)
+                        ? GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME.resolveModelAttribute(context, model)
+                                .asLong()
+                        : -1);
+        configuration.setKeepAliveTimeout(isDefined(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT, model)
+                ? GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT.resolveModelAttribute(context, model)
+                        .asLong()
+                : -1);
+        configuration.setMaxConcurrentCallsPerConnection(
+                isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION, model)
+                        ? GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION.resolveModelAttribute(context, model)
+                                .asInt()
+                        : -1);
+        configuration.setMaxConnectionAge(isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE, model)
+                ? GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE.resolveModelAttribute(context, model)
+                        .asLong()
+                : -1);
+        configuration.setMaxConnectionAgeGrace(isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE, model)
+                ? GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE.resolveModelAttribute(context, model)
+                        .asLong()
+                : -1);
+        configuration.setMaxConnectionIdle(isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE, model)
+                ? GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE.resolveModelAttribute(context, model)
+                        .asLong()
+                : -1);
+        configuration.setMaxInboundMessageSize(
                 GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE.resolveModelAttribute(context, model)
                         .asInt());
-
-        serverBuilder.maxInboundMetadataSize(
+        configuration.setMaxInboundMetadataSize(
                 GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE.resolveModelAttribute(context, model)
                         .asInt());
-
-        if (isDefined(GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME, model)) {
-            serverBuilder.permitKeepAliveTime(
-                    GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME.resolveModelAttribute(context, model)
-                            .asLong(),
-                    TimeUnit.SECONDS);
-        }
-
-        serverBuilder.permitKeepAliveWithoutCalls(
+        configuration.setPermitKeepAliveTime(isDefined(GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME, model)
+                ? GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME.resolveModelAttribute(context, model)
+                        .asLong()
+                : -1);
+        configuration.setPermitKeepAliveWithoutCalls(
                 GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS.resolveModelAttribute(context, model)
                         .asBoolean());
 
         final CapabilityServiceTarget target = context.getCapabilityServiceTarget();
         final CapabilityServiceBuilder<?> builder = target.addCapability(GrpcSubsystemDefinition.SERVER_CAPABILITY);
-        final ServerConfiguration configuration = new ServerConfiguration(serverHost);
 
         configuration.setProtocolProvider(GrpcSubsystemDefinition.GRPC_PROTOCOL_PROVIDER.resolveModelAttribute(context, model)
                 .asStringOrNull())
@@ -165,7 +145,7 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         final Consumer<GrpcServerService> provides = builder.provides(GrpcSubsystemDefinition.SERVER_CAPABILITY);
 
-        final GrpcServerService service = new GrpcServerService(serverBuilder, handlerRegistry, provides,
+        final GrpcServerService service = new GrpcServerService(provides,
                 Services.requireServerExecutor(builder), configuration);
 
         builder.setInstance(service)
