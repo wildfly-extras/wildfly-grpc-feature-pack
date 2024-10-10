@@ -69,42 +69,30 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
         configuration.setInitialFlowControlWindow(
                 GrpcSubsystemDefinition.GRPC_INITIAL_FLOW_CONTROL_WINDOW.resolveModelAttribute(context, model)
                         .asInt());
-        configuration
-                .setKeepLiveTime(isDefined(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME, model)
-                        ? GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME.resolveModelAttribute(context, model)
-                                .asLong()
-                        : -1);
-        configuration.setKeepAliveTimeout(isDefined(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT, model)
-                ? GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT.resolveModelAttribute(context, model)
-                        .asLong()
-                : -1);
+        configuration.setKeepLiveTime(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME.resolveModelAttribute(context, model)
+                .asLong(-1));
+        configuration.setKeepAliveTimeout(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT.resolveModelAttribute(context, model)
+                .asLong(-1));
         configuration.setMaxConcurrentCallsPerConnection(
-                isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION, model)
-                        ? GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION.resolveModelAttribute(context, model)
-                                .asInt()
-                        : -1);
-        configuration.setMaxConnectionAge(isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE, model)
-                ? GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE.resolveModelAttribute(context, model)
-                        .asLong()
-                : -1);
-        configuration.setMaxConnectionAgeGrace(isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE, model)
-                ? GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE.resolveModelAttribute(context, model)
-                        .asLong()
-                : -1);
-        configuration.setMaxConnectionIdle(isDefined(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE, model)
-                ? GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE.resolveModelAttribute(context, model)
-                        .asLong()
-                : -1);
+                GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION.resolveModelAttribute(context, model)
+                        .asInt(-1));
+        configuration.setMaxConnectionAge(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE.resolveModelAttribute(context, model)
+                .asLong(-1));
+        configuration.setMaxConnectionAgeGrace(
+                GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE.resolveModelAttribute(context, model)
+                        .asLong(-1));
+        configuration
+                .setMaxConnectionIdle(GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE.resolveModelAttribute(context, model)
+                        .asLong(-1));
         configuration.setMaxInboundMessageSize(
                 GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE.resolveModelAttribute(context, model)
                         .asInt());
         configuration.setMaxInboundMetadataSize(
                 GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE.resolveModelAttribute(context, model)
                         .asInt());
-        configuration.setPermitKeepAliveTime(isDefined(GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME, model)
-                ? GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME.resolveModelAttribute(context, model)
-                        .asLong()
-                : -1);
+        configuration.setPermitKeepAliveTime(
+                GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME.resolveModelAttribute(context, model)
+                        .asLong(-1));
         configuration.setPermitKeepAliveWithoutCalls(
                 GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS.resolveModelAttribute(context, model)
                         .asBoolean());
@@ -169,4 +157,5 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
     private static boolean isDefined(final AttributeDefinition def, final ModelNode model) {
         return model.hasDefined(def.getName());
     }
+
 }
