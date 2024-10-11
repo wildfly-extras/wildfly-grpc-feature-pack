@@ -63,7 +63,7 @@ class ServerConfiguration {
     }
 
     int getServerPort() {
-        return socketBinding.get().getPort();
+        return socketBinding.get().getAbsolutePort();
     }
 
     String getHostName() {
