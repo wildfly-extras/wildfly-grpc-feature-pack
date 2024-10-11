@@ -17,6 +17,7 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 option java_package = "chatmessages";
+option java_outer_classname = "ChatMessageProto";
 
 package chatmessages;
 
