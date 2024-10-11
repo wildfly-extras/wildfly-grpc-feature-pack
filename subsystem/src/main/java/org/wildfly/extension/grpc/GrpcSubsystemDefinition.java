@@ -24,6 +24,7 @@ import org.jboss.as.controller.ReloadRequiredRemoveStepHandler;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
+import org.jboss.as.controller.access.management.SensitiveTargetAccessConstraintDefinition;
 import org.jboss.as.controller.capability.RuntimeCapability;
 import org.jboss.as.controller.client.helpers.MeasurementUnit;
 import org.jboss.as.controller.operations.validation.IntRangeValidator;
@@ -173,22 +174,13 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .setValidator(new ModelTypeValidator(ModelType.STRING, true))
             .build();
 
-    static final SimpleAttributeDefinition GRPC_SERVER_HOST = new SimpleAttributeDefinitionBuilder(
-            "server-host", ModelType.STRING)
-            .setAllowExpression(true)
-            .setDefaultValue(new ModelNode("localhost"))
-            .setRequired(false)
+    static final SimpleAttributeDefinition GRPC_SERVER_SOCKET_BINDING = new SimpleAttributeDefinitionBuilder(
+            "socket-binding", ModelType.STRING)
+            .setAllowExpression(false)
+            .setRequired(true)
             .setRestartAllServices()
-            .setValidator(new ModelTypeValidator(ModelType.STRING, true))
-            .build();
-
-    static final SimpleAttributeDefinition GRPC_SERVER_PORT = new SimpleAttributeDefinitionBuilder(
-            "server-port", ModelType.LONG)
-            .setAllowExpression(true)
-            .setDefaultValue(new ModelNode(9555))
-            .setRequired(false)
-            .setRestartAllServices()
-            .setValidator(new IntRangeValidator(0, 65535, true, true))
+            .addAccessConstraint(SensitiveTargetAccessConstraintDefinition.SOCKET_BINDING_REF)
+            .setCapabilityReference(Capabilities.SOCKET_BiNDING)
             .build();
 
     static final SimpleAttributeDefinition GRPC_SESSION_CACHE_SIZE = new SimpleAttributeDefinitionBuilder(
@@ -259,8 +251,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             GRPC_PERMIT_KEEP_ALIVE_TIME,
             GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
             GRPC_PROTOCOL_PROVIDER,
-            GRPC_SERVER_HOST,
-            GRPC_SERVER_PORT,
+            GRPC_SERVER_SOCKET_BINDING,
             GRPC_SESSION_CACHE_SIZE,
             GRPC_SESSION_TIMEOUT,
             GRPC_SHUTDOWN_TIMEOUT,

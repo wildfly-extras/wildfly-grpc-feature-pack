@@ -21,6 +21,8 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
+import org.jboss.as.network.SocketBinding;
+
 import static org.wildfly.extension.grpc._private.GrpcLogger.LOGGER;
 
 /**
@@ -33,8 +35,7 @@ class ServerConfiguration {
 
     private volatile boolean built = false;
 
-    private final String hostName;
-    private int serverPort;
+    private Supplier<SocketBinding> socketBinding;
     private Supplier<TrustManager> trustManager;
     private Supplier<KeyManager> keyManager;
     private Supplier<SSLContext> sslContext;
@@ -57,22 +58,16 @@ class ServerConfiguration {
     private long permitKeepAliveTime;
     private boolean permitKeepAliveWithoutCalls;
 
-    ServerConfiguration(final String hostName) {
-        this.hostName = hostName;
+    ServerConfiguration(final Supplier<SocketBinding> socketBinding) {
+        this.socketBinding = socketBinding;
     }
 
     int getServerPort() {
-        return serverPort;
-    }
-
-    ServerConfiguration setServerPort(final int serverPort) {
-        assertNotBuilt();
-        this.serverPort = serverPort;
-        return this;
+        return socketBinding.get().getPort();
     }
 
     String getHostName() {
-        return hostName;
+        return socketBinding.get().getAddress().getHostName();
     }
 
     Supplier<TrustManager> getTrustManager() {
