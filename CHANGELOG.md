@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.5] - 2024-10-11
+
 ## [0.1.4] - 2024-10-11
 
 ### Fixes
@@ -173,7 +175,8 @@ Lots of new features, bug fixes and dependency upgrades went into this release.
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.1...v0.1.2
