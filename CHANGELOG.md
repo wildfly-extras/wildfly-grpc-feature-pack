@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixes
+
+- Update build to detect if running less than Java 17 and report an error
+
+### Added
+
+- Adaptation of feature pack so it can be pulled into WildFly Preview
+- Move the stability level of the extension and schema to Preview 
+- Add support for socket bindings
+- All attributes should have defaults if these are implied from the underlying API defaults.
+
+### Upgrades
+
+- Bump io.grpc:grpc-bom from 1.65.1 to 1.68.0
+
+
 ## [0.1.3] - 2024-01-26
 
 ### Fixed
