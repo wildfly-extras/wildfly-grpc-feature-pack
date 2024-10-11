@@ -121,6 +121,7 @@
         <linkXRef>false</linkXRef>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.deploy.skip>false</maven.deploy.skip>
         <maven.min.version>3.2.5</maven.min.version>
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
@@ -430,6 +431,7 @@
                             <serverId>ossrh</serverId>
                             <nexusUrl>${repo.sonatype.url}</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <skipNexusStagingDeployMojo>${maven.deploy.skip}</skipNexusStagingDeployMojo>
                         </configuration>
                     </plugin>
                 </plugins>
