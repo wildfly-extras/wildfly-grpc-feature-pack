@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.11] - 2024-10-13
+
 ### Changed
 
 - Exclude testsuite from deployment
@@ -200,7 +202,8 @@ Lots of new features, bug fixes and dependency upgrades went into this release.
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.11...HEAD
+[0.1.11]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.7...v0.1.8

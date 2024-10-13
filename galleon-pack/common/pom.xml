@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-galleon-pack-parent</artifactId>
-        <version>0.1.11-SNAPSHOT</version>
+        <version>0.1.11.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
