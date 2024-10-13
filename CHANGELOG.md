@@ -6,11 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.1.10] - 2024-10-13
-
 ### Changed
 
 - Exclude testsuite from deployment
+
+## [0.1.10] - 2024-10-13
+
+Intermediate release - don’t use
 
 ## [0.1.9] - 2024-10-11
 
