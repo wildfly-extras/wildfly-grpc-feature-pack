@@ -6,15 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Exclude testsuite from deployment
+
 ## [0.1.9] - 2024-10-11
+
+Intermediate release - don’t use
 
 ## [0.1.8] - 2024-10-11
 
+Intermediate release - don’t use
+
 ## [0.1.7] - 2024-10-11
+
+Intermediate release - don’t use
 
 ## [0.1.6] - 2024-10-11
 
+Intermediate release - don’t use
+
 ## [0.1.5] - 2024-10-11
+
+Intermediate release - don’t use
 
 ## [0.1.4] - 2024-10-11
 
@@ -32,7 +46,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Upgrades
 
 - Bump io.grpc:grpc-bom from 1.65.1 to 1.68.0
-
 
 ## [0.1.3] - 2024-01-26
 
