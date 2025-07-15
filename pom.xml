@@ -163,6 +163,7 @@
                             <licenseSet>
                                 <header>build-config/src/main/resources/etc/license.txt</header>
                                 <excludes>
+                                    <exclude>dco.txt</exclude>
                                     <exclude>**/.cache/*</exclude>
                                     <exclude>.sdkmanrc</exclude>
                                     <exclude>CODEOWNERS</exclude>
