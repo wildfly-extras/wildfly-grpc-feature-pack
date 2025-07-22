@@ -84,12 +84,12 @@
         <!-- Dependency versions -->
         <version.arquillian.junit>1.9.1.Final</version.arquillian.junit>
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
-        <version.grpc>1.68.0</version.grpc>
+        <version.grpc>1.73.0</version.grpc>
         <version.jakarta.annotation>2.1.1</version.jakarta.annotation>
         <version.kotlin.stdlib>2.0.10</version.kotlin.stdlib>
         <version.okhttp>4.12.0</version.okhttp>
         <version.perfmark>0.27.0</version.perfmark>
-        <version.protobuf>4.27.3</version.protobuf>
+        <version.protobuf>4.31.1</version.protobuf>
         <version.proto-google-common-protos>2.42.0</version.proto-google-common-protos>
         <version.wildfly.common>2.0.0</version.wildfly.common>
         <version.wildfly.core>25.0.0.Final</version.wildfly.core>
