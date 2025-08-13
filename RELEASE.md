@@ -1,6 +1,6 @@
 # Release Management
 
-The bulk of work of releasing a new version is done by the [`./release.sh`](release.sh) script. This script takes care of bumping the versions, creating a tag and deploying to Maven Central.
+The bulk of work of releasing a new version is done by the [`./release.sh`](release.sh) script. This script takes care of bumping the versions, creating a tag and deploying to JBoss Nexus.
 
 ```
 USAGE:
@@ -16,6 +16,12 @@ ARGS:
     <next-snapshot>     The next snapshot version  (as semver)
 ```
 
+Example:
+
+```shell
+./release.sh 1.2.3 1.2.4
+```
+
 ## Prerequisites
 
 - `<release-version>` and `<next-version>` _must_ be semantic versions following `major.minor.micro`. 
@@ -27,11 +33,10 @@ ARGS:
 ## What it does
 
 1. Bump the version to `<release-version>.Final`
-2. Update the changelog headings and internal links (there should already be entries in the [Unreleased](CHANGELOG.md#unreleased) section)
+2. Update the changelog (there should already be entries in the [Unreleased](CHANGELOG.md#unreleased) section)
 3. Create a tag for `v<release-version>`
-4. Commit and push to upstream (which will trigger the [release workflow](.github/workflows/release.yml) at GitHub):
-   1. Deploy to Maven Central
+4. Commit and push to origin and upstream (which will trigger the [release workflow](.github/workflows/release.yml) at GitHub):
+   1. Deploy to JBoss Nexus (staging)
    2. Create a GitHub release with the relevant entries from the changelog
-   3. [Announce](https://github.com/wildfly-extras/wildfly-grpc-feature-pack/discussions/categories/announcements) the release in the discussions
 5. Bump the version to `<next-version>-SNAPSHOT`
-6. Commit and push to upstream
+6. Commit and push to origin and upstream
