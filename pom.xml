@@ -102,6 +102,8 @@
         <version.wildfly.plugin>5.0.0.Final</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
+        <maven.repository.protocol>https</maven.repository.protocol>
+        <maven.repository.url>${maven.repository.protocol}://repository.jboss.org/nexus/content/groups/public/</maven.repository.url>
         <nexus.repository.release>wildfly-extras</nexus.repository.release>
         <nexus.repository.staging>wildfly-extras-staging</nexus.repository.staging>
         <nexus.staging.tag>wildfly-grpc-${project.version}</nexus.staging.tag>
@@ -354,4 +356,21 @@
             </properties>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Repository Group</name>
+            <url>${maven.repository.url}</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
 </project>
