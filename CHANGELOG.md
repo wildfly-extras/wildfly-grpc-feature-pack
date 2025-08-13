@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Release to JBoss Nexus 
+
+### Upgrades
+
+- Bump gRPC to 1.73.0
+- Bump Protobuf to 4.31.1
+
 ## [0.1.11] - 2024-10-13
 
 ### Changed

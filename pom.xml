@@ -69,17 +69,6 @@
         <url>https://github.com/wildfly-extras/wildfly-grpc-feature-pack/issues</url>
     </issueManagement>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>${repo.sonatype.url}/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>${repo.sonatype.url}/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <properties>
         <!-- Dependency versions -->
         <version.arquillian.junit>1.9.1.Final</version.arquillian.junit>
@@ -110,18 +99,14 @@
         <version.jandex.plugin>1.2.3</version.jandex.plugin>
         <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
         <version.license.plugin>4.5</version.license.plugin>
-        <version.nexus.staging.plugin>1.7.0</version.nexus.staging.plugin>
         <version.wildfly.plugin>5.0.0.Final</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
-        <maven.repository.protocol>https</maven.repository.protocol>
-        <maven.repository.url>${maven.repository.protocol}://repository.jboss.org/nexus/content/groups/public/
-        </maven.repository.url>
-        <maven.redhat.repository.url>${maven.repository.protocol}://maven.repository.redhat.com/ga/
-        </maven.redhat.repository.url>
+        <nexus.repository.release>wildfly-extras</nexus.repository.release>
+        <nexus.repository.staging>wildfly-extras-staging</nexus.repository.staging>
+        <nexus.staging.tag>wildfly-grpc-${project.version}</nexus.staging.tag>
         <repo.scm.connection>git@github.com:wildfly-extras/wildfly-grpc-feature-pack</repo.scm.connection>
         <repo.scm.url>https://github.com/wildfly-extras/wildfly-grpc-feature-pack</repo.scm.url>
-        <repo.sonatype.url>https://oss.sonatype.org</repo.sonatype.url>
 
         <!-- Build related -->
         <encoding>UTF-8</encoding>
@@ -132,7 +117,7 @@
         <linkXRef>false</linkXRef>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.min.version>3.2.5</maven.min.version>
+        <maven.min.version>3.9.10</maven.min.version>
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
         <server.name>wildfly-${version.wildfly}-grpc-${project.version}</server.name>
@@ -368,117 +353,5 @@
                 </modular.jdk.args>
             </properties>
         </profile>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <!-- Semantically ordered -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <configuration>
-                            <rules>
-                                <requireReleaseDeps>
-                                    <message>No Snapshots Allowed!</message>
-                                </requireReleaseDeps>
-                            </rules>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <additionalOptions>
-                                <additionalOption>-html5</additionalOption>
-                            </additionalOptions>
-                            <detectLinks>true</detectLinks>
-                            <doclint>none</doclint>
-                            <failOnError>false</failOnError>
-                            <show>public</show>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- Prevent gpg from using pinentry programs -->
-                                    <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
-                                    </gpgArguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>${repo.sonatype.url}</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
-
-    <repositories>
-        <repository>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-            <id>jboss-public-repository</id>
-            <name>JBoss Public Repository Group</name>
-            <url>${maven.repository.url}</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-            <id>jboss-enterprise-maven-repository</id>
-            <name>JBoss Enterprise Maven Repository</name>
-            <url>${maven.redhat.repository.url}</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
 </project>
