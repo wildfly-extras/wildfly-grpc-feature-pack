@@ -88,6 +88,7 @@
         <version.protobuf>4.31.1</version.protobuf>
         <version.wildfly.common>2.0.0</version.wildfly.common>
         <version.wildfly.core>25.0.0.Final</version.wildfly.core>
+        <version.wildfly.tools>1.0.5.Final</version.wildfly.tools>
         <version.wildfly>33.0.0.Final</version.wildfly>
 
         <!-- Plugin versions -->
@@ -150,6 +151,21 @@
                     <groupId>net.revelc.code.formatter</groupId>
                     <artifactId>formatter-maven-plugin</artifactId>
                     <version>${version.formatter.plugin}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.wildfly.tools</groupId>
+                            <artifactId>ide-config</artifactId>
+                            <version>${version.wildfly.tools}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <cachedir>.cache</cachedir>
+                        <configFile>eclipse-code-formatter.xml</configFile>
+                        <configXmlFile>wildfly-xml.properties</configXmlFile>
+                        <lineEnding>LF</lineEnding>
+                        <includeResources>true</includeResources>
+                        <removeTrailingWhitespace>true</removeTrailingWhitespace>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -187,7 +203,10 @@
                     <artifactId>impsort-maven-plugin</artifactId>
                     <version>${version.impsort.plugin}</version>
                     <configuration>
-                        <staticAfter>true</staticAfter>
+                        <cachedir>.cache</cachedir>
+                        <groups>java.,javax.,jakarta.,org.,com.</groups>
+                        <staticGroups>*</staticGroups>
+                        <removeUnused>true</removeUnused>
                     </configuration>
                 </plugin>
                 <plugin>

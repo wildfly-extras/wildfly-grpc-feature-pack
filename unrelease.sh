@@ -15,7 +15,6 @@
 #  limitations under the License.
 #
 
-
 # -------------------------------------------------------
 #
 # Undoes a failed release:
