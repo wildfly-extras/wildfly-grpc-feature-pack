@@ -57,18 +57,14 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) {
         DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
         final CompositeIndex index = deploymentUnit.getAttachment(Attachments.COMPOSITE_ANNOTATION_INDEX);
-        List<String> serviceClasses = index.getAllKnownImplementors(BINDABLE_CLASS)
-                .stream()
-                .map(ci -> ci.name().toString())
-                .collect(Collectors.toList());
+        List<String> serviceClasses = index.getAllKnownImplementors(BINDABLE_CLASS).stream()
+                .map(ci -> ci.name().toString()).collect(Collectors.toList());
         Module module = deploymentUnit.getAttachment(Attachments.MODULE);
         List<Class<? extends BindableService>> leaves = getLeaves(serviceClasses, module.getClassLoader());
         processManagement(deploymentUnit, leaves);
 
-        List<String> interceptorClasses = index.getAllKnownImplementors(SERVER_INTERCEPTOR_CLASS)
-                .stream()
-                .map(ci -> ci.name().toString())
-                .collect(Collectors.toList());
+        List<String> interceptorClasses = index.getAllKnownImplementors(SERVER_INTERCEPTOR_CLASS).stream()
+                .map(ci -> ci.name().toString()).collect(Collectors.toList());
 
         for (Class<? extends BindableService> type : getLeaves(serviceClasses, module.getClassLoader())) {
             registry.addService(deploymentUnit, type, getInterceptors(interceptorClasses, module.getClassLoader()));
@@ -107,7 +103,8 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
         return true;
     }
 
-    private List<Class<? extends ServerInterceptor>> getInterceptorClasses(List<String> classNames, ClassLoader classLoader) {
+    private List<Class<? extends ServerInterceptor>> getInterceptorClasses(List<String> classNames,
+            ClassLoader classLoader) {
         InterceptorQueue classes = new InterceptorQueue();
         try {
             for (String s : classNames) {
@@ -151,7 +148,8 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
         return interceptors;
     }
 
-    private void processManagement(DeploymentUnit deploymentUnit, List<Class<? extends BindableService>> grpcServiceClasses) {
+    private void processManagement(DeploymentUnit deploymentUnit,
+            List<Class<? extends BindableService>> grpcServiceClasses) {
         DeploymentResourceSupport drs = deploymentUnit.getAttachment(Attachments.DEPLOYMENT_RESOURCE_SUPPORT);
 
         for (Class<?> clazz : grpcServiceClasses) {

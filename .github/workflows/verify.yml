@@ -13,34 +13,10 @@ jobs:
     env:
       MVN: ./mvnw --show-version --batch-mode
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v5
-      - name: Set up JDK
-        id: setup-jdk
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-      - name: Install
-        id: install
-        run: $MVN install -Pexamples
-
-  format-check:
-    name: Check Code Formatting
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
       - uses: actions/checkout@v5
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'temurin'
-          cache: 'maven'
-      - name: Format Source
-        run: "mvn -B clean install -DskipTests formatter:format -Pexamples"
-      - name: Check for changes
-        run:  |
-          [ -z "$(git status --porcelain=v1 2>/dev/null)" ] || (echo -e "::error ::Changes have been found\n$(git diff)" && exit 1)
+          distribution: temurin
+          cache: maven
+      - run: $MVN install -Pexamples

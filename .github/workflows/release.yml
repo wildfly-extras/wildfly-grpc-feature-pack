@@ -6,69 +6,53 @@ on:
       - 'v*'
 
 jobs:
-
   deploy:
     name: Deploy Maven Artifacts
     runs-on: ubuntu-latest
     env:
       MVN: ./mvnw --show-version --batch-mode
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v5
-      - name: Set up JDK
-        id: setup-jdk
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: temurin
           cache: maven
-      - name: Install
-        id: install
-        run: $MVN install
-      - name: Set up Maven Settings
-        id: setup-maven-settings
-        uses: actions/setup-java@v4
+      - run: $MVN install
+      - uses: actions/setup-java@v4
         with: # running setup-java again overwrites the settings.xml
           java-version: 17
           distribution: temurin
-          server-id: ossrh
-          server-username: OSSRH_USERNAME
-          server-password: OSSRH_PASSWORD
+          server-id: jboss
+          server-username: NEXUS3_USERNAME
+          server-password: NEXUS3_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
-      - name: Deploy
-        id: deploy
-        run: $MVN deploy -P release -pl '!testsuite,!testsuite/integration,!testsuite/integration/subsystem'
+      - run: $MVN deploy -P jboss-release -pl '!testsuite,!testsuite/integration,!testsuite/integration/subsystem'
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          NEXUS3_USERNAME: ${{ secrets.NEXUS3_USERNAME }}
+          NEXUS3_PASSWORD: ${{ secrets.NEXUS3_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
   release:
     name: Create GitHub Release
-    needs: deploy
     runs-on: ubuntu-latest
+    needs: deploy
     steps:
-      - name: Get Version
-        id: get-version
+      - id: get-version
         uses: battila7/get-version-action@v2.3.0
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v5
-      - name: Read Changelog
-        id: read-changelog
+      - uses: actions/checkout@v5
+      - id: read-changelog
         uses: mindsers/changelog-reader-action@v2
         with:
           path: ./CHANGELOG.md
           version: ${{ steps.get-version.outputs.version-without-v }}
-      - name: Create GitHub Release
-        id: create-gh-release
-        uses: ncipollo/release-action@v1.14.0
+      - uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag: ${{ steps.get-version.outputs.version }}
-          name: WildFly gRPC ${{ steps.get-version.outputs.version-without-v }}.Final
+          tag_name: ${{ steps.get-version.outputs.version }}
+          release_name: WildFly gRPC ${{ steps.get-version.outputs.version-without-v }}
           body: ${{ steps.read-changelog.outputs.changes }}
           draft: false
-          discussionCategory: Announcements
           prerelease: false

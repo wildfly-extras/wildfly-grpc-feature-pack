@@ -47,8 +47,7 @@ public class GrpcExtension extends SubsystemExtension<GrpcSubsystemSchema> {
      * Model for the grpc subsystem.
      */
     enum GrpcSubsystemModel implements SubsystemModel {
-        VERSION_1_0_0(1, 0, 0),
-        ;
+        VERSION_1_0_0(1, 0, 0),;
 
         static final GrpcSubsystemModel CURRENT = VERSION_1_0_0;
 

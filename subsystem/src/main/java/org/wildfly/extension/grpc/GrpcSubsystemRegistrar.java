@@ -43,7 +43,8 @@ class GrpcSubsystemRegistrar implements SubsystemResourceDefinitionRegistrar {
 
         // /deployment=*/subsystem=grpc
         if (managementResourceRegistrationContext.isRuntimeOnlyRegistrationValid()) {
-            ManagementResourceRegistration deployment = parent.registerDeploymentModel(GrpcDeploymentDefinition.INSTANCE);
+            ManagementResourceRegistration deployment = parent
+                    .registerDeploymentModel(GrpcDeploymentDefinition.INSTANCE);
             deployment.registerSubModel(GrpcServiceDefinition.INSTANCE);
         }
 

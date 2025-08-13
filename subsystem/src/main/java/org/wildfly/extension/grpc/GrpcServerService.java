@@ -72,8 +72,7 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
     private volatile MutableHandlerRegistry registry;
     private volatile Server server;
 
-    GrpcServerService(final Consumer<GrpcServerService> serverService,
-            final Supplier<ExecutorService> executorService,
+    GrpcServerService(final Consumer<GrpcServerService> serverService, final Supplier<ExecutorService> executorService,
             final ServerConfiguration configuration) {
         this.serverService = serverService;
         this.executorService = executorService;
@@ -87,8 +86,8 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
         executorService.get().submit(() -> {
             try {
                 registry = new MutableHandlerRegistry();
-                NettyServerBuilder serverBuilder = NettyServerBuilder.forAddress(
-                        new InetSocketAddress(configuration.getHostName(), configuration.getServerPort()));
+                NettyServerBuilder serverBuilder = NettyServerBuilder
+                        .forAddress(new InetSocketAddress(configuration.getHostName(), configuration.getServerPort()));
                 serverBuilder.fallbackHandlerRegistry(registry);
                 serverBuilder.flowControlWindow(configuration.getFlowControlWindow());
                 serverBuilder.handshakeTimeout(configuration.getHandshakeTimeout(), TimeUnit.SECONDS);
@@ -120,8 +119,7 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
 
                 if (configuration.getKeyManager() != null) {
                     final SSLContext sslContext = configuration.getSslContext() == null ? null
-                            : configuration.getSslContext()
-                                    .get();
+                            : configuration.getSslContext().get();
                     serverBuilder.sslContext(createSslContext(sslContext));
                 }
                 server = serverBuilder.build().start();
@@ -159,7 +157,8 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
             try {
                 final Constructor<? extends BindableService> constructor = serviceType.getConstructor();
                 bindableService = constructor.newInstance();
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
+                    | IllegalAccessException e) {
                 throw GrpcLogger.LOGGER.failedToRegister(e, serviceType.getName(), deploymentName);
             }
         } else {
@@ -210,7 +209,8 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
         return GrpcSslContexts.configure(sslContextBuilder).build();
     }
 
-    private static BindableService installInterceptors(ServerServiceDefinition ssd, List<ServerInterceptor> interceptors) {
+    private static BindableService installInterceptors(ServerServiceDefinition ssd,
+            List<ServerInterceptor> interceptors) {
         ServerServiceDefinition.Builder builder = ServerServiceDefinition.builder(ssd.getServiceDescriptor());
         for (ServerMethodDefinition<?, ?> smd : ssd.getMethods()) {
             builder.addMethod(wrapMethod(smd, interceptors));

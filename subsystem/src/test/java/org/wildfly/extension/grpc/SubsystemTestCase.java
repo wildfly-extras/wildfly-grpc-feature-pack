@@ -53,7 +53,8 @@ public class SubsystemTestCase extends AbstractSubsystemBaseTest {
             @Override
             protected void initializeExtraSubystemsAndModel(ExtensionRegistry extensionRegistry, Resource rootResource,
                     ManagementResourceRegistration rootRegistration, RuntimeCapabilityRegistry capabilityRegistry) {
-                super.initializeExtraSubystemsAndModel(extensionRegistry, rootResource, rootRegistration, capabilityRegistry);
+                super.initializeExtraSubystemsAndModel(extensionRegistry, rootResource, rootRegistration,
+                        capabilityRegistry);
                 registerCapabilities(capabilityRegistry, "org.wildfly.weld");
             }
         };

@@ -27,9 +27,8 @@ import javax.annotation.concurrent.NotThreadSafe;
 import io.grpc.ServerInterceptor;
 
 /**
- * Specialized {@link PriorityQueue} that sorts {@link ServerInterceptor}s based on the value of a
- * {@link @Priority} annotation. A {@link ServerInterceptor} with no {@link @Priority} annotation has
- * the lowest priority.
+ * Specialized {@link PriorityQueue} that sorts {@link ServerInterceptor}s based on the value of a {@link @Priority}
+ * annotation. A {@link ServerInterceptor} with no {@link @Priority} annotation has the lowest priority.
  */
 @NotThreadSafe
 public class InterceptorQueue extends PriorityQueue<InterceptorQueue.Element> {
@@ -73,10 +72,9 @@ public class InterceptorQueue extends PriorityQueue<InterceptorQueue.Element> {
     }
 
     /**
-     * Returns the contents in reverse priority order. That is suitable for wrapping them around
-     * a method so that the highest priority {@link ServerInterceptor} executes first.
-     *
-     * {@link GrpcServerService#installInterceptors(String) GrpcServerService.installInterceptors()}
+     * Returns the contents in reverse priority order. That is suitable for wrapping them around a method so that the
+     * highest priority {@link ServerInterceptor} executes first. {@link GrpcServerService#installInterceptors(String)
+     * GrpcServerService.installInterceptors()}
      */
     public List<Class<? extends ServerInterceptor>> toList() {
         List<Class<? extends ServerInterceptor>> list = new ArrayList<Class<? extends ServerInterceptor>>();
