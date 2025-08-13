@@ -6,8 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.1.12] - 2025-08-13
-
 ### Changed
 
 - Release to JBoss Nexus 
@@ -213,8 +211,7 @@ Lots of new features, bug fixes and dependency upgrades went into this release.
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.12...HEAD
-[0.1.12]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.11...v0.1.12
+[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.11...HEAD
 [0.1.11]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.8...v0.1.9
