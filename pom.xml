@@ -17,13 +17,13 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.wildfly.tools</groupId>
-        <artifactId>wildfly-parent</artifactId>
-        <version>1.0.4.Final</version>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>50</version>
     </parent>
 
     <groupId>org.wildfly.extras.grpc</groupId>
@@ -85,12 +85,18 @@
         <version.arquillian.junit>1.9.1.Final</version.arquillian.junit>
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
         <version.grpc>1.73.0</version.grpc>
+        <version.io.netty.netty>4.1.108.Final</version.io.netty.netty>
         <version.jakarta.annotation>2.1.1</version.jakarta.annotation>
+        <version.junit>4.13.2</version.junit>
         <version.kotlin.stdlib>2.0.10</version.kotlin.stdlib>
         <version.okhttp>4.12.0</version.okhttp>
+        <version.org.jboss.arquillian>1.8.0.Final</version.org.jboss.arquillian>
+        <version.org.jboss.logging.jboss-logging-annotations>3.0.1.Final</version.org.jboss.logging.jboss-logging-annotations>
+        <version.org.jboss.logging.jboss-logging>3.6.0.Final</version.org.jboss.logging.jboss-logging>
+        <version.org.wildfly.arquillian>5.0.1.Final</version.org.wildfly.arquillian>
         <version.perfmark>0.27.0</version.perfmark>
+        <version.proto-google-common-protos>2.60.0</version.proto-google-common-protos>
         <version.protobuf>4.31.1</version.protobuf>
-        <version.proto-google-common-protos>2.42.0</version.proto-google-common-protos>
         <version.wildfly.common>2.0.0</version.wildfly.common>
         <version.wildfly.core>25.0.0.Final</version.wildfly.core>
         <version.wildfly>33.0.0.Final</version.wildfly>
@@ -98,16 +104,21 @@
         <!-- Plugin versions -->
         <version.checkstyle.plugin>3.1.1</version.checkstyle.plugin>
         <version.enforcer.plugin>3.0.0-M3</version.enforcer.plugin>
+        <version.formatter.plugin>2.26.0</version.formatter.plugin>
         <version.galleon.plugin>7.1.2.Final</version.galleon.plugin>
-        <version.keepachangelog>2.1.1</version.keepachangelog>
+        <version.impsort.plugin>1.12.0</version.impsort.plugin>
+        <version.jandex.plugin>1.2.3</version.jandex.plugin>
+        <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
         <version.license.plugin>4.5</version.license.plugin>
         <version.nexus.staging.plugin>1.7.0</version.nexus.staging.plugin>
         <version.wildfly.plugin>5.0.0.Final</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
         <maven.repository.protocol>https</maven.repository.protocol>
-        <maven.repository.url>${maven.repository.protocol}://repository.jboss.org/nexus/content/groups/public/</maven.repository.url>
-        <maven.redhat.repository.url>${maven.repository.protocol}://maven.repository.redhat.com/ga/</maven.redhat.repository.url>
+        <maven.repository.url>${maven.repository.protocol}://repository.jboss.org/nexus/content/groups/public/
+        </maven.repository.url>
+        <maven.redhat.repository.url>${maven.repository.protocol}://maven.repository.redhat.com/ga/
+        </maven.redhat.repository.url>
         <repo.scm.connection>git@github.com:wildfly-extras/wildfly-grpc-feature-pack</repo.scm.connection>
         <repo.scm.url>https://github.com/wildfly-extras/wildfly-grpc-feature-pack</repo.scm.url>
         <repo.sonatype.url>https://oss.sonatype.org</repo.sonatype.url>
@@ -138,7 +149,7 @@
     </modules>
 
     <!-- No dependencies! Dependencies are managed in code-parent -->
-    <dependencies />
+    <dependencies/>
 
     <build>
         <!--
@@ -148,6 +159,11 @@
         <pluginManagement>
             <plugins>
                 <!-- Ordered by artifactID -->
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>${version.formatter.plugin}</version>
+                </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
@@ -172,6 +188,7 @@
                                     <exclude>**/*license*.txt</exclude>
                                     <exclude>**/*.c?r</exclude>
                                     <exclude>**/*.cli</exclude>
+                                    <exclude>**/*.keystore</exclude>
                                     <exclude>**/*.pem</exclude>
                                 </excludes>
                             </licenseSet>
@@ -181,6 +198,7 @@
                 <plugin>
                     <groupId>net.revelc.code</groupId>
                     <artifactId>impsort-maven-plugin</artifactId>
+                    <version>${version.impsort.plugin}</version>
                     <configuration>
                         <staticAfter>true</staticAfter>
                     </configuration>
@@ -188,7 +206,7 @@
                 <plugin>
                     <groupId>co.enear.maven.plugins</groupId>
                     <artifactId>keepachangelog-maven-plugin</artifactId>
-                    <version>${version.keepachangelog}</version>
+                    <version>${version.keepachangelog.plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -199,7 +217,7 @@
                         <failsOnError>true</failsOnError>
                         <includeTestSourceDirectory>true</includeTestSourceDirectory>
                         <excludes>**/*$logger.java,**/*$bundle.java</excludes>
-                        <useFile />
+                        <useFile/>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -240,12 +258,6 @@
                             </requireJavaVersion>
                         </rules>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>${version.nexus.staging.plugin}</version>
-                    <extensions>true</extensions>
                 </plugin>
                 <plugin>
                     <groupId>org.wildfly.galleon-plugins</groupId>
@@ -352,7 +364,8 @@
                 <modular.jdk.args>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED
                     --add-exports=jdk.unsupported/sun.reflect=ALL-UNNAMED
                     --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED
-                    --add-modules=java.se</modular.jdk.args>
+                    --add-modules=java.se
+                </modular.jdk.args>
             </properties>
         </profile>
         <profile>
