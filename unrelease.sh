@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Copyright The WildFly Authors
-# SPDX-License-Identifier: Apache-2.0
+#  Copyright The WildFly Authors
+#  SPDX-License-Identifier: Apache-2.0
 #
 
 # -------------------------------------------------------
