@@ -4,14 +4,14 @@
  */
 package org.wildfly.extension.grpc;
 
+import static org.wildfly.extension.grpc.GrpcSubsystemRegistrar.RESOLVER;
+
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.descriptions.ParentResourceDescriptionResolver;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.dmr.ModelType;
-
-import static org.wildfly.extension.grpc.GrpcSubsystemRegistrar.RESOLVER;
 
 class GrpcServiceDefinition extends SimpleResourceDefinition {
 

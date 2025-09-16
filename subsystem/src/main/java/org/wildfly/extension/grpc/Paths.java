@@ -4,9 +4,9 @@
  */
 package org.wildfly.extension.grpc;
 
-import org.jboss.as.controller.PathElement;
-
 import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_NAME;
+
+import org.jboss.as.controller.PathElement;
 
 public interface Paths {
 

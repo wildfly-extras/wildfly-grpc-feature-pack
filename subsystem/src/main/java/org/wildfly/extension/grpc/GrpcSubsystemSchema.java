@@ -4,16 +4,16 @@
  */
 package org.wildfly.extension.grpc;
 
+import static org.jboss.as.controller.PersistentResourceXMLDescription.builder;
+import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_NAME;
+import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_PATH;
+
 import org.jboss.as.controller.PersistentResourceXMLDescription;
 import org.jboss.as.controller.PersistentSubsystemSchema;
 import org.jboss.as.controller.SubsystemSchema;
 import org.jboss.as.controller.xml.VersionedNamespace;
 import org.jboss.as.version.Stability;
 import org.jboss.staxmapper.IntVersion;
-
-import static org.jboss.as.controller.PersistentResourceXMLDescription.builder;
-import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_NAME;
-import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_PATH;
 
 enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchema> {
     VERSION_1_0_PREVIEW(1, 0, Stability.PREVIEW),;

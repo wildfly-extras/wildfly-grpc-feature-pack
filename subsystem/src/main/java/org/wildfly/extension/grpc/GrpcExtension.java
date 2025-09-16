@@ -4,6 +4,8 @@
  */
 package org.wildfly.extension.grpc;
 
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
+
 import org.jboss.as.controller.ModelVersion;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemModel;
@@ -11,8 +13,6 @@ import org.jboss.as.version.Stability;
 import org.wildfly.subsystem.SubsystemConfiguration;
 import org.wildfly.subsystem.SubsystemExtension;
 import org.wildfly.subsystem.SubsystemPersistence;
-
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
 
 public class GrpcExtension extends SubsystemExtension<GrpcSubsystemSchema> {
 
