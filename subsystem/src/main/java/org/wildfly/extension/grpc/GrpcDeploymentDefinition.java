@@ -4,9 +4,9 @@
  */
 package org.wildfly.extension.grpc;
 
-import org.jboss.as.controller.SimpleResourceDefinition;
-
 import static org.wildfly.extension.grpc.GrpcSubsystemRegistrar.RESOLVER;
+
+import org.jboss.as.controller.SimpleResourceDefinition;
 
 public class GrpcDeploymentDefinition extends SimpleResourceDefinition {
 

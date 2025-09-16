@@ -4,14 +4,14 @@
  */
 package org.wildfly.extension.grpc;
 
+import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_NAME;
+
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.descriptions.ParentResourceDescriptionResolver;
 import org.jboss.as.controller.descriptions.SubsystemResourceDescriptionResolver;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.wildfly.subsystem.resource.ManagementResourceRegistrationContext;
 import org.wildfly.subsystem.resource.SubsystemResourceDefinitionRegistrar;
-
-import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_NAME;
 
 /**
  * Resource registrar for the root resource of the GRPC subsystem.

@@ -4,6 +4,8 @@
  */
 package org.wildfly.extension.grpc;
 
+import static org.wildfly.extension.grpc._private.GrpcLogger.LOGGER;
+
 import java.util.function.Supplier;
 
 import javax.net.ssl.KeyManager;
@@ -11,8 +13,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.jboss.as.network.SocketBinding;
-
-import static org.wildfly.extension.grpc._private.GrpcLogger.LOGGER;
 
 /**
  * A simple configuration for the {@link GrpcServerService}.

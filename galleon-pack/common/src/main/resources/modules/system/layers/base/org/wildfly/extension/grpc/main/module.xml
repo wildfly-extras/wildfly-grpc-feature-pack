@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <!--
 
-     Copyright The WildFly Authors
-     SPDX-License-Identifier: Apache-2.0
+    Copyright The WildFly Authors
+    SPDX-License-Identifier: Apache-2.0
 
 -->
 <module xmlns="urn:jboss:module:1.9" name="org.wildfly.extension.grpc">
@@ -29,10 +29,10 @@
         <module name="io.netty.netty-codec" optional="true" />
         <module name="io.netty.netty-handler" optional="true" />
         <!--
-            Additional module dependencies.
-            If they contain any classes that should be exposed to the user's code,
-            (e.g. in a deployment) make sure you add them in the subsystem's
-            DependencyProcessor too
+                Additional module dependencies.
+                If they contain any classes that should be exposed to the user's code,
+                (e.g. in a deployment) make sure you add them in the subsystem's
+                DependencyProcessor too
         -->
         <module name="org.wildfly.grpc-dependency" />
     </dependencies>

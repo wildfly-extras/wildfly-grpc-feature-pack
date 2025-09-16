@@ -4,6 +4,8 @@
  */
 package org.wildfly.extension.grpc;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
@@ -43,8 +45,6 @@ import io.grpc.util.MutableHandlerRegistry;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * A gRPC Server service.
