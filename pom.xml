@@ -60,7 +60,7 @@
 
     <properties>
         <!-- Dependency versions -->
-        <version.arquillian.junit>1.9.1.Final</version.arquillian.junit>
+        <version.arquillian.junit>1.10.0.Final</version.arquillian.junit>
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
         <version.grpc>1.75.0</version.grpc>
         <version.io.netty.netty>4.1.108.Final</version.io.netty.netty>
@@ -73,10 +73,10 @@
         <version.org.jboss.logging.jboss-logging>3.6.0.Final</version.org.jboss.logging.jboss-logging>
         <version.org.wildfly.arquillian>5.0.1.Final</version.org.wildfly.arquillian>
         <version.perfmark>0.27.0</version.perfmark>
-        <version.proto-google-common-protos>2.60.0</version.proto-google-common-protos>
-        <version.protobuf>4.31.1</version.protobuf>
+        <version.proto-google-common-protos>2.61.1</version.proto-google-common-protos>
+        <version.protobuf>4.32.1</version.protobuf>
         <version.wildfly.common>2.0.0</version.wildfly.common>
-        <version.wildfly.core>25.0.0.Final</version.wildfly.core>
+        <version.wildfly.core>29.0.1.Final</version.wildfly.core>
         <version.wildfly.tools>1.0.5.Final</version.wildfly.tools>
         <version.wildfly>33.0.0.Final</version.wildfly>
 
@@ -88,7 +88,7 @@
         <version.impsort.plugin>1.12.0</version.impsort.plugin>
         <version.jandex.plugin>1.2.3</version.jandex.plugin>
         <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
-        <version.license.plugin>4.5</version.license.plugin>
+        <version.license.plugin>5.0.0</version.license.plugin>
         <version.wildfly.plugin>5.1.4.Final</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
