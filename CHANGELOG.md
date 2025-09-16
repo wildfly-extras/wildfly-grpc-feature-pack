@@ -8,9 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.1.13] - 2025-09-16
 
+### Added
+
+- Allow support for JSON serialization in the messages (#333, thanks @ehsavoie)
+
 ### Upgrades
 
 - Bump gRPC to 1.75.0
+- Bump Protobuf to 4.32.1
 - Bump WildFly Core to 29.0.1.Final
 - Bump WildFly Maven Plugin to 5.1.4.Final
 
