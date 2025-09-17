@@ -24,7 +24,7 @@ Example:
 
 ## Prerequisites
 
-- `<release-version>` and `<next-version>` _must_ be semantic versions following `major.minor.micro`. 
+- `<release-version>` and `<next-version>` _must_ be semantic versions following `major.minor.micro` (no `.Final` please). 
 - `<next-version>` _must_ be greater than `<release-version>`
 - there _must_ be no uncommitted changes
 - there _must_ be no tag `v<next-version>`
@@ -37,7 +37,7 @@ Example:
 3. Create a tag for `v<release-version>`
 4. Commit and push to origin and upstream (which will trigger the [release workflow](.github/workflows/release.yml) at GitHub):
    1. Deploy to JBoss Nexus `wildfly-extras-staging`
-   2. Create a GitHub release with the relevant entries from the changelog
+   2. Create a [GitHub release](https://github.com/wildfly-extras/wildfly-grpc-feature-pack/releases) with the relevant entries from the changelog
 5. Bump the version to `<next-version>-SNAPSHOT`
 6. Commit and push to origin and upstream
 
