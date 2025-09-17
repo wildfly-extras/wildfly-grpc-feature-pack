@@ -58,7 +58,7 @@
         <dependency>
 			<groupId>org.wildfly.arquillian</groupId>
 			<artifactId>wildfly-arquillian-common</artifactId>
-			<version>5.1.0.Beta4</version>
+			<version>5.1.0.Final</version>
 			<scope>test</scope>
 		</dependency>
         <dependency>
