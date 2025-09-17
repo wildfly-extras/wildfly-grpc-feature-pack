@@ -75,7 +75,7 @@
         <version.perfmark>0.27.0</version.perfmark>
         <version.proto-google-common-protos>2.61.1</version.proto-google-common-protos>
         <version.protobuf>4.32.1</version.protobuf>
-        <version.wildfly.common>2.0.0</version.wildfly.common>
+        <version.wildfly.common>2.0.1</version.wildfly.common>
         <version.wildfly.core>29.0.1.Final</version.wildfly.core>
         <version.wildfly.tools>1.0.5.Final</version.wildfly.tools>
         <version.wildfly>33.0.0.Final</version.wildfly>
