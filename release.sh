@@ -165,4 +165,10 @@ for remote in "${GIT_REMOTES[@]}"; do
   git push --quiet "${remote}" main &> /dev/null
   msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
 done
-msg "Done. Watch the release workflow at ${WORKFLOW_URL}"
+msg "Done. Watch the release workflow at ${CYAN}${WORKFLOW_URL}${NOFORMAT}"
+msg ""
+msg "Check the validation after ${YELLOW}$(date -d "now + 10 minutes" +"%H:%M:%S")${NOFORMAT} on ${CYAN}https://repository.jboss.org/nexus${NOFORMAT}."
+msg "Once validation is successful, execute the following command:"
+msg ""
+msg "git checkout ${TAG}"
+msg "mvn nxrm3:staging-move"
