@@ -32,17 +32,12 @@
         </license>
     </licenses>
 
-    <organization>
-        <name>Red Hat</name>
-        <url>https://developers.redhat.com/</url>
-    </organization>
     <developers>
         <developer>
-            <name>Harald Pehl</name>
-            <id>hpehl</id>
-            <email>hpehl@redhat.com</email>
-            <organization>Red Hat</organization>
-            <timezone>+1</timezone>
+            <id>wildfly.org</id>
+            <name>WildFly Community</name>
+            <organization>wildfly.org</organization>
+            <organizationUrl>https://wildfly.org</organizationUrl>
         </developer>
     </developers>
 
