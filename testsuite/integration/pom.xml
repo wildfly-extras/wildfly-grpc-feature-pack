@@ -12,7 +12,7 @@
     <parent>
         <artifactId>wildfly-grpc-testsuite</artifactId>
         <groupId>org.wildfly.extras.grpc</groupId>
-        <version>0.1.13-SNAPSHOT</version>
+        <version>0.1.13.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
