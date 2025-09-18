@@ -61,7 +61,7 @@
         <version.io.netty.netty>4.1.108.Final</version.io.netty.netty>
         <version.jakarta.annotation>2.1.1</version.jakarta.annotation>
         <version.junit>4.13.2</version.junit>
-        <version.kotlin.stdlib>2.0.10</version.kotlin.stdlib>
+        <version.kotlin.stdlib>2.2.20</version.kotlin.stdlib>
         <version.okhttp>4.12.0</version.okhttp>
         <version.org.jboss.arquillian>1.8.0.Final</version.org.jboss.arquillian>
         <version.org.jboss.logging.jboss-logging-annotations>3.0.4.Final</version.org.jboss.logging.jboss-logging-annotations>
