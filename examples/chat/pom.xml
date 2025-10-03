@@ -21,7 +21,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <version.javafx>11.0.2</version.javafx>
+        <version.javafx>26-ea+9</version.javafx>
         <version.javafx.plugin>0.0.8</version.javafx.plugin>
     </properties>
 
