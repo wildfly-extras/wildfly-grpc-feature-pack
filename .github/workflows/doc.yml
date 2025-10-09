@@ -1,0 +1,23 @@
+name: Publish Feature Pack Documentation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  documentation:
+    name: Publish Feature Pack Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: maven
+      - run: $MVN package
+      - uses: JamesIves/github-pages-deploy-action@v4.7.3
+        with:
+          branch: gh-pages
+          folder: galleon-pack/feature-pack/target/doc/
+          target-folder: doc
+          clean: true
