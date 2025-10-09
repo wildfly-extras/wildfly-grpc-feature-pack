@@ -10,7 +10,7 @@
         <prop name="org.wildfly.rule.add-on" value="rpc,grpc" />
         <prop name="org.wildfly.rule.add-on-depends-on" value="none" />
         <prop name="org.wildfly.rule.add-on-description" value="Support for gRPC." />
-        <prop name="org.wildfly.category" value="RPC (Remote Procdeure Call)"/>
+        <prop name="org.wildfly.category" value="RPC (Remote Procedure Call)"/>
         <prop name="org.wildfly.description" value="This layer can be used to deploy gRPC services in the application server."/>
     </props>
     <dependencies>
