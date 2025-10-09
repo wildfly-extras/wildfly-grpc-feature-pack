@@ -17,7 +17,8 @@
     </parent>
 
     <artifactId>wildfly-grpc-feature-pack</artifactId>
-    <name>WildFly gRPC :: Feature Pack</name>
+    <name>gRPC Feature Pack for WildFly</name>
+    <description>This feature pack provides gRPC capababilities for the WildFly Application Server</description>
     <packaging>pom</packaging>
 
     <properties>
