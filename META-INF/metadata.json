@@ -1,0 +1,68 @@
+{
+  "groupId" : "org.wildfly.extras.grpc",
+  "artifactId" : "wildfly-grpc-feature-pack",
+  "version" : "0.1.14-SNAPSHOT",
+  "name" : "gRPC Feature Pack for WildFly",
+  "description" : "This feature pack provides gRPC capababilities for the WildFly Application Server",
+  "licenses" : [ "Apache License, Version 2.0" ],
+  "url" : "https://github.com/wildfly-extras/wildfly-grpc-feature-pack",
+  "scm-url" : "https://github.com/wildfly-extras/wildfly-grpc-feature-pack",
+  "layers" : [ {
+    "name" : "grpc",
+    "stability" : "preview",
+    "dependencies" : [ {
+      "name" : "cdi",
+      "optional" : false
+    } ],
+    "managementModel" : {
+      "socket-binding-group" : {
+        "standard-sockets" : {
+          "_address" : "/socket-binding-group=*",
+          "socket-binding" : {
+            "grpc" : {
+              "_address" : "/socket-binding-group=*/socket-binding=*",
+              "attributes" : [ {
+                "name" : "port",
+                "value" : "${jboss.grpc.port:9555}",
+                "_address" : "/socket-binding-group=*/socket-binding=*@@@port"
+              } ]
+            }
+          }
+        }
+      },
+      "subsystem" : {
+        "grpc" : {
+          "_address" : "/subsystem=grpc",
+          "attributes" : [ {
+            "name" : "socket-binding",
+            "value" : "grpc",
+            "_address" : "/subsystem=grpc@@@socket-binding"
+          } ]
+        }
+      }
+    },
+    "properties" : [ {
+      "name" : "org.wildfly.rule.add-on",
+      "value" : "rpc,grpc"
+    }, {
+      "name" : "org.wildfly.rule.add-on-depends-on",
+      "value" : "none"
+    }, {
+      "name" : "org.wildfly.category",
+      "value" : "RPC (Remote Procedure Call)"
+    }, {
+      "name" : "org.wildfly.description",
+      "value" : "This layer can be used to deploy gRPC services in the application server."
+    }, {
+      "name" : "org.wildfly.rule.add-on-description",
+      "value" : "Support for gRPC."
+    } ],
+    "configurations" : [ {
+      "_address" : "/socket-binding-group=*/socket-binding=*@@@port",
+      "attribute" : "port",
+      "system-properties" : [ "jboss.grpc.port" ],
+      "environment-variables" : [ ]
+    } ],
+    "packages" : [ "org.wildfly.extension.grpc" ]
+  } ]
+}
