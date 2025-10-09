@@ -22,4 +22,4 @@ jobs:
           branch: gh-pages
           folder: galleon-pack/feature-pack/target/doc/
           target-folder: doc
-          clean: true
+          clean: false
