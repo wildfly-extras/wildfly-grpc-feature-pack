@@ -75,11 +75,10 @@ jobs:
         with:
           branch: gh-pages
           folder: galleon-pack/feature-pack/target/doc/
-          target-folder: doc
           clean: false
       - uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
           branch: gh-pages
           folder: galleon-pack/feature-pack/target/doc/
-          target-folder: doc/${{ steps.get-version.outputs.version-without-v }}
+          target-folder: ${{ steps.get-version.outputs.version-without-v }}
           clean: false

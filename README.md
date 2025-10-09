@@ -160,8 +160,8 @@ To see the `chat` example in action, you should start multiple chat clients.
 This feature pack uses the [WildFly Galleon Plugins](https://github.com/wildfly/galleon-plugins) to publish its 
 feature pack documentation. The documentation is available using the following links:
 
-- https://wildfly-extras.github.io/wildfly-grpc/doc/ - Contains the latest documentation
-- https://wildfly-extras.github.io/wildfly-grpc/doc/<sem-version> - Contains the documentation for a specific version
+- https://wildfly-extras.github.io/wildfly-grpc/ - Contains the latest documentation
+- https://wildfly-extras.github.io/wildfly-grpc/<sem-version> - Contains the documentation for a specific version
 
 # Licenses
 
