@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Add workflow to publish the feature pack documentation
+
+### Upgrades
+
+- Bump Kotlin to 2.2.20
+- Bump Arquillian to 5.1.0.Final
+- Bump gRPC to 2.62.0
+
 ## [0.1.13] - 2025-09-17
 
 ### Added
@@ -23,7 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- Release to JBoss Nexus 
+- Release to JBoss Nexus
 
 ### Upgrades
 
@@ -69,7 +79,7 @@ Intermediate release - don’t use
 ### Added
 
 - Adaptation of feature pack so it can be pulled into WildFly Preview
-- Move the stability level of the extension and schema to Preview 
+- Move the stability level of the extension and schema to Preview
 - Add support for socket bindings
 - All attributes should have defaults if these are implied from the underlying API defaults.
 
@@ -105,7 +115,7 @@ Intermediate release - don’t use
 
 ### Added
 
-- Add a maven profile `quick-build` that skips (IT) test, formatting, license check, checkstyle and enforcer. It runs the goals `clean install` by default and can be activated by specifying the system property `quickly`: `mvn -Dquickly` 
+- Add a maven profile `quick-build` that skips (IT) test, formatting, license check, checkstyle and enforcer. It runs the goals `clean install` by default and can be activated by specifying the system property `quickly`: `mvn -Dquickly`
 
 ### Upgrades
 
@@ -119,8 +129,8 @@ Intermediate release - don’t use
 
 ## [0.1.0] - 2023-04-28
 
-This is our first feature complete release of the WildFly gRPC feature pack 🍾🎉🍻. 
-Lots of new features, bug fixes and dependency upgrades went into this release. 
+This is our first feature complete release of the WildFly gRPC feature pack 🍾🎉🍻.
+Lots of new features, bug fixes and dependency upgrades went into this release.
 
 ### Added
 
