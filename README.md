@@ -155,6 +155,14 @@ The `chat` client is a JavaFX application. To build the client and connect to th
 
 To see the `chat` example in action, you should start multiple chat clients. 
 
+# Feature Pack Documentation
+
+This feature pack uses the [WildFly Galleon Plugins](https://github.com/wildfly/galleon-plugins) to publish its 
+feature pack documentation. The documentation is available using the following links:
+
+- https://wildfly-extras.github.io/wildfly-grpc/ - Contains the latest documentation
+- https://wildfly-extras.github.io/wildfly-grpc/<sem-version> - Contains the documentation for a specific version
+
 # Licenses
 
 This project uses the following licenses:
