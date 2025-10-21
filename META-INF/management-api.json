@@ -699,7 +699,7 @@
             "description" : "A list of deployments available for use on the server."
         }
     },
-    "description" : "This feature pack provides gRPC capababilities for the WildFly Application Server",
+    "description" : "This feature pack provides gRPC capabilities for the WildFly Application Server",
     "possible-capabilities" : [
         {
             "name" : "org.wildfly.grpc.server",
