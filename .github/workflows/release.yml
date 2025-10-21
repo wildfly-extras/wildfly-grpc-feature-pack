@@ -60,6 +60,8 @@ jobs:
   documentation:
     name: Publish Feature Pack Documentation
     runs-on: ubuntu-latest
+    env:
+      MVN: ./mvnw --show-version --batch-mode
     needs: deploy
     steps:
       - id: get-version
