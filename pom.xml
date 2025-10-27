@@ -73,7 +73,7 @@
         <version.wildfly.common>2.0.1</version.wildfly.common>
         <version.wildfly.core>30.0.0.Final</version.wildfly.core>
         <version.wildfly.tools>1.0.5.Final</version.wildfly.tools>
-        <version.wildfly>33.0.0.Final</version.wildfly>
+        <version.wildfly>38.0.0.Final</version.wildfly>
 
         <!-- Plugin versions -->
         <version.checkstyle.plugin>3.1.1</version.checkstyle.plugin>
