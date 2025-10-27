@@ -84,7 +84,7 @@
         <version.jandex.plugin>1.2.3</version.jandex.plugin>
         <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
         <version.license.plugin>5.0.0</version.license.plugin>
-        <version.wildfly.plugin>5.1.4.Final</version.wildfly.plugin>
+        <version.wildfly.plugin>5.1.5.Final</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
         <maven.repository.protocol>https</maven.repository.protocol>
