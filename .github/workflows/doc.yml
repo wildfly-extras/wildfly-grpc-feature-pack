@@ -24,10 +24,10 @@ jobs:
           fi
       - name: Checkout default branch
         if: ${{ inputs.version == '' }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Checkout tag v<version>
         if: ${{ inputs.version != '' }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: v${{ inputs.version }}
       - uses: actions/setup-java@v5
