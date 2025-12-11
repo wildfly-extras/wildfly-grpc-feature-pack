@@ -68,7 +68,7 @@
         <version.org.jboss.logging.jboss-logging>3.6.0.Final</version.org.jboss.logging.jboss-logging>
         <version.org.wildfly.arquillian>5.1.0.Final</version.org.wildfly.arquillian>
         <version.perfmark>0.27.0</version.perfmark>
-        <version.proto-google-common-protos>2.63.1</version.proto-google-common-protos>
+        <version.proto-google-common-protos>2.63.2</version.proto-google-common-protos>
         <version.protobuf>4.33.2</version.protobuf>
         <version.wildfly.common>2.0.1</version.wildfly.common>
         <version.wildfly.core>30.0.0.Final</version.wildfly.core>
