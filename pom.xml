@@ -57,7 +57,7 @@
         <!-- Dependency versions -->
         <version.arquillian.junit>1.10.0.Final</version.arquillian.junit>
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
-        <version.grpc>1.77.0</version.grpc>
+        <version.grpc>1.78.0</version.grpc>
         <version.io.netty.netty>4.1.108.Final</version.io.netty.netty>
         <version.jakarta.annotation>2.1.1</version.jakarta.annotation>
         <version.junit>4.13.2</version.junit>
