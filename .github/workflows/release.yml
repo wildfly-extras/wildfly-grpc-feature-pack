@@ -73,12 +73,12 @@ jobs:
           distribution: temurin
           cache: maven
       - run: $MVN package
-      - uses: JamesIves/github-pages-deploy-action@v4.7.6
+      - uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
           branch: gh-pages
           folder: galleon-pack/feature-pack/target/doc/
           clean: false
-      - uses: JamesIves/github-pages-deploy-action@v4.7.6
+      - uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
           branch: gh-pages
           folder: galleon-pack/feature-pack/target/doc/
