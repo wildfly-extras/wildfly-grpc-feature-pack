@@ -99,6 +99,7 @@ parse_params "$@"
 setup_colors
 
 GIT_REMOTES=("origin" "upstream")
+FINAL_VERSION="${RELEASE_VERSION}.Final"
 SNAPSHOT_VERSION="${RELEASE_VERSION}-SNAPSHOT"
 TAG="v${RELEASE_VERSION}"
 
@@ -138,3 +139,6 @@ for remote in "${GIT_REMOTES[@]}"; do
   msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
 done
 msg "Done. Please update/undo the changes to the changelog!"
+msg ""
+msg "Remove the staging tag using"
+msg "mvn nxrm3:staging-delete -Dnexus.staging.tag=wildfly-grpc-${FINAL_VERSION}"
