@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Upgrades
+
+- Bump gRPC to 1.78.0
+- Bump Kotlin to 2.3.0
+- Bump OK HTTP to 5.3.2
+- Bump Protobuf to 4.33.3
+- Bump WildFly to 38.0.1.Final
+- Bump WildFly Core to 30.0.0.Final
+
 ## [0.1.14] - 2025-10-21
 
 ### Added
