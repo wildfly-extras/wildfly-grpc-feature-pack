@@ -6,8 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.1.15] - 2026-01-12
-
 ### Upgrades
 
 - Bump gRPC to 1.78.0
@@ -249,8 +247,7 @@ Lots of new features, bug fixes and dependency upgrades went into this release.
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.15...HEAD
-[0.1.15]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.14...v0.1.15
+[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.14...HEAD
 [0.1.14]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.11...v0.1.12
