@@ -71,7 +71,7 @@
         <version.proto-google-common-protos>2.64.1</version.proto-google-common-protos>
         <version.protobuf>4.33.4</version.protobuf>
         <version.wildfly.common>2.0.1</version.wildfly.common>
-        <version.wildfly.core>31.0.0.Final</version.wildfly.core>
+        <version.wildfly.core>31.0.1.Final</version.wildfly.core>
         <version.wildfly.tools>1.0.5.Final</version.wildfly.tools>
         <version.wildfly>38.0.1.Final</version.wildfly>
 
