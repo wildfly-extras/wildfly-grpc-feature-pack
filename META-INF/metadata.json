@@ -1,7 +1,7 @@
 {
   "groupId" : "org.wildfly.extras.grpc",
   "artifactId" : "wildfly-grpc-feature-pack",
-  "version" : "0.1.15.Final",
+  "version" : "0.1.16.Final",
   "name" : "gRPC Feature Pack for WildFly",
   "description" : "This feature pack provides gRPC capabilities for the WildFly Application Server",
   "licenses" : [ "Apache License, Version 2.0" ],
