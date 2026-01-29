@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Upgrades
+
+- Bump Galleon plugins to 8.1.0.Final
+- Bump JBoss Logging to 3.6.2.Final
+- Bump Protobuf to 4.33.4
+- Bump WildFly to 39.0.0.Final
+- Bump WildFly Core to 31.0.1.Final
+
 ## [0.1.15] - 2026-01-13
 
 ### Upgrades
