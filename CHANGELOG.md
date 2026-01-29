@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-01-29
+
 ### Upgrades
 
 - Bump Galleon plugins to 8.1.0.Final
@@ -257,7 +259,8 @@ Lots of new features, bug fixes and dependency upgrades went into this release.
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.15...HEAD
+[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.16...HEAD
+[0.1.16]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.12...v0.1.13

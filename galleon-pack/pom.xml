@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.wildfly.extras.grpc</groupId>
         <artifactId>wildfly-grpc-code-parent</artifactId>
-        <version>0.1.16-SNAPSHOT</version>
+        <version>0.1.16.Final</version>
         <relativePath>../code-parent/pom.xml</relativePath>
     </parent>
 
