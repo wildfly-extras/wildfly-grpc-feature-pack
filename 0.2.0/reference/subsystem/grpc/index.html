@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Management API  Reference for subsystem=grpc</title>
+  <link rel="stylesheet" href="../../../styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+  <script src="../../../scripts.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header class="card-header">
+<div>
+  <nav aria-label="Breadcrumb" class="breadcrumb">
+    <ol>
+      <li>
+        <a href="../../index.html">root</a>
+      </li>
+      <li>subsystem=grpc</li>
+    </ol>
+  </nav>
+</div>    <h1>Management API Reference for subsystem=grpc</h1>
+    <p>The gRPC subsystem</p>
+
+  </header>
+<h2>Provided Capabilities (1)</h2>
+
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Dynamic</th>
+    <th>Other provider points</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td><a href="https://github.com/wildfly/wildfly-capabilities/tree/main/org/wildfly/grpc/server/capability.adoc">org.wildfly.grpc.server</a></td>
+    <td>false</td>
+    <td>
+      <p>none</p>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<h2>Attributes (22)</h2>
+<ul class="attributes">
+  <li>
+    <span class="toggle-link">
+      <a id="flow-control-window" href="#flow-control-window" class="">
+         flow-control-window</a> - gRPC flow control window parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>INT</td>
+        </tr>
+        <tr>
+          <td>Default Value</td>
+          <td>1048576</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "INT"
+    },
+    "description" : "gRPC flow control window parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "default" : 1048576,
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="handshake-timeout" href="#handshake-timeout" class="">
+         handshake-timeout</a> - gRPC handshake timeout parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Default Value</td>
+          <td>120</td>
+        </tr>
+        <tr>
+          <td>Unit</td>
+          <td>SECONDS</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC handshake timeout parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "default" : 120,
+    "unit" : "SECONDS",
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="initial-flow-control-window" href="#initial-flow-control-window" class="">
+         initial-flow-control-window</a> - gRPC initial flow control window parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>INT</td>
+        </tr>
+        <tr>
+          <td>Default Value</td>
+          <td>1048576</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "INT"
+    },
+    "description" : "gRPC initial flow control window parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "default" : 1048576,
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="keep-alive-time" href="#keep-alive-time" class="">
+         keep-alive-time</a> - gRPC keep alive time parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Unit</td>
+          <td>SECONDS</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC keep alive time parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "unit" : "SECONDS",
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="keep-alive-timeout" href="#keep-alive-timeout" class="">
+         keep-alive-timeout</a> - gRPC keep alive timeout parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Unit</td>
+          <td>SECONDS</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC keep alive timeout parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "unit" : "SECONDS",
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="key-manager-name" href="#key-manager-name" class="">
+         key-manager-name</a> - gRPC name of key manager parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>STRING</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "STRING"
+    },
+    "description" : "gRPC name of key manager parameter",
+    "expressions-allowed" : false,
+    "required" : false,
+    "nillable" : true,
+    "capability-reference" : "org.wildfly.security.key-manager",
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services"
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="max-concurrent-calls-per-connection" href="#max-concurrent-calls-per-connection" class="">
+         max-concurrent-calls-per-connection</a> - gRPC max concurrent calls per connection parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>INT</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "INT"
+    },
+    "description" : "gRPC max concurrent calls per connection parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="max-connection-age" href="#max-connection-age" class="">
+         max-connection-age</a> - gRPC max connection age parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Unit</td>
+          <td>SECONDS</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC max connection age parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "unit" : "SECONDS",
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="max-connection-age-grace" href="#max-connection-age-grace" class="">
+         max-connection-age-grace</a> - gRPC max connection age grace parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Unit</td>
+          <td>SECONDS</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC max connection age grace parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "unit" : "SECONDS",
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="max-connection-idle" href="#max-connection-idle" class="">
+         max-connection-idle</a> - gRPC max connection idle parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Unit</td>
+          <td>SECONDS</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC max connection idle parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "unit" : "SECONDS",
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="max-inbound-message-size" href="#max-inbound-message-size" class="">
+         max-inbound-message-size</a> - gRPC max inbound message size parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>INT</td>
+        </tr>
+        <tr>
+          <td>Default Value</td>
+          <td>4194304</td>
+        </tr>
+        <tr>
+          <td>Unit</td>
+          <td>BYTES</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "INT"
+    },
+    "description" : "gRPC max inbound message size parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "default" : 4194304,
+    "unit" : "BYTES",
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="max-inbound-metadata-size" href="#max-inbound-metadata-size" class="">
+         max-inbound-metadata-size</a> - gRPC max inbound metadata size parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>INT</td>
+        </tr>
+        <tr>
+          <td>Default Value</td>
+          <td>8192</td>
+        </tr>
+        <tr>
+          <td>Unit</td>
+          <td>BYTES</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "INT"
+    },
+    "description" : "gRPC max inbound metadata size parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "default" : 8192,
+    "unit" : "BYTES",
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="permit-keep-alive-time" href="#permit-keep-alive-time" class="">
+         permit-keep-alive-time</a> - gRPC permit keep alive time parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Default Value</td>
+          <td>250</td>
+        </tr>
+        <tr>
+          <td>Unit</td>
+          <td>SECONDS</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC permit keep alive time parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "default" : 250,
+    "unit" : "SECONDS",
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="permit-keep-alive-without-calls" href="#permit-keep-alive-without-calls" class="">
+         permit-keep-alive-without-calls</a> - gRPC permit keep alive without calls parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>BOOLEAN</td>
+        </tr>
+        <tr>
+          <td>Default Value</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "BOOLEAN"
+    },
+    "description" : "gRPC permit keep alive without calls parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "default" : false,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="protocol-provider" href="#protocol-provider" class="">
+         protocol-provider</a> - gRPC SSL/TLS protocol provider
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>STRING</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "STRING"
+    },
+    "description" : "gRPC SSL/TLS protocol provider",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="session-cache-size" href="#session-cache-size" class="">
+         session-cache-size</a> - gRPC size of the cache used for storing SSL session objects
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>9223372036854775807</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC size of the cache used for storing SSL session objects",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "min" : 0,
+    "max" : 9223372036854775807,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="session-timeout" href="#session-timeout" class="">
+         session-timeout</a> - gRPC timeout for the cached SSL session objects
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>9223372036854775807</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC timeout for the cached SSL session objects",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "min" : 0,
+    "max" : 9223372036854775807,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="shutdown-timeout" href="#shutdown-timeout" class="">
+         shutdown-timeout</a> - gRPC server shutdown timeout parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>LONG</td>
+        </tr>
+        <tr>
+          <td>Default Value</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td>2147483647</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "LONG"
+    },
+    "description" : "gRPC server shutdown timeout parameter",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "default" : 3,
+    "min" : 0,
+    "max" : 2147483647,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="socket-binding" href="#socket-binding" class="">
+         socket-binding</a> - The socket binding for the gRPC server to use
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>STRING</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "STRING"
+    },
+    "description" : "The socket binding for the gRPC server to use",
+    "expressions-allowed" : false,
+    "required" : true,
+    "nillable" : false,
+    "capability-reference" : "org.wildfly.network.socket-binding",
+    "min-length" : 1,
+    "max-length" : 2147483647,
+    "stability" : "default",
+    "access-constraints" : {"sensitive" : {"socket-binding-ref" : {"type" : "core"}}},
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services"
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="ssl-context-name" href="#ssl-context-name" class="">
+         ssl-context-name</a> - gRP name of SSLContext
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>STRING</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "STRING"
+    },
+    "description" : "gRP name of SSLContext",
+    "expressions-allowed" : false,
+    "required" : false,
+    "nillable" : true,
+    "capability-reference" : "org.wildfly.security.ssl-context",
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services"
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="start-tls" href="#start-tls" class="">
+         start-tls</a> - gRPC whether first write request shouldn't be encrypted
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>BOOLEAN</td>
+        </tr>
+        <tr>
+          <td>Default Value</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Does the attribute allow expression?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "BOOLEAN"
+    },
+    "description" : "gRPC whether first write request shouldn't be encrypted",
+    "expressions-allowed" : true,
+    "required" : false,
+    "nillable" : true,
+    "default" : false,
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services",
+    "capability-reference" : null
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="trust-manager-name" href="#trust-manager-name" class="">
+         trust-manager-name</a> - gRPC name of trust manager parameter
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>STRING</td>
+        </tr>
+        <tr>
+          <td>Is the attribute nillable?</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>Where is the attribute stored?</td>
+          <td>configuration</td>
+        </tr>
+        <tr>
+          <td>Access Type</td>
+          <td>read-write</td>
+        </tr>
+        <tr>
+          <td>Is restarted required?</td>
+          <td>all-services</td>
+        </tr>
+        <tr>
+          <td>Stability Level</td>
+          <td>default</td>
+        </tr>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+                            <pre><code class="language-json">
+{
+    "type" : {
+        "TYPE_MODEL_VALUE" : "STRING"
+    },
+    "description" : "gRPC name of trust manager parameter",
+    "expressions-allowed" : false,
+    "required" : false,
+    "nillable" : true,
+    "capability-reference" : "org.wildfly.security.trust-manager",
+    "stability" : "default",
+    "access-type" : "read-write",
+    "storage" : "configuration",
+    "restart-required" : "all-services"
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+</ul>
+<h2>Operations (2)</h2>
+<ul class="operations">
+  <li>
+    <span class="toggle-link">
+      <a id="add" href="#add" class="">
+      <abbr title="Preview feature">&#x1F17F;</abbr>&nbsp;
+      add</a> - Adds the gRPC subsystem
+    </span>
+    <div class="collapsible">
+
+
+      <table>
+        <thead>
+        <tr>
+          <th>Request Parameter</th>
+          <th>Type</th>
+          <th>Required</th>
+          <th>Expressions Allowed</th>
+          <th>Default value</th>
+          <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>flow-control-window</td>
+          <td>INT</td>
+          <td>false</td>
+          <td>true</td>
+          <td>1048576</td>
+          <td>gRPC flow control window parameter</td>
+        </tr>
+        <tr>
+          <td>handshake-timeout</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td>120</td>
+          <td>gRPC handshake timeout parameter</td>
+        </tr>
+        <tr>
+          <td>initial-flow-control-window</td>
+          <td>INT</td>
+          <td>false</td>
+          <td>true</td>
+          <td>1048576</td>
+          <td>gRPC initial flow control window parameter</td>
+        </tr>
+        <tr>
+          <td>keep-alive-time</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td>gRPC keep alive time parameter</td>
+        </tr>
+        <tr>
+          <td>keep-alive-timeout</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td>gRPC keep alive timeout parameter</td>
+        </tr>
+        <tr>
+          <td>key-manager-name</td>
+          <td>STRING</td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td>gRPC name of key manager parameter</td>
+        </tr>
+        <tr>
+          <td>max-concurrent-calls-per-connection</td>
+          <td>INT</td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td>gRPC max concurrent calls per connection parameter</td>
+        </tr>
+        <tr>
+          <td>max-connection-age</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td>gRPC max connection age parameter</td>
+        </tr>
+        <tr>
+          <td>max-connection-age-grace</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td>gRPC max connection age grace parameter</td>
+        </tr>
+        <tr>
+          <td>max-connection-idle</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td>gRPC max connection idle parameter</td>
+        </tr>
+        <tr>
+          <td>max-inbound-message-size</td>
+          <td>INT</td>
+          <td>false</td>
+          <td>true</td>
+          <td>4194304</td>
+          <td>gRPC max inbound message size parameter</td>
+        </tr>
+        <tr>
+          <td>max-inbound-metadata-size</td>
+          <td>INT</td>
+          <td>false</td>
+          <td>true</td>
+          <td>8192</td>
+          <td>gRPC max inbound metadata size parameter</td>
+        </tr>
+        <tr>
+          <td>permit-keep-alive-time</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td>250</td>
+          <td>gRPC permit keep alive time parameter</td>
+        </tr>
+        <tr>
+          <td>permit-keep-alive-without-calls</td>
+          <td>BOOLEAN</td>
+          <td>false</td>
+          <td>true</td>
+          <td>false</td>
+          <td>gRPC permit keep alive without calls parameter</td>
+        </tr>
+        <tr>
+          <td>protocol-provider</td>
+          <td>STRING</td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td>gRPC SSL/TLS protocol provider</td>
+        </tr>
+        <tr>
+          <td>session-cache-size</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td>gRPC size of the cache used for storing SSL session objects</td>
+        </tr>
+        <tr>
+          <td>session-timeout</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td>gRPC timeout for the cached SSL session objects</td>
+        </tr>
+        <tr>
+          <td>shutdown-timeout</td>
+          <td>LONG</td>
+          <td>false</td>
+          <td>true</td>
+          <td>3</td>
+          <td>gRPC server shutdown timeout parameter</td>
+        </tr>
+        <tr>
+          <td>socket-binding</td>
+          <td>STRING</td>
+          <td>true</td>
+          <td>false</td>
+          <td></td>
+          <td>The socket binding for the gRPC server to use</td>
+        </tr>
+        <tr>
+          <td>ssl-context-name</td>
+          <td>STRING</td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td>gRP name of SSLContext</td>
+        </tr>
+        <tr>
+          <td>start-tls</td>
+          <td>BOOLEAN</td>
+          <td>false</td>
+          <td>true</td>
+          <td>false</td>
+          <td>gRPC whether first write request shouldn't be encrypted</td>
+        </tr>
+        <tr>
+          <td>trust-manager-name</td>
+          <td>STRING</td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td>gRPC name of trust manager parameter</td>
+        </tr>
+        </tbody>
+      </table>
+
+
+      <table>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+              <pre><code class="language-json">
+{
+    "operation-name" : "add",
+    "description" : "Adds the gRPC subsystem",
+    "request-properties" : {
+        "flow-control-window" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "INT"
+            },
+            "description" : "gRPC flow control window parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "default" : 1048576,
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "handshake-timeout" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC handshake timeout parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "default" : 120,
+            "unit" : "SECONDS",
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "initial-flow-control-window" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "INT"
+            },
+            "description" : "gRPC initial flow control window parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "default" : 1048576,
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "keep-alive-time" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC keep alive time parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "unit" : "SECONDS",
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "keep-alive-timeout" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC keep alive timeout parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "unit" : "SECONDS",
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "key-manager-name" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "STRING"
+            },
+            "description" : "gRPC name of key manager parameter",
+            "expressions-allowed" : false,
+            "required" : false,
+            "nillable" : true,
+            "capability-reference" : "org.wildfly.security.key-manager",
+            "stability" : "default"
+        },
+        "max-concurrent-calls-per-connection" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "INT"
+            },
+            "description" : "gRPC max concurrent calls per connection parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "max-connection-age" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC max connection age parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "unit" : "SECONDS",
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "max-connection-age-grace" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC max connection age grace parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "unit" : "SECONDS",
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "max-connection-idle" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC max connection idle parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "unit" : "SECONDS",
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "max-inbound-message-size" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "INT"
+            },
+            "description" : "gRPC max inbound message size parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "default" : 4194304,
+            "unit" : "BYTES",
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "max-inbound-metadata-size" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "INT"
+            },
+            "description" : "gRPC max inbound metadata size parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "default" : 8192,
+            "unit" : "BYTES",
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "permit-keep-alive-time" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC permit keep alive time parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "default" : 250,
+            "unit" : "SECONDS",
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "permit-keep-alive-without-calls" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "BOOLEAN"
+            },
+            "description" : "gRPC permit keep alive without calls parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "default" : false,
+            "stability" : "default"
+        },
+        "protocol-provider" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "STRING"
+            },
+            "description" : "gRPC SSL/TLS protocol provider",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "stability" : "default"
+        },
+        "session-cache-size" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC size of the cache used for storing SSL session objects",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "min" : 0,
+            "max" : 9223372036854775807,
+            "stability" : "default"
+        },
+        "session-timeout" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC timeout for the cached SSL session objects",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "min" : 0,
+            "max" : 9223372036854775807,
+            "stability" : "default"
+        },
+        "shutdown-timeout" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "LONG"
+            },
+            "description" : "gRPC server shutdown timeout parameter",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "default" : 3,
+            "min" : 0,
+            "max" : 2147483647,
+            "stability" : "default"
+        },
+        "socket-binding" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "STRING"
+            },
+            "description" : "The socket binding for the gRPC server to use",
+            "expressions-allowed" : false,
+            "required" : true,
+            "nillable" : false,
+            "capability-reference" : "org.wildfly.network.socket-binding",
+            "min-length" : 1,
+            "max-length" : 2147483647,
+            "stability" : "default"
+        },
+        "ssl-context-name" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "STRING"
+            },
+            "description" : "gRP name of SSLContext",
+            "expressions-allowed" : false,
+            "required" : false,
+            "nillable" : true,
+            "capability-reference" : "org.wildfly.security.ssl-context",
+            "stability" : "default"
+        },
+        "start-tls" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "BOOLEAN"
+            },
+            "description" : "gRPC whether first write request shouldn't be encrypted",
+            "expressions-allowed" : true,
+            "required" : false,
+            "nillable" : true,
+            "default" : false,
+            "stability" : "default"
+        },
+        "trust-manager-name" : {
+            "type" : {
+                "TYPE_MODEL_VALUE" : "STRING"
+            },
+            "description" : "gRPC name of trust manager parameter",
+            "expressions-allowed" : false,
+            "required" : false,
+            "nillable" : true,
+            "capability-reference" : "org.wildfly.security.trust-manager",
+            "stability" : "default"
+        }
+    },
+    "reply-properties" : {},
+    "stability" : "preview",
+    "read-only" : false,
+    "runtime-only" : false
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+  <li>
+    <span class="toggle-link">
+      <a id="remove" href="#remove" class="">
+      remove</a> - Removes the gRPC subsystem
+    </span>
+    <div class="collapsible">
+
+
+
+
+      <table>
+        <tr>
+          <td class="toggle-link">Raw DMR model</td>
+          <td class="collapsible">
+            <div class="code-block-container">
+              <pre><code class="language-json">
+{
+    "operation-name" : "remove",
+    "description" : "Removes the gRPC subsystem",
+    "request-properties" : {},
+    "reply-properties" : {},
+    "stability" : "default",
+    "read-only" : false,
+    "restart-required" : "all-services",
+    "runtime-only" : false
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </li>
+</ul>
+<h2>Galleon Features</h2>
+<p>Galleon features are to be used when creating Galleon feature-packs.</p>
+<ul class="attributes">
+  <li>
+  <span class="toggle-link">subsystem.grpc</span>
+  <div class="collapsible">
+    <div class="code-block-container">
+      <pre>
+        <code id="feature" class="language-xml">
+&lt;feature spec="subsystem.grpc"&gt;
+  &lt;param name="flow-control-window" value="{value}"/&gt;
+  &lt;param name="handshake-timeout" value="{value}"/&gt;
+  &lt;param name="initial-flow-control-window" value="{value}"/&gt;
+  &lt;param name="keep-alive-time" value="{value}"/&gt;
+  &lt;param name="keep-alive-timeout" value="{value}"/&gt;
+  &lt;param name="key-manager-name" value="{value}"/&gt;
+  &lt;param name="max-concurrent-calls-per-connection" value="{value}"/&gt;
+  &lt;param name="max-connection-age" value="{value}"/&gt;
+  &lt;param name="max-connection-age-grace" value="{value}"/&gt;
+  &lt;param name="max-connection-idle" value="{value}"/&gt;
+  &lt;param name="max-inbound-message-size" value="{value}"/&gt;
+  &lt;param name="max-inbound-metadata-size" value="{value}"/&gt;
+  &lt;param name="permit-keep-alive-time" value="{value}"/&gt;
+  &lt;param name="permit-keep-alive-without-calls" value="{value}"/&gt;
+  &lt;param name="protocol-provider" value="{value}"/&gt;
+  &lt;param name="session-cache-size" value="{value}"/&gt;
+  &lt;param name="session-timeout" value="{value}"/&gt;
+  &lt;param name="shutdown-timeout" value="{value}"/&gt;
+  &lt;param name="socket-binding" value="{value}"/&gt;
+  &lt;param name="ssl-context-name" value="{value}"/&gt;
+  &lt;param name="start-tls" value="{value}"/&gt;
+  &lt;param name="trust-manager-name" value="{value}"/&gt;
+&lt;feature/&gt;
+        </code>
+      </pre>
+      <button class="copy-btn" onclick="copyToClipboard('feature')" title="Copy to clipboard">📋</button>
+    </div>
+  </div>
+  </li>
+</ul>
+
+<footer>
+  <hr />
+</footer></div>
+</body>
+</html>
