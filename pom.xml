@@ -84,7 +84,7 @@
         <version.formatter.plugin>2.29.0</version.formatter.plugin>
         <version.galleon.plugin>8.1.0.Final</version.galleon.plugin>
         <version.impsort.plugin>1.13.0</version.impsort.plugin>
-        <version.jandex.plugin>1.2.3</version.jandex.plugin>
+        <version.jandex.plugin>3.2.7</version.jandex.plugin>
         <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
         <version.license.plugin>5.0.0</version.license.plugin>
         <version.wildfly.plugin>5.1.5.Final</version.wildfly.plugin>
@@ -103,10 +103,10 @@
         <galleon.fork.embedded>true</galleon.fork.embedded>
         <galleon.log.time>true</galleon.log.time>
         <galleon.wildfly.home>/tmp</galleon.wildfly.home>
-        <java.version>17</java.version>
+        <jdk.min.version>17</jdk.min.version>
         <linkXRef>false</linkXRef>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${jdk.min.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.min.version}</maven.compiler.target>
         <maven.min.version>3.9.10</maven.min.version>
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
@@ -244,10 +244,10 @@
                                 <version>${maven.min.version}</version>
                             </requireMavenVersion>
                             <requireJavaVersion>
-                                <message>To build this project JDK ${maven.compiler.source} (or greater) is required.
+                                <message>To build this project JDK ${jdk.min.version} (or greater) is required.
                                     Please install it.
                                 </message>
-                                <version>${maven.compiler.source}</version>
+                                <version>${jdk.min.version}</version>
                             </requireJavaVersion>
                         </rules>
                     </configuration>

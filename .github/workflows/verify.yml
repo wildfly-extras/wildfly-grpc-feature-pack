@@ -8,15 +8,19 @@ on:
 
 jobs:
   build:
-    name: Verify Codebase
+    name: Verify (${{ matrix.java }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ 17, 21, 25 ]
     env:
       MVN: ./mvnw --show-version --batch-mode
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with:
-          java-version: 17
+          java-version: ${{ matrix.java }}
           distribution: temurin
           cache: maven
       - run: $MVN install -Pexamples
