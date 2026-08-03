@@ -86,7 +86,7 @@
         <version.impsort.plugin>1.13.0</version.impsort.plugin>
         <version.jandex.plugin>3.6.0</version.jandex.plugin>
         <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
-        <version.license.plugin>5.0.0</version.license.plugin>
+        <version.license.plugin>5.1.1</version.license.plugin>
         <version.wildfly.plugin>5.1.5.Final</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
