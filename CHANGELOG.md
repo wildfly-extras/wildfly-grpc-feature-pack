@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Add missing version management for `javax.annotation-api` and `failureaccess`
+- Add `org.jboss.shrinkwrap:shrinkwrap-bom` 1.2.6
+
+### Changed
+
+- Set compile target to JDK 17 and add JDK matrix (17, 21, 25) to CI
+- Upgrade Jandex Maven plugin from `org.jboss.jandex` to `io.smallrye` for JDK 25 compatibility
+- Move `jboss-logging-processor` to annotation processor paths for JDK 23+ compatibility (JEP 611)
+
+### Fixed
+
+- Fix Javadoc issue in `InterceptorQueue`
+
+### Upgrades
+
+- Bump Arquillian BOM to 1.10.2.Final, add Arquillian Jakarta BOM 10.0.0.Final
+- Bump Galleon Maven Plugin to 6.0.13.Final
+- Bump gRPC to 1.83.1
+- Bump Guava failureaccess to 1.0.3
+- Bump Jandex Maven Plugin to 3.6.0
+- Bump JBoss Logging to 3.6.3.Final
+- Bump Kotlin to 2.4.10
+- Bump license-maven-plugin to 5.1.1
+- Bump OkHttp to 5.4.0
+- Bump Protobuf to 4.35.1
+- Bump WildFly to 41.0.0.Final
+- Bump WildFly Core to 33.0.0.Final
+- Bump WildFly Galleon Maven Plugin to 8.1.7.Final
+- Bump actions/checkout to 7
+
 ## [0.2.0] - 2026-06-09
 
 ### Changed
