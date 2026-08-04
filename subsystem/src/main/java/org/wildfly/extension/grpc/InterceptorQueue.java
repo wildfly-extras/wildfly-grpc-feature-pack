@@ -17,7 +17,7 @@ import io.grpc.ServerInterceptor;
 
 /**
  * Specialized {@link PriorityQueue} that sorts {@link ServerInterceptor}s based on the value of a {@link @Priority}
- * annotation. A {@link ServerInterceptor} with no {@link @Priority} annotation has the lowest priority.
+ * annotation. A {@link ServerInterceptor} with no {@link Priority} annotation has the lowest priority.
  */
 @NotThreadSafe
 public class InterceptorQueue extends PriorityQueue<InterceptorQueue.Element> {
