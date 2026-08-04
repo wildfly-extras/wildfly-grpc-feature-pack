@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-04
+
 ### Added
 
 - Add missing version management for `javax.annotation-api` and `failureaccess`
@@ -313,7 +315,8 @@ Lots of new features, bug fixes and dependency upgrades went into this release.
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.16...v0.2.0
 [0.1.16]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.14...v0.1.15
