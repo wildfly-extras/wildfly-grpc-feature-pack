@@ -56,14 +56,14 @@
     <properties>
         <!-- Dependency versions -->
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
-        <version.com.google.guava.failureaccess>1.0.1</version.com.google.guava.failureaccess>
-        <version.grpc>1.83.0</version.grpc>
+        <version.com.google.guava.failureaccess>1.0.3</version.com.google.guava.failureaccess>
+        <version.grpc>1.83.1</version.grpc>
         <version.io.netty.netty>4.1.108.Final</version.io.netty.netty>
         <version.jakarta.annotation>2.1.1</version.jakarta.annotation>
         <version.javax.annotation-api>1.3.2</version.javax.annotation-api>
         <version.junit>4.13.2</version.junit>
         <version.kotlin.stdlib>2.3.20</version.kotlin.stdlib>
-        <version.okhttp>5.3.2</version.okhttp>
+        <version.okhttp>5.4.0</version.okhttp>
         <version.org.jboss.arquillian>1.10.2.Final</version.org.jboss.arquillian>
         <version.org.jboss.arquillian.jakarta>10.0.0.Final</version.org.jboss.arquillian.jakarta>
         <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
@@ -72,7 +72,7 @@
         <version.org.wildfly.arquillian>5.1.0.Final</version.org.wildfly.arquillian>
         <version.perfmark>0.27.0</version.perfmark>
         <version.proto-google-common-protos>2.66.0</version.proto-google-common-protos>
-        <version.protobuf>4.35.0</version.protobuf>
+        <version.protobuf>4.35.1</version.protobuf>
         <version.wildfly.common>2.0.1</version.wildfly.common>
         <version.wildfly.core>33.0.0.Final</version.wildfly.core>
         <version.wildfly.tools>1.0.5.Final</version.wildfly.tools>
@@ -84,9 +84,9 @@
         <version.formatter.plugin>2.29.0</version.formatter.plugin>
         <version.galleon.plugin>8.1.0.Final</version.galleon.plugin>
         <version.impsort.plugin>1.13.0</version.impsort.plugin>
-        <version.jandex.plugin>3.2.7</version.jandex.plugin>
+        <version.jandex.plugin>3.6.0</version.jandex.plugin>
         <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
-        <version.license.plugin>5.0.0</version.license.plugin>
+        <version.license.plugin>5.1.1</version.license.plugin>
         <version.wildfly.plugin>5.1.5.Final</version.wildfly.plugin>
 
         <!-- Repos, URLs & protocols -->
