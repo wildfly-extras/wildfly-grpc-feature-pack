@@ -4,6 +4,7 @@
  */
 package org.wildfly.extension.grpc.deployment;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,7 +70,7 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
         }
         List<Class<? extends BindableService>> leaves = new ArrayList<>();
         for (Class<? extends BindableService> clazz : classes) {
-            if (isLeaf(clazz, classes)) {
+            if (!Modifier.isAbstract(clazz.getModifiers()) && isLeaf(clazz, classes)) {
                 leaves.add(clazz);
             }
         }
