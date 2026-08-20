@@ -140,7 +140,7 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             GRPC_SSL_CONTEXT_NAME, GRPC_START_TLS, GRPC_TRUST_MANAGER_NAME);
 
     static RuntimeCapability<Void> SERVER_CAPABILITY = RuntimeCapability.Builder.of("org.wildfly.grpc.server", false)
-            .setServiceType(GrpcServerService.class).build();
+            .setServiceType(WildFlyGrpcDeploymentRegistry.class).build();
 
     // This must be initialized last to ensure the other static attributes are created first
     static final GrpcSubsystemDefinition INSTANCE = new GrpcSubsystemDefinition();

@@ -25,11 +25,16 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.wildfly.extension.grpc.deployment.GrpcDependencyProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcDeploymentProcessor;
+import org.wildfly.extension.grpc.deployment.GrpcServiceInstallProcessor;
 
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.JdkLoggerFactory;
 
 class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
+
+    private static final int DEPENDENCIES_PRIORITY = 6304;
+    private static final int POST_MODULE_PRIORITY = 6305;
+    private static final int INSTALL_PRIORITY = 6306;
 
     static GrpcSubsystemAdd INSTANCE = new GrpcSubsystemAdd();
 
@@ -123,14 +128,12 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         context.addStep(new AbstractDeploymentChainStep() {
             public void execute(DeploymentProcessorTarget processorTarget) {
-                // TODO What phases and priorities should I use?
-                int DEPENDENCIES_PRIORITY = 6304;
                 processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES,
                         DEPENDENCIES_PRIORITY, new GrpcDependencyProcessor());
-
-                int DEPLOYMENT_PRIORITY = 6305;
                 processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.POST_MODULE,
-                        DEPLOYMENT_PRIORITY, new GrpcDeploymentProcessor(service));
+                        POST_MODULE_PRIORITY, new GrpcDeploymentProcessor());
+                processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.INSTALL,
+                        INSTALL_PRIORITY, new GrpcServiceInstallProcessor());
             }
         }, OperationContext.Stage.RUNTIME);
 

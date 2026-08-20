@@ -60,6 +60,8 @@
         <version.grpc>1.84.0</version.grpc>
         <version.io.netty.netty>4.1.108.Final</version.io.netty.netty>
         <version.jakarta.annotation>2.1.1</version.jakarta.annotation>
+        <version.jakarta.enterprise.cdi-api>4.0.1</version.jakarta.enterprise.cdi-api>
+        <version.jakarta.inject-api>2.0.1</version.jakarta.inject-api>
         <version.javax.annotation-api>1.3.2</version.javax.annotation-api>
         <version.junit>4.13.2</version.junit>
         <version.kotlin.stdlib>2.4.10</version.kotlin.stdlib>
