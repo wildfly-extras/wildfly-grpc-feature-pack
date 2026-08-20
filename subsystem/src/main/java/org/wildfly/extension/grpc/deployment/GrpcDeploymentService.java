@@ -150,7 +150,7 @@ class GrpcDeploymentService implements Service {
         return interceptors;
     }
 
-    private List<Class<? extends ServerInterceptor>> getInterceptorClasses() {
+    private List<Class<? extends ServerInterceptor>> getInterceptorClasses() throws StartException {
         InterceptorQueue queue = new InterceptorQueue();
         try {
             for (String className : interceptorClassNames) {
@@ -160,7 +160,7 @@ class GrpcDeploymentService implements Service {
             }
             return queue.toList();
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new StartException(e);
         }
     }
 }
