@@ -52,7 +52,9 @@ public class CdiHelloWorldTest {
 
     @AfterClass
     public static void afterClass() throws Exception {
-        channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+        if (channel != null) {
+            channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+        }
     }
 
     @Test
