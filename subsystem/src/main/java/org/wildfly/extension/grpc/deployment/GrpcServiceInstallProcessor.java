@@ -19,6 +19,7 @@ import org.jboss.modules.Module;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
 import org.wildfly.extension.grpc.Capabilities;
+import org.wildfly.extension.grpc.GrpcSubsystemDefinition;
 import org.wildfly.extension.grpc.WildFlyGrpcDeploymentRegistry;
 import org.wildfly.extension.grpc._private.GrpcLogger;
 
@@ -45,9 +46,8 @@ public class GrpcServiceInstallProcessor implements DeploymentUnitProcessor {
         final ServiceName serviceName = deploymentUnit.getServiceName().append("grpc");
         final ServiceBuilder<?> serviceBuilder = phaseContext.getServiceTarget().addService(serviceName);
 
-        final ServiceName grpcServiceName = ServiceName.parse("org.wildfly.grpc.server");
         final Supplier<WildFlyGrpcDeploymentRegistry> serverServiceSupplier = serviceBuilder
-                .requires(grpcServiceName);
+                .requires(GrpcSubsystemDefinition.SERVER_CAPABILITY.getCapabilityServiceName());
 
         Supplier<BeanManager> beanManagerSupplier = null;
         try {
