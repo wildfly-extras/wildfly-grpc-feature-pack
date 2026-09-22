@@ -6,10 +6,9 @@ package org.wildfly.extension.grpc;
 
 import java.util.List;
 
-import org.jboss.as.server.deployment.DeploymentUnit;
-
 import io.grpc.BindableService;
 import io.grpc.ServerInterceptor;
+import io.grpc.ServerServiceDefinition;
 
 /**
  * A registry for registering {@linkplain BindableService services} with a deployment.
@@ -19,21 +18,21 @@ import io.grpc.ServerInterceptor;
 public interface WildFlyGrpcDeploymentRegistry {
 
     /**
-     * Adds a {@link BindableService} to the gRPC server.
+     * Adds a {@link BindableService} instance to the gRPC server.
      *
-     * @param serviceType
-     *                         the service to add
+     * @param service
+     *                         the service instance to add
      * @param interceptors
      *                         {@link ServerInterceptor}s to wrap around the service
+     * @return the registered {@link ServerServiceDefinition}
      */
-    void addService(DeploymentUnit deployment, Class<? extends BindableService> serviceType,
-            List<ServerInterceptor> interceptors);
+    ServerServiceDefinition addService(BindableService service, List<ServerInterceptor> interceptors);
 
     /**
-     * Removes all the associated services from the gRPC server.
+     * Removes a previously registered service from the gRPC server.
      *
-     * @param deployment
-     *                       the name of the deployment to remove the services for
+     * @param ssd
+     *                the service definition to remove
      */
-    void removeDeploymentServices(DeploymentUnit deployment);
+    void removeService(ServerServiceDefinition ssd);
 }

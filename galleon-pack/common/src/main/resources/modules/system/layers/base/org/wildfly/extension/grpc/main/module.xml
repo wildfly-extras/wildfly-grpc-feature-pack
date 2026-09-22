@@ -35,5 +35,7 @@
                 DependencyProcessor too
         -->
         <module name="org.wildfly.grpc-dependency" />
+        <module name="org.jboss.as.weld.common" optional="true" />
+        <module name="jakarta.enterprise.api" optional="true" />
     </dependencies>
 </module>

@@ -6,16 +6,9 @@ package org.wildfly.extension.grpc;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -25,7 +18,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 
-import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -56,7 +48,6 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
     private final Supplier<ExecutorService> executorService;
 
     private final ServerConfiguration configuration;
-    private final Map<String, Collection<ServerServiceDefinition>> deploymentServices;
 
     private volatile MutableHandlerRegistry registry;
     private volatile Server server;
@@ -66,7 +57,6 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
         this.serverService = serverService;
         this.executorService = executorService;
         this.configuration = configuration;
-        deploymentServices = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -136,41 +126,18 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
     }
 
     @Override
-    public void addService(final DeploymentUnit deployment, final Class<? extends BindableService> serviceType,
+    public ServerServiceDefinition addService(final BindableService service,
             List<ServerInterceptor> interceptors) {
-        final String deploymentName = deployment.getName();
-        GrpcLogger.LOGGER.registerService(serviceType.getName(), deploymentName);
-        // We must have a no-arg constructor
-        final BindableService bindableService;
-        if (System.getSecurityManager() == null) {
-            try {
-                final Constructor<? extends BindableService> constructor = serviceType.getConstructor();
-                bindableService = constructor.newInstance();
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-                    | IllegalAccessException e) {
-                throw GrpcLogger.LOGGER.failedToRegister(e, serviceType.getName(), deploymentName);
-            }
-        } else {
-            bindableService = AccessController.doPrivileged((PrivilegedAction<BindableService>) () -> {
-                try {
-                    final Constructor<? extends BindableService> constructor = serviceType.getConstructor();
-                    return constructor.newInstance();
-                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-                        | IllegalAccessException e) {
-                    throw GrpcLogger.LOGGER.failedToRegister(e, serviceType.getName(), deploymentName);
-                }
-            });
-        }
-        registry.addService(installInterceptors(bindableService.bindService(), interceptors));
+        BindableService wrapped = installInterceptors(service.bindService(), interceptors);
+        ServerServiceDefinition ssd = wrapped.bindService();
+        registry.addService(ssd);
+        return ssd;
     }
 
     @Override
-    public void removeDeploymentServices(final DeploymentUnit deployment) {
-        final Collection<ServerServiceDefinition> defs = deploymentServices.remove(deployment.getName());
-        if (defs != null) {
-            for (ServerServiceDefinition def : defs) {
-                registry.removeService(def);
-            }
+    public void removeService(final ServerServiceDefinition ssd) {
+        if (registry != null && ssd != null) {
+            registry.removeService(ssd);
         }
     }
 

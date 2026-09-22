@@ -57,4 +57,8 @@ public interface GrpcLogger extends BasicLogger {
     @Message(id = 10, value = "The configuration object has already been built.")
     IllegalStateException configurationAlreadyBuilt();
 
+    @LogMessage(level = DEBUG)
+    @Message(id = 11, value = "Instantiating gRPC service %s as CDI bean for deployment %s.")
+    void registerCdiService(String serviceName, String deploymentName);
+
 }
