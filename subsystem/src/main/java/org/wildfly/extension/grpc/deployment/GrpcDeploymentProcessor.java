@@ -17,6 +17,7 @@ import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentResourceSupport;
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.annotation.CompositeIndex;
 import org.jboss.dmr.ModelNode;
@@ -43,7 +44,7 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
     }
 
     @Override
-    public void deploy(DeploymentPhaseContext phaseContext) {
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
         final CompositeIndex index = deploymentUnit.getAttachment(Attachments.COMPOSITE_ANNOTATION_INDEX);
         List<String> serviceClasses = index.getAllKnownImplementors(BINDABLE_CLASS).stream()
