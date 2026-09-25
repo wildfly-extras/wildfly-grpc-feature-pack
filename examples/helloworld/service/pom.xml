@@ -17,6 +17,7 @@
     </parent>
 
     <artifactId>wildfly-grpc-examples-helloworld-service</artifactId>
+    <packaging>war</packaging>
     <name>WildFly gRPC :: Examples :: Hello World :: Service</name>
 
     <properties>
@@ -28,6 +29,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>wildfly-grpc-examples-helloworld-proto</artifactId>
+            <!-- The gRPC and protobuf jars are provided at runtime by the
+                 WildFly module system (org.wildfly.grpc-dependency / io.grpc-all).
+                 Marking provided prevents them from being bundled in WEB-INF/lib,
+                 which would expose internal gRPC classes to Jandex scanning. -->
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -91,21 +97,23 @@
                         </feature-pack>
                     </feature-packs>
                     <layers>
-                        <layer>core-server</layer>
-                        <layer>web-server</layer>
+                        <layer>jaxrs-server</layer>
                         <!-- Layers from this FP  -->
                         <layer>grpc</layer>
                     </layers>
                     <galleon-options>
                         <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+                        <stability-level>preview</stability-level>
                     </galleon-options>
                     <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
+                    <stability>preview</stability>
+                    <overwrite-provisioned-server>true</overwrite-provisioned-server>
                 </configuration>
                 <executions>
                     <execution>
                         <id>provision-server</id>
                         <goals>
-                            <goal>provision</goal>
+                            <goal>package</goal>
                         </goals>
                         <phase>package</phase>
                     </execution>
