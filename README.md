@@ -105,34 +105,34 @@ The `helloworld` client is a simple Java application. From the project root, run
 where *SSL* is either "none" (port 8080, h2c), "oneway" (port 8443, TLS), or "twoway" (port 8443, mutual TLS).
 
 Alternatively, use [grpcurl](https://github.com/fullstorydev/grpcurl) to invoke the service directly.
-From the `examples/helloworld/service` directory, pass the proto file with `-import-path` and `-proto`
+From the `examples/helloworld` directory, pass the proto file with `-import-path` and `-proto`
 since the server does not expose the gRPC reflection API:
 
 ```shell
-cd examples/helloworld/service
+cd examples/helloworld
 
 # plaintext (port 8080, h2c)
 grpcurl \
   -plaintext \
-  -import-path ../proto/src/main/proto \
+  -import-path proto/src/main/proto \
   -proto helloworld.proto \
   -d '{"name":"Bob"}' \
   localhost:8080 helloworld.Greeter/SayHello
 
 # TLS, one-way (port 8443) — server authenticates to client, no client cert
 grpcurl \
-  -cacert ../../../ssl/server.pem \
-  -import-path ../proto/src/main/proto \
+  -cacert ../../ssl/server.pem \
+  -import-path proto/src/main/proto \
   -proto helloworld.proto \
   -d '{"name":"Bob"}' \
   localhost:8443 helloworld.Greeter/SayHello
 
 # TLS, two-way (port 8443) — mutual authentication, client presents a certificate
 grpcurl \
-  -cacert ../../../ssl/server.pem \
-  -cert ../client/src/main/resources/client.keystore.pem \
-  -key ../client/src/main/resources/client.key.pem \
-  -import-path ../proto/src/main/proto \
+  -cacert ../../ssl/server.pem \
+  -cert client/src/main/resources/client.keystore.pem \
+  -key client/src/main/resources/client.key.pem \
+  -import-path proto/src/main/proto \
   -proto helloworld.proto \
   -d '{"name":"Bob"}' \
   localhost:8443 helloworld.Greeter/SayHello
