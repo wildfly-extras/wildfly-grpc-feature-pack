@@ -5,4 +5,4 @@
 
 -->
 <subsystem xmlns="urn:wildfly:grpc:preview:1.0" max-inbound-message-size="${test.max-inbound-message-size:31}"
-    max-inbound-metadata-size="${test.max-inbound-metadata-size:37}" shutdown-timeout="${test.shutdown-timeout:53}" />
+    max-inbound-metadata-size="${test.max-inbound-metadata-size:37}" />

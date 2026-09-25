@@ -5,4 +5,4 @@
 
 -->
 <subsystem xmlns="urn:wildfly:grpc:preview:1.0" max-inbound-message-size="31" max-inbound-metadata-size="37"
-    server-name="default-server" shutdown-timeout="53" virtual-host="default-host" />
+    server-name="default-server" virtual-host="default-host" />
