@@ -121,7 +121,7 @@ grpcurl \
 
 # TLS, one-way (port 8443) — server authenticates to client, no client cert
 grpcurl \
-  -cacert ../../ssl/server.pem \
+  -cacert ../../ssl/ca.pem \
   -import-path proto/src/main/proto \
   -proto helloworld.proto \
   -d '{"name":"Bob"}' \
@@ -129,7 +129,7 @@ grpcurl \
 
 # TLS, two-way (port 8443) — mutual authentication, client presents a certificate
 grpcurl \
-  -cacert ../../ssl/server.pem \
+  -cacert ../../ssl/ca.pem \
   -cert client/src/main/resources/client.keystore.pem \
   -key client/src/main/resources/client.key.pem \
   -import-path proto/src/main/proto \
