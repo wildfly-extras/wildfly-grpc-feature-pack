@@ -130,11 +130,11 @@
             </activation>
         </profile>
         <profile>
-            <id>ssl-oneway</id>
+            <id>ssl-tls</id>
             <activation>
                 <property>
                     <name>ssl</name>
-                    <value>oneway</value>
+                    <value>tls</value>
                 </property>
             </activation>
             <build>
@@ -144,66 +144,7 @@
                         <artifactId>maven-resources-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>copy-keystore-oneway</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.build.directory}/server-content/standalone/configuration</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${root.directory}/ssl</directory>
-                                            <includes>
-                                                <include>server.keystore.jks</include>
-                                            </includes>
-                                            <filtering>false</filtering>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>provision-server</id>
-                                <configuration>
-                                    <extra-server-content-dirs>
-                                        <extra-content-dir>${project.build.directory}/server-content</extra-content-dir>
-                                    </extra-server-content-dirs>
-                                    <packaging-scripts>
-                                        <execution>
-                                            <scripts>
-                                                <script>${root.directory}/ssl/configure-elytron-oneway.cli</script>
-                                            </scripts>
-                                        </execution>
-                                    </packaging-scripts>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>ssl-twoway</id>
-            <activation>
-                <property>
-                    <name>ssl</name>
-                    <value>twoway</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-keystore-twoway</id>
+                                <id>copy-keystores</id>
                                 <phase>prepare-package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
@@ -237,7 +178,7 @@
                                     <packaging-scripts>
                                         <execution>
                                             <scripts>
-                                                <script>${root.directory}/ssl/configure-elytron-twoway.cli</script>
+                                                <script>${root.directory}/ssl/configure-elytron-tls.cli</script>
                                             </scripts>
                                         </execution>
                                     </packaging-scripts>

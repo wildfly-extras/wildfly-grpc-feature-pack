@@ -1,0 +1,8 @@
+if (outcome != success) of /subsystem=elytron/key-store=grpc-key-store:read-resource
+    /subsystem=elytron/key-store=grpc-key-store:add(credential-reference={clear-text="secret"}, type=JKS, path="server.keystore.jks", relative-to="jboss.server.config.dir", required=false)
+    /subsystem=elytron/key-store=grpc-trust-store:add(credential-reference={clear-text="secret"}, type=JKS, path="server.truststore.jks", relative-to="jboss.server.config.dir", required=false)
+    /subsystem=elytron/key-manager=grpc-key-manager:add(key-store=grpc-key-store, credential-reference={clear-text="secret"})
+    /subsystem=elytron/trust-manager=grpc-trust-manager:add(key-store=grpc-trust-store)
+    /subsystem=elytron/server-ssl-context=grpc-ssl-context:add(key-manager=grpc-key-manager, trust-manager=grpc-trust-manager, protocols=["TLSv1.3"], want-client-auth=true, authentication-optional=true)
+    /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, ssl-context="grpc-ssl-context", enable-http2=true)
+end-if

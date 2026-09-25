@@ -83,7 +83,12 @@ From the `examples/helloworld/service` directory, build and provision the server
 
 ```shell
 cd examples/helloworld/service
+
+# Plaintext (h2c on port 8080)
 mvn clean package -Dssl=none
+
+# TLS (HTTPS on port 8443, supports both one-way and two-way at runtime)
+mvn clean package -Dssl=tls
 ```
 
 Then start WildFly:
@@ -92,7 +97,9 @@ Then start WildFly:
 ./target/wildfly/bin/standalone.sh --stability=preview
 ```
 
-For TLS variants, pass `-Dssl=oneway` or `-Dssl=twoway` to `mvn clean package` instead.
+The `ssl=tls` provisioning configures the SSL context with `want-client-auth=true` and `authentication-optional=true`:
+clients that present a certificate use mutual TLS; clients without a certificate use one-way TLS.
+The behaviour is chosen at runtime by the client, not at provisioning time.
 
 ### Client
 
@@ -117,7 +124,7 @@ grpcurl \
   -d '{"name":"Bob"}' \
   localhost:8080 helloworld.Greeter/SayHello
 
-# oneway TLS (port 8443)
+# TLS, one-way (port 8443) — server authenticates to client, no client cert
 grpcurl \
   -cacert ../../../ssl/server.pem \
   -import-path ../proto/src/main/proto \
@@ -125,7 +132,7 @@ grpcurl \
   -d '{"name":"Bob"}' \
   localhost:8443 helloworld.Greeter/SayHello
 
-# twoway TLS (port 8443)
+# TLS, two-way (port 8443) — mutual authentication, client presents a certificate
 grpcurl \
   -cacert ../../../ssl/server.pem \
   -cert ../client/src/main/resources/client.keystore.pem \
