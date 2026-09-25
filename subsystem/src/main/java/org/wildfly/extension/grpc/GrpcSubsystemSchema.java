@@ -45,6 +45,7 @@ enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchem
                         GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE,
                         GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME,
                         GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
+                        GrpcSubsystemDefinition.GRPC_SERVER_NAME,
                         GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT,
                         GrpcSubsystemDefinition.GRPC_VIRTUAL_HOST)
                 .build();

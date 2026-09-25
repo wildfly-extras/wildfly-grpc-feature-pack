@@ -35,10 +35,12 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
         final CapabilityServiceTarget target = context.getCapabilityServiceTarget();
         final CapabilityServiceBuilder<?> builder = target.addCapability(GrpcSubsystemDefinition.SERVER_CAPABILITY);
 
+        final String serverNameRef = GrpcSubsystemDefinition.GRPC_SERVER_NAME
+                .resolveModelAttribute(context, model).asString();
         final String virtualHostRef = GrpcSubsystemDefinition.GRPC_VIRTUAL_HOST
                 .resolveModelAttribute(context, model).asString();
         final Supplier<Host> undertowHost = builder.requiresCapability(
-                Capabilities.UNDERTOW_HOST_CAPABILITY, Host.class, virtualHostRef);
+                Capabilities.UNDERTOW_HOST_CAPABILITY, Host.class, serverNameRef, virtualHostRef);
 
         final ServerConfiguration configuration = new ServerConfiguration();
 

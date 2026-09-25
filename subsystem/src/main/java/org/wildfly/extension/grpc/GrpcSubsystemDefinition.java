@@ -79,16 +79,21 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .setRequired(false).setRestartAllServices()
             .setValidator(new LongRangeValidator(0, Integer.MAX_VALUE, true, true)).build();
 
+    static final SimpleAttributeDefinition GRPC_SERVER_NAME = new SimpleAttributeDefinitionBuilder(
+            "server-name", ModelType.STRING).setAllowExpression(false).setRequired(false)
+            .setDefaultValue(new ModelNode("default-server")).setRestartAllServices()
+            .setValidator(new ModelTypeValidator(ModelType.STRING, true)).build();
+
     static final SimpleAttributeDefinition GRPC_VIRTUAL_HOST = new SimpleAttributeDefinitionBuilder(
             "virtual-host", ModelType.STRING).setAllowExpression(false).setRequired(false)
             .setDefaultValue(new ModelNode("default-host")).setRestartAllServices()
-            .setCapabilityReference(Capabilities.UNDERTOW_HOST_CAPABILITY).build();
+            .setValidator(new ModelTypeValidator(ModelType.STRING, true)).build();
 
     static final List<AttributeDefinition> ATTRIBUTES = List.of(GRPC_KEEP_ALIVE_TIME, GRPC_KEEP_ALIVE_TIMEOUT,
             GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION, GRPC_MAX_CONNECTION_AGE, GRPC_MAX_CONNECTION_AGE_GRACE,
             GRPC_MAX_CONNECTION_IDLE, GRPC_MAX_INBOUND_MESSAGE_SIZE, GRPC_MAX_INBOUND_METADATA_SIZE,
-            GRPC_PERMIT_KEEP_ALIVE_TIME, GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS, GRPC_SHUTDOWN_TIMEOUT,
-            GRPC_VIRTUAL_HOST);
+            GRPC_PERMIT_KEEP_ALIVE_TIME, GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS, GRPC_SERVER_NAME,
+            GRPC_SHUTDOWN_TIMEOUT, GRPC_VIRTUAL_HOST);
 
     static RuntimeCapability<Void> SERVER_CAPABILITY = RuntimeCapability.Builder.of("org.wildfly.grpc.server", false)
             .setServiceType(GrpcUndertowService.class).build();

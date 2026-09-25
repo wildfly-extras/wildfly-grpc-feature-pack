@@ -4,8 +4,6 @@
  */
 package org.wildfly.extension.grpc;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.AccessController;
