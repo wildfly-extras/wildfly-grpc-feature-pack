@@ -1,6 +1,6 @@
 # WildFly gRPC
 
-Feature pack to bring gRPC support to WildFly. gRPC services are registered against a gRPC server listening, by default, to port 9555.
+Feature pack to bring gRPC support to WildFly. gRPC services are served via WildFly's Undertow HTTP/2 stack — no separate port is needed. By default, gRPC is available on the standard HTTP listener (port 8080) with HTTP/2 cleartext (h2c) enabled automatically, and on any configured HTTPS listener (port 8443) via ALPN.
 
 Only gRPC services are supported at the moment. Support for gRPC clients is coming soon.
 
@@ -51,6 +51,15 @@ Once built you can provision a server with gRPC support using Galleon provisioni
 </plugin>
 ```
 
+You must also add `stability-level=preview` to the `galleon-options` and `stability=preview` to the plugin configuration, as the gRPC subsystem uses `PREVIEW` stability:
+
+```xml
+<galleon-options>
+    <stability-level>preview</stability-level>
+</galleon-options>
+<stability>preview</stability>
+```
+
 You can also configure this with the Galleon CLI tool:
 
 ```bash
@@ -78,58 +87,60 @@ The `helloworld` example is a slightly modified version of the `helloworld` exam
 
 ### Service
 
-To build the `helloworld` service, provision a WildFly server with the gRPC subsystem and any necessary certificate files,
-and deploy the service, run:
+Build and provision the server with the gRPC service pre-deployed:
 
-<code>mvn wildfly:run -P examples -pl examples/helloworld/service -Dssl=*SSL*</code>
+```shell
+mvn clean package -P examples -pl examples/helloworld/service -Dssl=none
+```
 
-where *SSL* is either
+Then start WildFly:
 
-* none: plaintext
-* oneway: server identity is verified
-* twoway: both server and client identities are verified
+```shell
+./examples/helloworld/service/target/wildfly/bin/standalone.sh
+```
+
+For TLS variants, pass `-Dssl=oneway` or `-Dssl=twoway` to the `mvn clean package` command instead. The server will be configured with the appropriate Elytron SSL context.
 
 ### Client
 
-The `helloworld` client is a simple Java application. To build the client and call to the gRPC service, run:
+The `helloworld` client is a simple Java application. To call the deployed gRPC service, run:
 
 <code>mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob *SSL*"</code>
 
-where, again, *SSL* is either "none", "oneway", or "twoway"
+where *SSL* is either "none", "oneway", or "twoway".
 
-Alternatively you could also use tools like [BloomRPC](https://github.com/uw-labs/bloomrpc)
-or [gRPCurl](https://github.com/fullstorydev/grpcurl) to invoke the service:
+Alternatively, use [grpcurl](https://github.com/fullstorydev/grpcurl) to invoke the service directly.
+Pass the proto file with `-import-path` and `-proto` since the server does not expose the gRPC reflection API:
 
 ```shell
-grpcurl \ # plaintext
-  -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
+# plaintext (port 8080, h2c)
+grpcurl \
   -plaintext \
+  -import-path examples/helloworld/proto/src/main/proto \
+  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+  localhost:8080 helloworld.Greeter/SayHello
 ```
-or
 ```shell
-grpcurl \ # oneway
-  -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
-  -cacert examples/helloworld/client/src/main/resources/client.truststore.pem \
+# oneway TLS (port 8443)
+grpcurl \
+  -cacert ssl/server.pem \
+  -import-path examples/helloworld/proto/src/main/proto \
+  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+  localhost:8443 helloworld.Greeter/SayHello
 ```
-or
 ```shell
-grpcurl \ # twoway
-  -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
-  -cacert examples/helloworld/client/src/main/resources/client.truststore.pem \
+# twoway TLS (port 8443)
+grpcurl \
+  -cacert ssl/server.pem \
   -cert examples/helloworld/client/src/main/resources/client.keystore.pem \
   -key examples/helloworld/client/src/main/resources/client.key.pem \
+  -import-path examples/helloworld/proto/src/main/proto \
+  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+  localhost:8443 helloworld.Greeter/SayHello
 ```
-**Note.** To use the current versions of the certificate files with grpcurl, it is necessary to set
-
-   <code>export GODEBUG=x509ignoreCN=0</code>
-
-This restriction will be removed in the future.
 
 ## Chat
 
