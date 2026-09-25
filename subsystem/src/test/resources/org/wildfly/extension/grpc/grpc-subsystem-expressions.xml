@@ -4,12 +4,5 @@
      SPDX-License-Identifier: Apache-2.0
 
 -->
-<subsystem xmlns="urn:wildfly:grpc:preview:1.0" keep-alive-time="${test.keep-alive-time:11}"
-    keep-alive-timeout="${test.keep-alive-timeout:13}"
-    max-concurrent-calls-per-connection="${test.max-concurrent-calls-per-connection:17}"
-    max-connection-age="${test.max-connection-age:19}" max-connection-age-grace="${test.max-connection-age-grace:23}"
-    max-connection-idle="${test.max-connection-idle:29}" max-inbound-message-size="${test.max-inbound-message-size:31}"
-    max-inbound-metadata-size="${test.max-inbound-metadata-size:37}"
-    permit-keep-alive-time="${test.permit-keep-alive-time:39}"
-    permit-keep-alive-without-calls="${test.permit-keep-alive-without-calls:true}"
-    shutdown-timeout="${test.shutdown-timeout:53}" />
+<subsystem xmlns="urn:wildfly:grpc:preview:1.0" max-inbound-message-size="${test.max-inbound-message-size:31}"
+    max-inbound-metadata-size="${test.max-inbound-metadata-size:37}" shutdown-timeout="${test.shutdown-timeout:53}" />

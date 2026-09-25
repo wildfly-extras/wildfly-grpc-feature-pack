@@ -4,8 +4,5 @@
      SPDX-License-Identifier: Apache-2.0
 
 -->
-<subsystem xmlns="urn:wildfly:grpc:preview:1.0" keep-alive-time="11" keep-alive-timeout="13"
-    max-concurrent-calls-per-connection="17" max-connection-age="19" max-connection-age-grace="23"
-    max-connection-idle="29" max-inbound-message-size="31" max-inbound-metadata-size="37" permit-keep-alive-time="39"
-    permit-keep-alive-without-calls="true" server-name="default-server" shutdown-timeout="53"
-    virtual-host="default-host" />
+<subsystem xmlns="urn:wildfly:grpc:preview:1.0" max-inbound-message-size="31" max-inbound-metadata-size="37"
+    server-name="default-server" shutdown-timeout="53" virtual-host="default-host" />

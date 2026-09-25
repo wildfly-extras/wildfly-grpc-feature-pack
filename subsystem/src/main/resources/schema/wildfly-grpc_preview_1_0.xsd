@@ -23,16 +23,8 @@
             ]]>
             </xs:documentation>
         </xs:annotation>
-            <xs:attribute name="keep-alive-time" type="nonnegativeJavaInt" />
-            <xs:attribute name="keep-alive-timeout" type="nonnegativeJavaInt" />
-            <xs:attribute name="max-concurrent-calls-per-connection" type="nonnegativeJavaInt" />
-            <xs:attribute name="max-connection-age" type="nonnegativeJavaInt" />
-            <xs:attribute name="max-connection-age-grace" type="nonnegativeJavaInt" />
-            <xs:attribute name="max-connection-idle" type="nonnegativeJavaInt" />
             <xs:attribute name="max-inbound-message-size" type="nonnegativeJavaInt" default="4194304" />
             <xs:attribute name="max-inbound-metadata-size" type="nonnegativeJavaInt" default="8192"/>
-            <xs:attribute name="permit-keep-alive-time" type="nonnegativeJavaInt" default="250" />
-            <xs:attribute name="permit-keep-alive-without-calls" type="xs:boolean" default="false" />
             <xs:attribute name="server-name" type="xs:string" default="default-server" />
             <xs:attribute name="shutdown-timeout" type="nonnegativeJavaInt" />
             <xs:attribute name="virtual-host" type="xs:string" default="default-host" />

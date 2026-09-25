@@ -35,16 +35,8 @@ enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchem
     public PersistentResourceXMLDescription getXMLDescription() {
         // TODO - How can this avoid this deprecated variant?
         return builder(SUBSYSTEM_PATH, namespace)
-                .addAttributes(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME,
-                        GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT,
-                        GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION,
-                        GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE,
-                        GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE,
-                        GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE,
-                        GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE,
+                .addAttributes(GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE,
                         GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE,
-                        GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME,
-                        GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
                         GrpcSubsystemDefinition.GRPC_SERVER_NAME,
                         GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT,
                         GrpcSubsystemDefinition.GRPC_VIRTUAL_HOST)

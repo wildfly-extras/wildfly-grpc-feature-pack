@@ -44,28 +44,10 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         final ServerConfiguration configuration = new ServerConfiguration();
 
-        configuration.setKeepLiveTime(
-                GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME.resolveModelAttribute(context, model).asLong(-1));
-        configuration.setKeepAliveTimeout(
-                GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT.resolveModelAttribute(context, model).asLong(-1));
-        configuration.setMaxConcurrentCallsPerConnection(
-                GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION
-                        .resolveModelAttribute(context, model).asInt(-1));
-        configuration.setMaxConnectionAge(
-                GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE.resolveModelAttribute(context, model).asLong(-1));
-        configuration.setMaxConnectionAgeGrace(
-                GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE.resolveModelAttribute(context, model)
-                        .asLong(-1));
-        configuration.setMaxConnectionIdle(
-                GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE.resolveModelAttribute(context, model).asLong(-1));
         configuration.setMaxInboundMessageSize(
                 GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE.resolveModelAttribute(context, model).asInt());
         configuration.setMaxInboundMetadataSize(
                 GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE.resolveModelAttribute(context, model).asInt());
-        configuration.setPermitKeepAliveTime(
-                GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME.resolveModelAttribute(context, model).asLong(-1));
-        configuration.setPermitKeepAliveWithoutCalls(GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS
-                .resolveModelAttribute(context, model).asBoolean());
         configuration.setShutdownTimeout(
                 GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT.resolveModelAttribute(context, model).asLong());
 
