@@ -100,7 +100,9 @@ The server is provisioned with both listeners ready:
 
 The `helloworld` client is a simple Java application. From the project root, run:
 
-<code>mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob none"</code>
+<code>mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob *SSL*"</code>
+
+where *SSL* is either "none" (port 8080, h2c), "oneway" (port 8443, TLS), or "twoway" (port 8443, mutual TLS).
 
 Alternatively, use [grpcurl](https://github.com/fullstorydev/grpcurl) to invoke the service directly.
 From the `examples/helloworld/service` directory, pass the proto file with `-import-path` and `-proto`
