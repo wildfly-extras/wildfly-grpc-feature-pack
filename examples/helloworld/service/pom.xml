@@ -128,25 +128,6 @@
                     <value>none</value>
                 </property>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>execute-commands</goal>
-                                </goals>
-                                <phase>package</phase>
-                                <configuration>
-                                    <offline>true</offline>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>ssl-oneway</id>
@@ -159,38 +140,48 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <configuration>
-                            <offline>true</offline>
-                            <stability>preview</stability>
-                            <scripts>
-                                <script>${root.directory}/ssl/configure-elytron-oneway.cli</script>
-                            </scripts>
-                        </configuration>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>copy-keystore-oneway</id>
+                                <phase>prepare-package</phase>
                                 <goals>
-                                    <goal>execute-commands</goal>
+                                    <goal>copy-resources</goal>
                                 </goals>
-                                <phase>package</phase>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/server-content/standalone/configuration</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${root.directory}/ssl</directory>
+                                            <includes>
+                                                <include>server.keystore.jks</include>
+                                            </includes>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
                     <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <phase>package</phase>
+                                <id>provision-server</id>
                                 <configuration>
-                                    <target>
-                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
-                                            overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
-                                    </target>
+                                    <extra-server-content-dirs>
+                                        <extra-content-dir>${project.build.directory}/server-content</extra-content-dir>
+                                    </extra-server-content-dirs>
+                                    <packaging-scripts>
+                                        <execution>
+                                            <scripts>
+                                                <script>${root.directory}/ssl/configure-elytron-oneway.cli</script>
+                                            </scripts>
+                                        </execution>
+                                    </packaging-scripts>
                                 </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -208,40 +199,49 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>copy-keystore-twoway</id>
+                                <phase>prepare-package</phase>
                                 <goals>
-                                    <goal>execute-commands</goal>
+                                    <goal>copy-resources</goal>
                                 </goals>
-                                <phase>package</phase>
                                 <configuration>
-                                    <offline>true</offline>
-                                    <scripts>
-                                        <script>${root.directory}/ssl/configure-elytron-twoway.cli</script>
-                                    </scripts>
+                                    <outputDirectory>${project.build.directory}/server-content/standalone/configuration</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${root.directory}/ssl</directory>
+                                            <includes>
+                                                <include>server.keystore.jks</include>
+                                                <include>server.truststore.jks</include>
+                                            </includes>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
                     <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>3.2.0</version>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <phase>package</phase>
+                                <id>provision-server</id>
                                 <configuration>
-                                    <target>
-                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
-                                            overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
-                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
-                                            overwrite="true" file="${root.directory}/ssl/server.truststore.jks" />
-                                    </target>
+                                    <extra-server-content-dirs>
+                                        <extra-content-dir>${project.build.directory}/server-content</extra-content-dir>
+                                    </extra-server-content-dirs>
+                                    <packaging-scripts>
+                                        <execution>
+                                            <scripts>
+                                                <script>${root.directory}/ssl/configure-elytron-twoway.cli</script>
+                                            </scripts>
+                                        </execution>
+                                    </packaging-scripts>
                                 </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
