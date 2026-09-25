@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-     Copyright The WildFly Authors
-     SPDX-License-Identifier: Apache-2.0
+    Copyright The WildFly Authors
+    SPDX-License-Identifier: Apache-2.0
 
 -->
 <feature-group-spec name="grpc" xmlns="urn:jboss:galleon:feature-group:1.0">
     <feature spec="subsystem.grpc">
         <param name="server-name" value="default-server" />
         <param name="virtual-host" value="default-host" />
+    </feature>
+    <!-- gRPC requires HTTP/2. Enable h2c on the default HTTP listener so that
+        gRPC clients using plaintext (usePlaintext()) can connect on port 8080
+        without requiring the operator to configure TLS. -->
+    <feature spec="subsystem.undertow.server.http-listener">
+        <param name="server" value="default-server" />
+        <param name="http-listener" value="default" />
+        <param name="enable-http2" value="true" />
     </feature>
 </feature-group-spec>
