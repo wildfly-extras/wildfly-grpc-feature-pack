@@ -1,5 +1,5 @@
 if (outcome != success) of /subsystem=elytron/key-store=grpc-key-store:read-resource
-    /subsystem=elytron/key-store=grpc-key-store:add(credential-reference={clear-text="secret"}, type=JKS, path="server.keystore.jks", relative-to="jboss.server.config.dir", required=false)
+    /subsystem=elytron/key-store=grpc-key-store:add(credential-reference={clear-text="secret"}, type=PKCS12, path="server.keystore", relative-to="jboss.server.config.dir", required=false)
     /subsystem=elytron/key-store=grpc-trust-store:add(credential-reference={clear-text="secret"}, type=JKS, path="server.truststore.jks", relative-to="jboss.server.config.dir", required=false)
     /subsystem=elytron/key-manager=grpc-key-manager:add(key-store=grpc-key-store, credential-reference={clear-text="secret"})
     /subsystem=elytron/trust-manager=grpc-trust-manager:add(key-store=grpc-trust-store)
