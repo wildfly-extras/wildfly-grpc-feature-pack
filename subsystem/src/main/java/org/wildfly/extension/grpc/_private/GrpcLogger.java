@@ -21,8 +21,8 @@ public interface GrpcLogger extends BasicLogger {
     GrpcLogger LOGGER = Logger.getMessageLogger(GrpcLogger.class, "org.wildfly.extension.grpc");
 
     @LogMessage(level = INFO)
-    @Message(id = 1, value = "gRPC server listening on %s:%d")
-    void serverListening(String address, int port);
+    @Message(id = 1, value = "gRPC server registered on Undertow virtual host '%s'")
+    void grpcServingViaUndertow(String hostName);
 
     @LogMessage(level = INFO)
     @Message(id = 2, value = "gRPC service stopping")

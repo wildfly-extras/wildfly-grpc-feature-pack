@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-     Copyright The WildFly Authors
-     SPDX-License-Identifier: Apache-2.0
+    Copyright The WildFly Authors
+    SPDX-License-Identifier: Apache-2.0
 
 -->
 
@@ -20,6 +20,7 @@
         <artifact name="${io.grpc:grpc-protobuf-lite}" />
         <artifact name="${io.grpc:grpc-stub}" />
         <artifact name="${io.grpc:grpc-util}" />
+        <artifact name="${io.grpc:grpc-servlet-jakarta}" />
     </resources>
 
     <dependencies>
@@ -29,5 +30,6 @@
         <module name="com.google.guava" />
         <module name="io.perfmark" />
         <module name="java.logging" />
+        <module name="jakarta.servlet.api" />
     </dependencies>
 </module>

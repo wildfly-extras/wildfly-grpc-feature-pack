@@ -34,20 +34,19 @@ enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchem
     @Override
     public PersistentResourceXMLDescription getXMLDescription() {
         // TODO - How can this avoid this deprecated variant?
-        return builder(SUBSYSTEM_PATH, namespace).addAttributes(GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW,
-                GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT,
-                GrpcSubsystemDefinition.GRPC_INITIAL_FLOW_CONTROL_WINDOW, GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME,
-                GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT, GrpcSubsystemDefinition.GRPC_KEY_MANAGER_NAME,
-                GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION,
-                GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE, GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE,
-                GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE, GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE,
-                GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE,
-                GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME,
-                GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
-                GrpcSubsystemDefinition.GRPC_PROTOCOL_PROVIDER, GrpcSubsystemDefinition.GRPC_SERVER_SOCKET_BINDING,
-                GrpcSubsystemDefinition.GRPC_SESSION_CACHE_SIZE, GrpcSubsystemDefinition.GRPC_SESSION_TIMEOUT,
-                GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT, GrpcSubsystemDefinition.GRPC_SSL_CONTEXT_NAME,
-                GrpcSubsystemDefinition.GRPC_START_TLS, GrpcSubsystemDefinition.GRPC_TRUST_MANAGER_NAME).build();
+        return builder(SUBSYSTEM_PATH, namespace)
+                .addAttributes(GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME,
+                        GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT,
+                        GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION,
+                        GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE,
+                        GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE,
+                        GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE,
+                        GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE,
+                        GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE,
+                        GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME,
+                        GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
+                        GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT,
+                        GrpcSubsystemDefinition.GRPC_VIRTUAL_HOST)
+                .build();
     }
-
 }
