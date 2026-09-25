@@ -121,6 +121,7 @@
         <module>subsystem</module>
         <module>galleon-pack</module>
         <module>testsuite</module>
+        <module>examples</module>
     </modules>
 
     <!-- No dependencies! Dependencies are managed in code-parent -->
@@ -341,12 +342,6 @@
             <build>
                 <defaultGoal>clean install</defaultGoal>
             </build>
-        </profile>
-        <profile>
-            <id>examples</id>
-            <modules>
-                <module>examples</module>
-            </modules>
         </profile>
     </profiles>
 

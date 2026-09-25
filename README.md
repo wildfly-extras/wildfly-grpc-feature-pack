@@ -70,7 +70,7 @@ Each example consists of three modules:
 Before running the examples, please make sure that all necessary dependencies are available in your local maven repository:
 
 ```shell
-mvn install -P examples
+mvn install
 ```
 
 ## Hello World
@@ -100,7 +100,7 @@ The server is provisioned with both listeners ready:
 
 The `helloworld` client is a simple Java application. From the project root, run:
 
-<code>mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob *SSL*"</code>
+<code>mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob *SSL*"</code>
 
 where *SSL* is either "none" (port 8080, h2c), "oneway" (port 8443, TLS), or "twoway" (port 8443, mutual TLS).
 
@@ -147,7 +147,7 @@ The `chat` example is taken from [gRPC by example](https://github.com/saturnism/
 To build the `chat` service, provision a WildFly server with the gRPC subsystem and any necessary certificate files,
 and deploy the service, run:
 
-<code>mvn wildfly:run -P examples -pl examples/chat/service -Dssl=*SSL*</code>
+<code>mvn wildfly:run -pl examples/chat/service -Dssl=*SSL*</code>
 
 where *SSL* is either
 
@@ -160,7 +160,7 @@ where *SSL* is either
 
 The `chat` client is a JavaFX application. To build the client and connect to the gRPC service, run:
 
-<code>mvn javafx:run -P examples -pl examples/chat/client -Dexec.args="*SSL*"</code>
+<code>mvn javafx:run -pl examples/chat/client -Dexec.args="*SSL*"</code>
 
 To see the `chat` example in action, you should start multiple chat clients. 
 
