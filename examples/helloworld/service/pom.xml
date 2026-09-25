@@ -79,6 +79,32 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-keystores</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/server-content/standalone/configuration</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${root.directory}/ssl</directory>
+                                    <includes>
+                                        <include>server.keystore.jks</include>
+                                        <include>server.truststore.jks</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
@@ -106,6 +132,16 @@
                     </galleon-options>
                     <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
                     <stability>preview</stability>
+                    <extra-server-content-dirs>
+                        <extra-content-dir>${project.build.directory}/server-content</extra-content-dir>
+                    </extra-server-content-dirs>
+                    <packaging-scripts>
+                        <execution>
+                            <scripts>
+                                <script>${root.directory}/ssl/configure-elytron-tls.cli</script>
+                            </scripts>
+                        </execution>
+                    </packaging-scripts>
                 </configuration>
                 <executions>
                     <execution>
@@ -119,75 +155,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>ssl-none</id>
-            <activation>
-                <property>
-                    <name>ssl</name>
-                    <value>none</value>
-                </property>
-            </activation>
-        </profile>
-        <profile>
-            <id>ssl-tls</id>
-            <activation>
-                <property>
-                    <name>ssl</name>
-                    <value>tls</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-keystores</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.build.directory}/server-content/standalone/configuration</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${root.directory}/ssl</directory>
-                                            <includes>
-                                                <include>server.keystore.jks</include>
-                                                <include>server.truststore.jks</include>
-                                            </includes>
-                                            <filtering>false</filtering>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>provision-server</id>
-                                <configuration>
-                                    <extra-server-content-dirs>
-                                        <extra-content-dir>${project.build.directory}/server-content</extra-content-dir>
-                                    </extra-server-content-dirs>
-                                    <packaging-scripts>
-                                        <execution>
-                                            <scripts>
-                                                <script>${root.directory}/ssl/configure-elytron-tls.cli</script>
-                                            </scripts>
-                                        </execution>
-                                    </packaging-scripts>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

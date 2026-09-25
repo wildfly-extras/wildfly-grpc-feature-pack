@@ -83,12 +83,7 @@ From the `examples/helloworld/service` directory, build and provision the server
 
 ```shell
 cd examples/helloworld/service
-
-# Plaintext (h2c on port 8080)
-mvn clean package -Dssl=none
-
-# TLS (HTTPS on port 8443, supports both one-way and two-way at runtime)
-mvn clean package -Dssl=tls
+mvn clean package
 ```
 
 Then start WildFly:
@@ -97,17 +92,15 @@ Then start WildFly:
 ./target/wildfly/bin/standalone.sh --stability=preview
 ```
 
-The `ssl=tls` provisioning configures the SSL context with `want-client-auth=true` and `authentication-optional=true`:
-clients that present a certificate use mutual TLS; clients without a certificate use one-way TLS.
-The behaviour is chosen at runtime by the client, not at provisioning time.
+The server is provisioned with both listeners ready:
+- **Port 8080** — HTTP/2 cleartext (h2c), no certificate required
+- **Port 8443** — HTTPS with HTTP/2 via ALPN; the SSL context uses `want-client-auth=true` and `authentication-optional=true` so clients may optionally present a certificate for mutual TLS
 
 ### Client
 
 The `helloworld` client is a simple Java application. From the project root, run:
 
-<code>mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob *SSL*"</code>
-
-where *SSL* is either "none", "oneway", or "twoway".
+<code>mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob none"</code>
 
 Alternatively, use [grpcurl](https://github.com/fullstorydev/grpcurl) to invoke the service directly.
 From the `examples/helloworld/service` directory, pass the proto file with `-import-path` and `-proto`
