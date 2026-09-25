@@ -18,6 +18,6 @@
     <dependencies>
         <module name="com.google.guava" />
         <module name="java.logging" />
-        <module name="com.google.code.gson" optional="true"/>
+        <module name="com.google.code.gson" optional="true" />
     </dependencies>
 </module>
