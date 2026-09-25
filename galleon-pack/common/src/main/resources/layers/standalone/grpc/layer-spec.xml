@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-     Copyright The WildFly Authors
-     SPDX-License-Identifier: Apache-2.0
+    Copyright The WildFly Authors
+    SPDX-License-Identifier: Apache-2.0
 
 -->
 <layer-spec xmlns="urn:jboss:galleon:layer-spec:2.0" name="grpc">
@@ -10,15 +10,13 @@
         <prop name="org.wildfly.rule.add-on" value="rpc,grpc" />
         <prop name="org.wildfly.rule.add-on-depends-on" value="none" />
         <prop name="org.wildfly.rule.add-on-description" value="Support for gRPC." />
-        <prop name="org.wildfly.category" value="RPC (Remote Procedure Call)"/>
-        <prop name="org.wildfly.description" value="This layer can be used to deploy gRPC services in the application server."/>
+        <prop name="org.wildfly.category" value="RPC (Remote Procedure Call)" />
+        <prop name="org.wildfly.description"
+            value="This layer can be used to deploy gRPC services in the application server." />
     </props>
     <dependencies>
         <layer name="cdi" />
+        <layer name="web-server" />
     </dependencies>
     <feature-group name="grpc" />
-    <feature spec="socket-binding-group">
-        <param name="socket-binding-group" value="standard-sockets" />
-        <feature-group name="grpc-sockets" />
-    </feature>
 </layer-spec>

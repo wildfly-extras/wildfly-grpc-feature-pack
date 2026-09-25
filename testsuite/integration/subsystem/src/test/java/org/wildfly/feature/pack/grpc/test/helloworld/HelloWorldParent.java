@@ -21,9 +21,10 @@ import messages.HelloRequest;
  */
 public class HelloWorldParent {
 
-    protected static final String TARGET = "localhost:9555";
+    protected static final String TARGET = "localhost:8080";
     protected static final String TARGET_HOST = "localhost";
-    protected static final int TARGET_PORT = 9555;
+    protected static final int TARGET_PORT = 8080;
+    protected static final int SECURE_PORT = 8443;
 
     protected static ManagedChannel channel = null;
     protected static GreeterGrpc.GreeterBlockingStub blockingStub;

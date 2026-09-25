@@ -15,7 +15,7 @@ Group ID: `org.wildfly.grpc` (changed from `org.wildfly.extras.grpc` in 0.1.17).
 mvn install
 
 # Full build including examples
-mvn install -P examples
+mvn install
 
 # Build without tests
 mvn install -DskipTests
@@ -36,10 +36,10 @@ The helloworld example provisions a WildFly server with the gRPC subsystem:
 
 ```bash
 # Start server (ssl: none, oneway, twoway)
-mvn wildfly:run -P examples -pl examples/helloworld/service -Dssl=none
+mvn wildfly:run -pl examples/helloworld/service -Dssl=none
 
 # Run client
-mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob none"
+mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob none"
 ```
 
 ## Architecture

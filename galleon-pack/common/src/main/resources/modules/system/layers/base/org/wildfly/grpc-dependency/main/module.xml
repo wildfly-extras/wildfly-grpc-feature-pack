@@ -1,18 +1,14 @@
 <?xml version="1.0" ?>
 <!--
 
-     Copyright The WildFly Authors
-     SPDX-License-Identifier: Apache-2.0
+    Copyright The WildFly Authors
+    SPDX-License-Identifier: Apache-2.0
 
 -->
 <module xmlns="urn:jboss:module:1.9" name="org.wildfly.grpc-dependency">
     <properties>
         <property name="jboss.api" value="private" />
     </properties>
-
-    <resources>
-        <artifact name="${io.grpc:grpc-netty}" />
-    </resources>
 
     <dependencies>
         <module name="java.logging" />
@@ -22,13 +18,6 @@
         <module name="org.jboss.weld.spi" />
         <module name="io.grpc-all" export="true" />
         <module name="io.perfmark" />
-        <module name="io.netty.netty-buffer" />
-        <module name="io.netty.netty-codec" />
-        <module name="io.netty.netty-codec-http" />
-        <module name="io.netty.netty-codec-http2" />
-        <module name="io.netty.netty-common" />
-        <module name="io.netty.netty-handler" />
-        <module name="io.netty.netty-transport" />
         <module name="com.google.guava" />
     </dependencies>
 </module>

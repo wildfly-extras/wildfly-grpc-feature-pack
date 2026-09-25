@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright The WildFly Authors
+    SPDX-License-Identifier: Apache-2.0
+
+-->
+
+<module xmlns="urn:jboss:module:1.9" name="io.grpc.servlet.jakarta">
+    <properties>
+        <property name="jboss.api" value="private" />
+    </properties>
+
+    <resources>
+        <artifact name="${io.grpc:grpc-servlet-jakarta}" />
+    </resources>
+
+    <dependencies>
+        <module name="io.grpc-all" />
+        <module name="com.google.guava" />
+        <module name="jakarta.servlet.api" />
+        <module name="io.undertow.servlet" />
+        <module name="java.logging" />
+    </dependencies>
+</module>

@@ -58,7 +58,7 @@ import io.grpc.stub.StreamObserver;
 @RunAsClient
 public class StreamingInterceptorTest {
 
-    protected static final String TARGET = "localhost:9555";
+    protected static final String TARGET = "localhost:8080";
 
     protected static ManagedChannel channel;
     protected static ChatServiceGrpc.ChatServiceStub stub;

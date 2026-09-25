@@ -1,6 +1,6 @@
 # WildFly gRPC
 
-Feature pack to bring gRPC support to WildFly. gRPC services are registered against a gRPC server listening, by default, to port 9555.
+Feature pack to bring gRPC support to WildFly. gRPC services are served via WildFly's Undertow HTTP/2 stack — no separate port is needed. The `grpc` Galleon layer enables HTTP/2 cleartext (h2c) on the standard HTTP listener (port 8080) automatically. For TLS (port 8443), configure an Undertow `https-listener` with `enable-http2="true"` — HTTP/2 is not enabled on HTTPS listeners by default even though TLS supports ALPN.
 
 Only gRPC services are supported at the moment. Support for gRPC clients is coming soon.
 
@@ -37,13 +37,14 @@ Once built you can provision a server with gRPC support using Galleon provisioni
             </feature-pack>
         </feature-packs>
         <layers>
-            <layer>core-server</layer>
-            <layer>web-server</layer>
+            <layer>jaxrs-server</layer>
             <layer>grpc</layer>
         </layers>
         <galleon-options>
             <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+            <stability-level>preview</stability-level>
         </galleon-options>
+        <stability>preview</stability>
         <provisioning-dir>wildfly</provisioning-dir>
         <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
         <offline>true</offline>
@@ -69,7 +70,7 @@ Each example consists of three modules:
 Before running the examples, please make sure that all necessary dependencies are available in your local maven repository:
 
 ```shell
-mvn install -P examples
+mvn install
 ```
 
 ## Hello World
@@ -78,58 +79,64 @@ The `helloworld` example is a slightly modified version of the `helloworld` exam
 
 ### Service
 
-To build the `helloworld` service, provision a WildFly server with the gRPC subsystem and any necessary certificate files,
-and deploy the service, run:
+From the `examples/helloworld/service` directory, build and provision the server with the gRPC service pre-deployed:
 
-<code>mvn wildfly:run -P examples -pl examples/helloworld/service -Dssl=*SSL*</code>
+```shell
+cd examples/helloworld/service
+mvn clean package
+```
 
-where *SSL* is either
+Then start WildFly:
 
-* none: plaintext
-* oneway: server identity is verified
-* twoway: both server and client identities are verified
+```shell
+./target/wildfly/bin/standalone.sh --stability=preview
+```
+
+The server is provisioned with both listeners ready:
+- **Port 8080** — HTTP/2 cleartext (h2c), no certificate required
+- **Port 8443** — HTTPS with HTTP/2 via ALPN; the SSL context uses `want-client-auth=true` and `authentication-optional=true` so clients may optionally present a certificate for mutual TLS
 
 ### Client
 
-The `helloworld` client is a simple Java application. To build the client and call to the gRPC service, run:
+The `helloworld` client is a simple Java application. From the project root, run:
 
-<code>mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob *SSL*"</code>
+<code>mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob *SSL*"</code>
 
-where, again, *SSL* is either "none", "oneway", or "twoway"
+where *SSL* is either "none" (port 8080, h2c), "oneway" (port 8443, TLS), or "twoway" (port 8443, mutual TLS).
 
-Alternatively you could also use tools like [BloomRPC](https://github.com/uw-labs/bloomrpc)
-or [gRPCurl](https://github.com/fullstorydev/grpcurl) to invoke the service:
+Alternatively, use [grpcurl](https://github.com/fullstorydev/grpcurl) to invoke the service directly.
+From the `examples/helloworld` directory, pass the proto file with `-import-path` and `-proto`
+since the server does not expose the gRPC reflection API:
 
 ```shell
-grpcurl \ # plaintext
-  -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
+cd examples/helloworld
+
+# plaintext (port 8080, h2c)
+grpcurl \
   -plaintext \
+  -import-path proto/src/main/proto \
+  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
-```
-or
-```shell
-grpcurl \ # oneway
-  -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
-  -cacert examples/helloworld/client/src/main/resources/client.truststore.pem \
-  -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
-```
-or
-```shell
-grpcurl \ # twoway
-  -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
-  -cacert examples/helloworld/client/src/main/resources/client.truststore.pem \
-  -cert examples/helloworld/client/src/main/resources/client.keystore.pem \
-  -key examples/helloworld/client/src/main/resources/client.key.pem \
-  -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
-```
-**Note.** To use the current versions of the certificate files with grpcurl, it is necessary to set
+  localhost:8080 helloworld.Greeter/SayHello
 
-   <code>export GODEBUG=x509ignoreCN=0</code>
+# TLS, one-way (port 8443) — server authenticates to client, no client cert
+grpcurl \
+  -cacert ../../ssl/ca.pem \
+  -import-path proto/src/main/proto \
+  -proto helloworld.proto \
+  -d '{"name":"Bob"}' \
+  localhost:8443 helloworld.Greeter/SayHello
 
-This restriction will be removed in the future.
+# TLS, two-way (port 8443) — mutual authentication, client presents a certificate
+grpcurl \
+  -cacert ../../ssl/ca.pem \
+  -cert client/src/main/resources/client.keystore.pem \
+  -key client/src/main/resources/client.key.pem \
+  -import-path proto/src/main/proto \
+  -proto helloworld.proto \
+  -d '{"name":"Bob"}' \
+  localhost:8443 helloworld.Greeter/SayHello
+```
 
 ## Chat
 
@@ -140,7 +147,7 @@ The `chat` example is taken from [gRPC by example](https://github.com/saturnism/
 To build the `chat` service, provision a WildFly server with the gRPC subsystem and any necessary certificate files,
 and deploy the service, run:
 
-<code>mvn wildfly:run -P examples -pl examples/chat/service -Dssl=*SSL*</code>
+<code>mvn wildfly:run -pl examples/chat/service -Dssl=*SSL*</code>
 
 where *SSL* is either
 
@@ -153,7 +160,7 @@ where *SSL* is either
 
 The `chat` client is a JavaFX application. To build the client and connect to the gRPC service, run:
 
-<code>mvn javafx:run -P examples -pl examples/chat/client -Dexec.args="*SSL*"</code>
+<code>mvn javafx:run -pl examples/chat/client -Dexec.args="*SSL*"</code>
 
 To see the `chat` example in action, you should start multiple chat clients. 
 

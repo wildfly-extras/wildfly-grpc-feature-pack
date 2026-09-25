@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-     Copyright The WildFly Authors
-     SPDX-License-Identifier: Apache-2.0
+    Copyright The WildFly Authors
+    SPDX-License-Identifier: Apache-2.0
 
 -->
 
@@ -15,7 +15,6 @@
         <artifact name="${io.grpc:grpc-api}" />
         <artifact name="${io.grpc:grpc-context}" />
         <artifact name="${io.grpc:grpc-protobuf}" />
-        <artifact name="${io.grpc:grpc-okhttp}" />
         <artifact name="${io.grpc:grpc-core}" />
         <artifact name="${io.grpc:grpc-protobuf-lite}" />
         <artifact name="${io.grpc:grpc-stub}" />
@@ -25,7 +24,6 @@
     <dependencies>
         <module name="com.google.code.gson" />
         <module name="com.google.protobuf" export="true" />
-        <module name="com.squareup.okhttp3" />
         <module name="com.google.guava" />
         <module name="io.perfmark" />
         <module name="java.logging" />
