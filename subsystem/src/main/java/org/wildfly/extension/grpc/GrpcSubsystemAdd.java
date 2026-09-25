@@ -42,18 +42,13 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
         final Supplier<Host> undertowHost = builder.requiresCapability(
                 Capabilities.UNDERTOW_HOST_CAPABILITY, Host.class, serverNameRef, virtualHostRef);
 
-        final ServerConfiguration configuration = new ServerConfiguration();
-
-        configuration.setMaxInboundMessageSize(
-                GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE.resolveModelAttribute(context, model).asInt());
-        configuration.setMaxInboundMetadataSize(
+        final ServletConfiguration configuration = new ServletConfiguration(
+                GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE.resolveModelAttribute(context, model).asInt(),
                 GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE.resolveModelAttribute(context, model).asInt());
-        configuration.setShutdownTimeout(
-                GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT.resolveModelAttribute(context, model).asLong());
 
         final Consumer<GrpcUndertowService> provides = builder.provides(GrpcSubsystemDefinition.SERVER_CAPABILITY);
 
-        final GrpcUndertowService service = new GrpcUndertowService(provides, undertowHost, configuration.build());
+        final GrpcUndertowService service = new GrpcUndertowService(provides, undertowHost, configuration);
 
         builder.setInstance(service).install();
 

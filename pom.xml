@@ -100,6 +100,7 @@
 
         <!-- Build related -->
         <encoding>UTF-8</encoding>
+        <modular.jdk.args />
         <galleon.fork.embedded>true</galleon.fork.embedded>
         <galleon.log.time>true</galleon.log.time>
         <galleon.wildfly.home>/tmp</galleon.wildfly.home>
@@ -195,6 +196,7 @@
                         <groups>java.,javax.,jakarta.,org.,com.</groups>
                         <staticGroups>*</staticGroups>
                         <removeUnused>true</removeUnused>
+                        <compliance>17</compliance>
                     </configuration>
                 </plugin>
                 <plugin>
