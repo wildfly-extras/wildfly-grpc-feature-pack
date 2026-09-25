@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -25,7 +24,6 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.wildfly.extension.grpc._private.GrpcLogger;
 import org.wildfly.extension.undertow.Host;
-import org.wildfly.extension.undertow.UndertowFilter;
 
 import io.grpc.BindableService;
 import io.grpc.InternalServerInterceptors;
@@ -37,7 +35,9 @@ import io.grpc.servlet.jakarta.GrpcServlet;
 import io.grpc.servlet.jakarta.ServletServerBuilder;
 import io.grpc.util.MutableHandlerRegistry;
 import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.ResponseCodeHandler;
 import io.undertow.servlet.Servlets;
+import io.undertow.servlet.api.Deployment;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.servlet.api.InstanceHandle;
@@ -63,7 +63,7 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     private volatile GrpcServlet grpcServlet;
     private volatile DeploymentManager deploymentManager;
     private volatile ServletContainer servletContainer;
-    private volatile UndertowFilter grpcFilter;
+    private volatile Deployment registeredDeployment;
 
     GrpcUndertowService(final Consumer<GrpcUndertowService> serviceConsumer,
             final Supplier<Host> undertowHost,
@@ -78,29 +78,12 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     public void start(final StartContext context) throws StartException {
         registry = new MutableHandlerRegistry();
 
+        // ServletServerBuilder delegates transport concerns (keepalive, connection age/idle)
+        // to the servlet container (Undertow). Only message-level settings are applicable.
         final ServletServerBuilder builder = new ServletServerBuilder()
                 .fallbackHandlerRegistry(registry)
-                .maxInboundMessageSize(configuration.getMaxInboundMessageSize());
-
-        if (configuration.getKeepLiveTime() > 0) {
-            builder.keepAliveTime(configuration.getKeepLiveTime(), TimeUnit.SECONDS);
-        }
-        if (configuration.getKeepAliveTimeout() > 0) {
-            builder.keepAliveTimeout(configuration.getKeepAliveTimeout(), TimeUnit.SECONDS);
-        }
-        if (configuration.getMaxConnectionAge() > 0) {
-            builder.maxConnectionAge(configuration.getMaxConnectionAge(), TimeUnit.SECONDS);
-        }
-        if (configuration.getMaxConnectionAgeGrace() > 0) {
-            builder.maxConnectionAgeGrace(configuration.getMaxConnectionAgeGrace(), TimeUnit.SECONDS);
-        }
-        if (configuration.getMaxConnectionIdle() > 0) {
-            builder.maxConnectionIdle(configuration.getMaxConnectionIdle(), TimeUnit.SECONDS);
-        }
-        if (configuration.getPermitKeepAliveTime() > 0) {
-            builder.permitKeepAliveTime(configuration.getPermitKeepAliveTime(), TimeUnit.SECONDS);
-        }
-        builder.permitKeepAliveWithoutCalls(configuration.isPermitKeepAliveWithoutCalls());
+                .maxInboundMessageSize(configuration.getMaxInboundMessageSize())
+                .maxInboundMetadataSize(configuration.getMaxInboundMetadataSize());
 
         grpcServlet = builder.buildServlet();
 
@@ -135,22 +118,15 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
             throw new StartException(e);
         }
 
-        // Register an UndertowFilter that wraps the entire host handler chain.
-        // application/grpc traffic goes to the servlet handler; everything else passes through.
-        grpcFilter = new UndertowFilter() {
-            @Override
-            public int getPriority() {
-                return 1;
-            }
-
-            @Override
-            public HttpHandler wrap(final HttpHandler next) {
-                return new GrpcRoutingHandler(servletHandler, next);
-            }
-        };
-
+        // Register the gRPC deployment at context path "/" so Undertow routes all
+        // unmatched paths here. GrpcRoutingHandler intercepts application/grpc traffic
+        // and routes it to the servlet; non-gRPC requests fall through to a 404.
+        // Requests to actual web applications take priority because Undertow uses
+        // longest-prefix context-path matching.
+        final HttpHandler routingHandler = new GrpcRoutingHandler(servletHandler, ResponseCodeHandler.HANDLE_404);
+        registeredDeployment = deploymentManager.getDeployment();
         final Host host = undertowHost.get();
-        host.addFilter(grpcFilter);
+        host.registerDeployment(registeredDeployment, routingHandler);
 
         GrpcLogger.LOGGER.grpcServingViaUndertow(host.getName());
         serviceConsumer.accept(this);
@@ -160,10 +136,10 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     public void stop(final StopContext context) {
         GrpcLogger.LOGGER.grpcStopping();
         final Host host = undertowHost.get();
-        if (host != null && grpcFilter != null) {
-            host.removeFilter(grpcFilter);
+        if (host != null && registeredDeployment != null) {
+            host.unregisterDeployment(registeredDeployment);
         }
-        grpcFilter = null;
+        registeredDeployment = null;
 
         if (deploymentManager != null) {
             try {

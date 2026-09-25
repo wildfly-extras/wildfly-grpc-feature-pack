@@ -80,18 +80,19 @@ public class OnewaySecureStreamingTest extends StreamingTestParent {
         protocols.add("TLSv1.2");
         op.get("protocols").set(protocols);
         op.get("want-client-auth").set(false);
-        op.get("need-client-auth").set(true);
+        op.get("need-client-auth").set(false);
         op.get("authentication-optional").set(false);
         op.get("use-cipher-suites-order").set(false);
         op.get("key-manager").set("grpc-key-manager");
         builder.addStep(op);
 
         // /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https,
-        // ssl-context="grpc-ssl-context")
+        // ssl-context="grpc-ssl-context", enable-http2=true)
         address = Operations.createAddress("subsystem", "undertow", "server", "default-server", "https-listener", "https");
         op = Operations.createAddOperation(address);
         op.get("socket-binding").set("https");
         op.get("ssl-context").set("grpc-ssl-context");
+        op.get("enable-http2").set(true);
         builder.addStep(op);
 
         final var result = client.getControllerClient().execute(builder.build());
