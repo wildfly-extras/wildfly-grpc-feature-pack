@@ -19,7 +19,6 @@
         <artifact name="${io.grpc:grpc-protobuf-lite}" />
         <artifact name="${io.grpc:grpc-stub}" />
         <artifact name="${io.grpc:grpc-util}" />
-        <artifact name="${io.grpc:grpc-servlet-jakarta}" />
     </resources>
 
     <dependencies>
@@ -28,6 +27,5 @@
         <module name="com.google.guava" />
         <module name="io.perfmark" />
         <module name="java.logging" />
-        <module name="jakarta.servlet.api" />
     </dependencies>
 </module>
