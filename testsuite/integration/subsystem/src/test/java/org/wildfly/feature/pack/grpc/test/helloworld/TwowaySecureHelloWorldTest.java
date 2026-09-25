@@ -68,7 +68,7 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
         op = Operations.createAddOperation(address);
         op.get("credential-reference").set(credentialRef);
         op.get("type").set("JKS");
-        op.get("path").set("./../../ssl/server.truststore.jks");
+        op.get("path").set("../../../ssl/server.truststore.jks");
         // op.get("relative-to").set("jboss.server.config.dir");
         builder.addStep(op);
 
@@ -97,7 +97,7 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
         protocols.add("TLSv1.2");
         op.get("protocols").set(protocols);
         op.get("want-client-auth").set(false);
-        op.get("need-client-auth").set(false);
+        op.get("need-client-auth").set(true);
         op.get("authentication-optional").set(false);
         op.get("use-cipher-suites-order").set(false);
         op.get("key-manager").set("grpc-key-manager");
