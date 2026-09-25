@@ -37,27 +37,19 @@ Once built you can provision a server with gRPC support using Galleon provisioni
             </feature-pack>
         </feature-packs>
         <layers>
-            <layer>core-server</layer>
-            <layer>web-server</layer>
+            <layer>jaxrs-server</layer>
             <layer>grpc</layer>
         </layers>
         <galleon-options>
             <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+            <stability-level>preview</stability-level>
         </galleon-options>
+        <stability>preview</stability>
         <provisioning-dir>wildfly</provisioning-dir>
         <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
         <offline>true</offline>
     </configuration>
 </plugin>
-```
-
-You must also add `stability-level=preview` to the `galleon-options` and `stability=preview` to the plugin configuration, as the gRPC subsystem uses `PREVIEW` stability:
-
-```xml
-<galleon-options>
-    <stability-level>preview</stability-level>
-</galleon-options>
-<stability>preview</stability>
 ```
 
 You can also configure this with the Galleon CLI tool:
@@ -87,56 +79,58 @@ The `helloworld` example is a slightly modified version of the `helloworld` exam
 
 ### Service
 
-Build and provision the server with the gRPC service pre-deployed:
+From the `examples/helloworld/service` directory, build and provision the server with the gRPC service pre-deployed:
 
 ```shell
-mvn clean package -P examples -pl examples/helloworld/service -Dssl=none
+cd examples/helloworld/service
+mvn clean package -Dssl=none
 ```
 
 Then start WildFly:
 
 ```shell
-./examples/helloworld/service/target/wildfly/bin/standalone.sh
+./target/wildfly/bin/standalone.sh --stability=preview
 ```
 
-For TLS variants, pass `-Dssl=oneway` or `-Dssl=twoway` to the `mvn clean package` command instead. The server will be configured with the appropriate Elytron SSL context.
+For TLS variants, pass `-Dssl=oneway` or `-Dssl=twoway` to `mvn clean package` instead.
 
 ### Client
 
-The `helloworld` client is a simple Java application. To call the deployed gRPC service, run:
+The `helloworld` client is a simple Java application. From the project root, run:
 
 <code>mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob *SSL*"</code>
 
 where *SSL* is either "none", "oneway", or "twoway".
 
 Alternatively, use [grpcurl](https://github.com/fullstorydev/grpcurl) to invoke the service directly.
-Pass the proto file with `-import-path` and `-proto` since the server does not expose the gRPC reflection API:
+From the `examples/helloworld/service` directory, pass the proto file with `-import-path` and `-proto`
+since the server does not expose the gRPC reflection API:
 
 ```shell
+cd examples/helloworld/service
+
 # plaintext (port 8080, h2c)
 grpcurl \
   -plaintext \
-  -import-path examples/helloworld/proto/src/main/proto \
+  -import-path ../proto/src/main/proto \
   -proto helloworld.proto \
   -d '{"name":"Bob"}' \
   localhost:8080 helloworld.Greeter/SayHello
-```
-```shell
+
 # oneway TLS (port 8443)
 grpcurl \
-  -cacert ssl/server.pem \
-  -import-path examples/helloworld/proto/src/main/proto \
+  -cacert ../../../ssl/server.pem \
+  -import-path ../proto/src/main/proto \
   -proto helloworld.proto \
   -d '{"name":"Bob"}' \
   localhost:8443 helloworld.Greeter/SayHello
-```
-```shell
+
 # twoway TLS (port 8443)
 grpcurl \
-  -cacert ssl/server.pem \
-  -cert examples/helloworld/client/src/main/resources/client.keystore.pem \
-  -key examples/helloworld/client/src/main/resources/client.key.pem \
-  -import-path examples/helloworld/proto/src/main/proto \
+  -cacert ../../../ssl/server.pem \
+  -cert ../client/src/main/resources/client.keystore.pem \
+  -key ../client/src/main/resources/client.key.pem \
+  -import-path ../proto/src/main/proto \
   -proto helloworld.proto \
   -d '{"name":"Bob"}' \
   localhost:8443 helloworld.Greeter/SayHello
