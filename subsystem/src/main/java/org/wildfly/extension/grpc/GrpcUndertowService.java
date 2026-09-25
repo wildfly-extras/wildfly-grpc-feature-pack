@@ -24,6 +24,7 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.wildfly.extension.grpc._private.GrpcLogger;
 import org.wildfly.extension.undertow.Host;
+import org.wildfly.extension.undertow.UndertowFilter;
 
 import io.grpc.BindableService;
 import io.grpc.InternalServerInterceptors;
@@ -35,9 +36,7 @@ import io.grpc.servlet.jakarta.GrpcServlet;
 import io.grpc.servlet.jakarta.ServletServerBuilder;
 import io.grpc.util.MutableHandlerRegistry;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.handlers.ResponseCodeHandler;
 import io.undertow.servlet.Servlets;
-import io.undertow.servlet.api.Deployment;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.servlet.api.InstanceHandle;
@@ -63,7 +62,7 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     private volatile GrpcServlet grpcServlet;
     private volatile DeploymentManager deploymentManager;
     private volatile ServletContainer servletContainer;
-    private volatile Deployment registeredDeployment;
+    private volatile UndertowFilter grpcFilter;
 
     GrpcUndertowService(final Consumer<GrpcUndertowService> serviceConsumer,
             final Supplier<Host> undertowHost,
@@ -118,15 +117,24 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
             throw new StartException(e);
         }
 
-        // Register the gRPC deployment at context path "/" so Undertow routes all
-        // unmatched paths here. GrpcRoutingHandler intercepts application/grpc traffic
-        // and routes it to the servlet; non-gRPC requests fall through to a 404.
-        // Requests to actual web applications take priority because Undertow uses
-        // longest-prefix context-path matching.
-        final HttpHandler routingHandler = new GrpcRoutingHandler(servletHandler, ResponseCodeHandler.HANDLE_404);
-        registeredDeployment = deploymentManager.getDeployment();
+        // Register an UndertowFilter that wraps the host's root handler.
+        // This sits above Undertow's path router so application/grpc requests are
+        // intercepted before any context-path dispatch — including ROOT.war deployments
+        // at "/". All other traffic passes through to the existing handler chain unchanged.
+        final HttpHandler servletHandlerRef = servletHandler;
+        grpcFilter = new UndertowFilter() {
+            @Override
+            public int getPriority() {
+                return 1;
+            }
+
+            @Override
+            public HttpHandler wrap(final HttpHandler next) {
+                return new GrpcRoutingHandler(servletHandlerRef, next);
+            }
+        };
         final Host host = undertowHost.get();
-        host.registerDeployment(registeredDeployment, routingHandler);
+        host.addFilter(grpcFilter);
 
         GrpcLogger.LOGGER.grpcServingViaUndertow(host.getName());
         serviceConsumer.accept(this);
@@ -136,10 +144,10 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     public void stop(final StopContext context) {
         GrpcLogger.LOGGER.grpcStopping();
         final Host host = undertowHost.get();
-        if (host != null && registeredDeployment != null) {
-            host.unregisterDeployment(registeredDeployment);
+        if (host != null && grpcFilter != null) {
+            host.removeFilter(grpcFilter);
         }
-        registeredDeployment = null;
+        grpcFilter = null;
 
         if (deploymentManager != null) {
             try {
