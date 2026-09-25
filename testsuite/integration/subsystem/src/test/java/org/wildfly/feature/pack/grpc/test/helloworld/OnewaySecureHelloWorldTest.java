@@ -94,10 +94,6 @@ public class OnewaySecureHelloWorldTest extends HelloWorldParent {
         op.get("ssl-context").set("grpc-ssl-context");
         builder.addStep(op);
 
-        // /subsystem=grpc:write-attribute(name=key-manager-name, value="grpc-key-manager")
-        address = Operations.createAddress("subsystem", "grpc");
-        builder.addStep(Operations.createWriteAttributeOperation(address, "key-manager-name", "grpc-key-manager"));
-
         final var result = client.getControllerClient().execute(builder.build());
         if (!Operations.isSuccessfulOutcome(result)) {
             throw new RuntimeException("Failed to configure SSL context: " + Operations.getFailureDescription(result));
@@ -119,7 +115,7 @@ public class OnewaySecureHelloWorldTest extends HelloWorldParent {
     public static void beforeClass() throws Exception {
         InputStream trustStore = OnewaySecureHelloWorldTest.class.getClassLoader().getResourceAsStream("client.truststore.pem");
         ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
-        channel = Grpc.newChannelBuilderForAddress(TARGET_HOST, TARGET_PORT, creds).build();
+        channel = Grpc.newChannelBuilderForAddress(TARGET_HOST, SECURE_PORT, creds).build();
         blockingStub = GreeterGrpc.newBlockingStub(channel);
     }
 }
