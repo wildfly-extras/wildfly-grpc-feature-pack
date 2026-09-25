@@ -98,7 +98,6 @@
                     </feature-packs>
                     <layers>
                         <layer>jaxrs-server</layer>
-                        <!-- Layers from this FP  -->
                         <layer>grpc</layer>
                     </layers>
                     <galleon-options>
@@ -107,7 +106,6 @@
                     </galleon-options>
                     <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
                     <stability>preview</stability>
-                    <overwrite-provisioned-server>true</overwrite-provisioned-server>
                 </configuration>
                 <executions>
                     <execution>
@@ -163,18 +161,19 @@
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
+                        <configuration>
+                            <offline>true</offline>
+                            <stability>preview</stability>
+                            <scripts>
+                                <script>${root.directory}/ssl/configure-elytron-oneway.cli</script>
+                            </scripts>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
                                     <goal>execute-commands</goal>
                                 </goals>
                                 <phase>package</phase>
-                                <configuration>
-                                    <offline>true</offline>
-                                    <scripts>
-                                        <script>${root.directory}/ssl/configure-elytron-oneway.cli</script>
-                                    </scripts>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

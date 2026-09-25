@@ -11,7 +11,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.container.test.api.Testable;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -33,7 +32,6 @@ import org.wildfly.feature.pack.grpc.StreamingServerInterceptor;
 import org.wildfly.feature.pack.grpc.StreamingServerInterceptor0;
 import org.wildfly.feature.pack.grpc.StreamingServerInterceptor1;
 import org.wildfly.feature.pack.grpc.test.stream.ChatServiceImpl;
-import org.wildfly.feature.pack.grpc.test.utility.EnableH2cServerSetupTask;
 
 import chatmessages.ChatMessage;
 import chatmessages.ChatMessageOrBuilder;
@@ -57,7 +55,6 @@ import io.grpc.stub.StreamObserver;
  * the returned {@code Integer}.
  */
 @RunWith(Arquillian.class)
-@ServerSetup(EnableH2cServerSetupTask.class)
 @RunAsClient
 public class StreamingInterceptorTest {
 

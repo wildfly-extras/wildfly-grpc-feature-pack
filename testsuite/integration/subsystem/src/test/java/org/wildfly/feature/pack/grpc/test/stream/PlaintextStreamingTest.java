@@ -7,14 +7,12 @@ package org.wildfly.feature.pack.grpc.test.stream;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc;
-import org.wildfly.feature.pack.grpc.test.utility.EnableH2cServerSetupTask;
 
 import chatmessages.ChatMessage;
 import io.grpc.ManagedChannelBuilder;
@@ -23,7 +21,6 @@ import io.grpc.ManagedChannelBuilder;
  * Executes {@link StreamingTestParent#streamingTest() StreamingTestParent.streamingTest()} over a plaintext connection.
  */
 @RunWith(Arquillian.class)
-@ServerSetup(EnableH2cServerSetupTask.class)
 @RunAsClient
 public class PlaintextStreamingTest extends StreamingTestParent {
 

@@ -10,7 +10,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.container.test.api.Testable;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -31,7 +30,6 @@ import org.wildfly.feature.pack.grpc.TestServerInterceptor10;
 import org.wildfly.feature.pack.grpc.TestServerInterceptor11;
 import org.wildfly.feature.pack.grpc.test.helloworld.GreeterGrpc;
 import org.wildfly.feature.pack.grpc.test.helloworld.GreeterServiceImpl;
-import org.wildfly.feature.pack.grpc.test.utility.EnableH2cServerSetupTask;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -54,7 +52,6 @@ import messages.HelloRequest;
  * the returned {@code String}.
  */
 @RunWith(Arquillian.class)
-@ServerSetup(EnableH2cServerSetupTask.class)
 @RunAsClient
 public class InterceptorTest {
     protected static final String TARGET = "localhost:8080";
