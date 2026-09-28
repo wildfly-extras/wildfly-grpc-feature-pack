@@ -8,6 +8,7 @@ import static org.jboss.logging.Logger.Level.DEBUG;
 import static org.jboss.logging.Logger.Level.ERROR;
 import static org.jboss.logging.Logger.Level.INFO;
 
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.BasicLogger;
 import org.jboss.logging.Logger;
 import org.jboss.logging.annotations.Cause;
@@ -56,5 +57,8 @@ public interface GrpcLogger extends BasicLogger {
 
     @Message(id = 10, value = "The configuration object has already been built.")
     IllegalStateException configurationAlreadyBuilt();
+
+    @Message(id = 11, value = "gRPC service '%s' is already registered by deployment '%s'")
+    DeploymentUnitProcessingException grpcServiceAlreadyRegistered(String serviceName, String existingOwner);
 
 }

@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +27,7 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.msc.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -57,6 +59,7 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
 
     private final ServerConfiguration configuration;
     private final Map<String, Collection<ServerServiceDefinition>> deploymentServices;
+    private final Map<String, String> serviceOwners;
 
     private volatile MutableHandlerRegistry registry;
     private volatile Server server;
@@ -67,6 +70,7 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
         this.executorService = executorService;
         this.configuration = configuration;
         deploymentServices = new ConcurrentHashMap<>();
+        serviceOwners = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -137,7 +141,7 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
 
     @Override
     public void addService(final DeploymentUnit deployment, final Class<? extends BindableService> serviceType,
-            List<ServerInterceptor> interceptors) {
+            List<ServerInterceptor> interceptors) throws DeploymentUnitProcessingException {
         final String deploymentName = deployment.getName();
         GrpcLogger.LOGGER.registerService(serviceType.getName(), deploymentName);
         // We must have a no-arg constructor
@@ -161,7 +165,14 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
                 }
             });
         }
-        registry.addService(installInterceptors(bindableService.bindService(), interceptors));
+        final ServerServiceDefinition def = installInterceptors(bindableService.bindService(), interceptors).bindService();
+        final String serviceName = def.getServiceDescriptor().getName();
+        final String existingOwner = serviceOwners.putIfAbsent(serviceName, deploymentName);
+        if (existingOwner != null && !existingOwner.equals(deploymentName)) {
+            throw GrpcLogger.LOGGER.grpcServiceAlreadyRegistered(serviceName, existingOwner);
+        }
+        registry.addService(def);
+        deploymentServices.computeIfAbsent(deploymentName, k -> new ArrayList<>()).add(def);
     }
 
     @Override
@@ -170,6 +181,7 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
         if (defs != null) {
             for (ServerServiceDefinition def : defs) {
                 registry.removeService(def);
+                serviceOwners.remove(def.getServiceDescriptor().getName());
             }
         }
     }

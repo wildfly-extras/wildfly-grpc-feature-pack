@@ -7,6 +7,7 @@ package org.wildfly.extension.grpc;
 import java.util.List;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 
 import io.grpc.BindableService;
 import io.grpc.ServerInterceptor;
@@ -25,9 +26,11 @@ public interface WildFlyGrpcDeploymentRegistry {
      *                         the service to add
      * @param interceptors
      *                         {@link ServerInterceptor}s to wrap around the service
+     * @throws DeploymentUnitProcessingException
+     *                                               if the gRPC service name is already registered by another deployment
      */
     void addService(DeploymentUnit deployment, Class<? extends BindableService> serviceType,
-            List<ServerInterceptor> interceptors);
+            List<ServerInterceptor> interceptors) throws DeploymentUnitProcessingException;
 
     /**
      * Removes all the associated services from the gRPC server.
