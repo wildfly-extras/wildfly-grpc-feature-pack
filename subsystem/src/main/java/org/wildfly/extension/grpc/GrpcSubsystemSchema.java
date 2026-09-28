@@ -16,9 +16,33 @@ import org.jboss.as.version.Stability;
 import org.jboss.staxmapper.IntVersion;
 
 enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchema> {
-    VERSION_1_0_PREVIEW(1, 0, Stability.PREVIEW),;
+    // 1.0: Netty-based server (removed in servlet rewrite — kept so the parser rejects old
+    // configs with an "unsupported namespace" error rather than silently misparsing them)
+    VERSION_1_0_PREVIEW(1, 0, Stability.PREVIEW) {
+        @Override
+        public PersistentResourceXMLDescription getXMLDescription() {
+            // Netty-based schema: no attributes are valid in the new model.
+            // Returning an empty description causes the parser to reject unknown attributes,
+            // surfacing a clear error rather than silently dropping Netty-only configuration.
+            // TODO - How can this avoid this deprecated variant?
+            return builder(SUBSYSTEM_PATH, getNamespace()).build();
+        }
+    },
+    // 2.0: Undertow/servlet-based server
+    VERSION_2_0_PREVIEW(2, 0, Stability.PREVIEW) {
+        @Override
+        public PersistentResourceXMLDescription getXMLDescription() {
+            // TODO - How can this avoid this deprecated variant?
+            return builder(SUBSYSTEM_PATH, getNamespace())
+                    .addAttributes(GrpcSubsystemDefinition.MAX_INBOUND_MESSAGE_SIZE,
+                            GrpcSubsystemDefinition.MAX_INBOUND_METADATA_SIZE,
+                            GrpcSubsystemDefinition.SERVER_NAME,
+                            GrpcSubsystemDefinition.VIRTUAL_HOST)
+                    .build();
+        }
+    },;
 
-    static final GrpcSubsystemSchema CURRENT = VERSION_1_0_PREVIEW;
+    static final GrpcSubsystemSchema CURRENT = VERSION_2_0_PREVIEW;
 
     private final VersionedNamespace<IntVersion, GrpcSubsystemSchema> namespace;
 
@@ -30,24 +54,4 @@ enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchem
     public VersionedNamespace<IntVersion, GrpcSubsystemSchema> getNamespace() {
         return namespace;
     }
-
-    @Override
-    public PersistentResourceXMLDescription getXMLDescription() {
-        // TODO - How can this avoid this deprecated variant?
-        return builder(SUBSYSTEM_PATH, namespace).addAttributes(GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW,
-                GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT,
-                GrpcSubsystemDefinition.GRPC_INITIAL_FLOW_CONTROL_WINDOW, GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME,
-                GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT, GrpcSubsystemDefinition.GRPC_KEY_MANAGER_NAME,
-                GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION,
-                GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE, GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_AGE_GRACE,
-                GrpcSubsystemDefinition.GRPC_MAX_CONNECTION_IDLE, GrpcSubsystemDefinition.GRPC_MAX_INBOUND_MESSAGE_SIZE,
-                GrpcSubsystemDefinition.GRPC_MAX_INBOUND_METADATA_SIZE,
-                GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_TIME,
-                GrpcSubsystemDefinition.GRPC_PERMIT_KEEP_ALIVE_WITHOUT_CALLS,
-                GrpcSubsystemDefinition.GRPC_PROTOCOL_PROVIDER, GrpcSubsystemDefinition.GRPC_SERVER_SOCKET_BINDING,
-                GrpcSubsystemDefinition.GRPC_SESSION_CACHE_SIZE, GrpcSubsystemDefinition.GRPC_SESSION_TIMEOUT,
-                GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT, GrpcSubsystemDefinition.GRPC_SSL_CONTEXT_NAME,
-                GrpcSubsystemDefinition.GRPC_START_TLS, GrpcSubsystemDefinition.GRPC_TRUST_MANAGER_NAME).build();
-    }
-
 }

@@ -39,6 +39,7 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
         DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
         final CompositeIndex index = deploymentUnit.getAttachment(Attachments.COMPOSITE_ANNOTATION_INDEX);
         List<String> serviceClasses = index.getAllKnownImplementors(BINDABLE_CLASS).stream()
+                .filter(ci -> !Modifier.isAbstract(ci.flags()))
                 .map(ci -> ci.name().toString()).collect(Collectors.toList());
         Module module = deploymentUnit.getAttachment(Attachments.MODULE);
         List<Class<? extends BindableService>> leaves = getLeaves(serviceClasses, module.getClassLoader());
@@ -50,6 +51,7 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
         processManagement(deploymentUnit, leaves);
 
         List<String> interceptorClasses = index.getAllKnownImplementors(SERVER_INTERCEPTOR_CLASS).stream()
+                .filter(ci -> !Modifier.isAbstract(ci.flags()))
                 .map(ci -> ci.name().toString()).collect(Collectors.toList());
 
         deploymentUnit.putAttachment(GrpcDeploymentAttachments.GRPC_BINDABLE_SERVICES, leaves);
@@ -62,29 +64,16 @@ public class GrpcDeploymentProcessor implements DeploymentUnitProcessor {
 
     private List<Class<? extends BindableService>> getLeaves(List<String> classNames, ClassLoader classLoader) {
         List<Class<? extends BindableService>> classes = new ArrayList<>();
-        try {
-            for (String s : classNames) {
-                classes.add(classLoader.loadClass(s).asSubclass(BindableService.class));
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        List<Class<? extends BindableService>> leaves = new ArrayList<>();
-        for (Class<? extends BindableService> clazz : classes) {
-            if (!Modifier.isAbstract(clazz.getModifiers()) && isLeaf(clazz, classes)) {
-                leaves.add(clazz);
+        for (String name : classNames) {
+            try {
+                classes.add(classLoader.loadClass(name).asSubclass(BindableService.class));
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
-        return leaves;
-    }
-
-    private boolean isLeaf(Class<?> clazz, List<Class<? extends BindableService>> classes) {
-        for (Class<?> c : classes) {
-            if (clazz != c && clazz.isAssignableFrom(c)) {
-                return false;
-            }
-        }
-        return true;
+        return classes.stream()
+                .filter(clazz -> classes.stream().noneMatch(c -> c != clazz && clazz.isAssignableFrom(c)))
+                .collect(Collectors.toList());
     }
 
     private void processManagement(DeploymentUnit deploymentUnit,
