@@ -60,7 +60,10 @@ public class GrpcServiceInstallProcessor implements DeploymentUnitProcessor {
                 LOGGER.debugf("Deployment %s is not a Weld deployment", deploymentName);
             } else {
                 beanManagerSupplier = weldCapability.addBeanManagerService(deploymentUnit, serviceBuilder);
-                serviceBuilder.requires(deploymentUnit.getServiceName().append("WeldStartService"));
+                // WeldStartService is installed under the root EAR service name for EAR deployments.
+                final DeploymentUnit parent = deploymentUnit.getParent();
+                final DeploymentUnit weldRoot = parent != null ? parent : deploymentUnit;
+                serviceBuilder.requires(weldRoot.getServiceName().append("WeldStartService"));
                 LOGGER.debugf("CDI integration enabled for gRPC services in deployment %s", deploymentName);
             }
         } catch (Exception e) {
