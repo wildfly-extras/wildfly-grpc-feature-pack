@@ -18,41 +18,20 @@
             <xs:documentation>
                 <![CDATA[
                 The configuration of the gRPC subsystem.
+                gRPC services are served via WildFly's Undertow HTTP/2 stack on the configured virtual host.
+                TLS is configured on the Undertow https-listener, not here.
             ]]>
             </xs:documentation>
         </xs:annotation>
-            <xs:attribute name="flow-control-window" type="nonnegativeJavaInt" default="1048576" />
-            <xs:attribute name="handshake-timeout" type="nonnegativeJavaInt" default="120" />
-            <xs:attribute name="initial-flow-control-window" type="nonnegativeJavaInt" default="1048576" />
-            <xs:attribute name="keep-alive-time" type="nonnegativeJavaInt" />
-            <xs:attribute name="keep-alive-timeout" type="nonnegativeJavaInt" />
-            <xs:attribute name="key-manager-name" type="xs:string"/>
-            <xs:attribute name="max-concurrent-calls-per-connection" type="nonnegativeJavaInt" />
-            <xs:attribute name="max-connection-age" type="nonnegativeJavaInt" />
-            <xs:attribute name="max-connection-age-grace" type="nonnegativeJavaInt" />
-            <xs:attribute name="max-connection-idle" type="nonnegativeJavaInt" />
             <xs:attribute name="max-inbound-message-size" type="nonnegativeJavaInt" default="4194304" />
             <xs:attribute name="max-inbound-metadata-size" type="nonnegativeJavaInt" default="8192"/>
-            <xs:attribute name="permit-keep-alive-time" type="nonnegativeJavaInt" default="250" />
-            <xs:attribute name="permit-keep-alive-without-calls" type="xs:boolean" default="false" />
-            <xs:attribute name="protocol-provider" type="xs:string"/>
-            <xs:attribute name="socket-binding" type="xs:string" use="required" />
-            <xs:attribute name="session-cache-size" type="nonnegativeJavaLong" />
-            <xs:attribute name="session-timeout" type="nonnegativeJavaLong" />
-            <xs:attribute name="shutdown-timeout" type="nonnegativeJavaInt" />
-            <xs:attribute name="ssl-context-name" type="xs:string"/>
-            <xs:attribute name="start-tls" type="xs:boolean" />
-            <xs:attribute name="trust-manager-name" type="xs:string"/>
+            <xs:attribute name="server-name" type="xs:string" default="default-server" />
+            <xs:attribute name="virtual-host" type="xs:string" default="default-host" />
     </xs:complexType>
 
     <xs:simpleType name="nonnegativeJavaInt" id="nonnegativeJavaInt">
         <xs:restriction base="xs:unsignedLong">
             <xs:maxInclusive value="2147483647"/>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:simpleType name="nonnegativeJavaLong" id="nonnegativeJavaLong">
-        <xs:restriction base="xs:unsignedLong">
-            <xs:maxInclusive value="9223372036854775807"/>
         </xs:restriction>
     </xs:simpleType>
 
