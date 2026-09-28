@@ -5,12 +5,9 @@
 package org.wildfly.extension.grpc.example.helloworld;
 
 import java.io.InputStream;
-import java.security.KeyStore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.net.ssl.KeyManagerFactory;
 
 import io.grpc.Channel;
 import io.grpc.ChannelCredentials;
@@ -59,9 +56,9 @@ public class GreeterClient {
      */
     public static void main(String[] args) throws Exception {
         String user = "world";
-        // Access a service running on the local machine on port 50051
-        String target = "localhost:9555";
         String ssl = "none";
+        String target = "127.0.0.1:8080";
+        String tlsTarget = "127.0.0.1:8443";
         ManagedChannel channel = null;
 
         // Allow passing in the user and target strings as command line arguments
@@ -70,8 +67,8 @@ public class GreeterClient {
                 System.err.println("Usage: [name ssl [target]]");
                 System.err.println("");
                 System.err.println("  name    The name you wish to be greeted by. Defaults to " + user);
-                System.err.println("  ssl     none, oneway, or twoway");
-                System.err.println("  target  The server to connect to. Defaults to " + target);
+                System.err.println("  ssl     none (port 8080), oneway (port 8443), or twoway (port 8443)");
+                System.err.println("  target  The server to connect to. Defaults to " + target + " or " + tlsTarget);
                 System.exit(1);
             }
             user = args[0];
@@ -79,32 +76,24 @@ public class GreeterClient {
         }
         if (args.length > 2) {
             target = args[2];
+            tlsTarget = args[2];
         }
 
         ClassLoader classLoader = GreeterClient.class.getClassLoader();
         if ("none".equals(ssl)) {
             channel = ManagedChannelBuilder.forTarget(target)
-                    // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
-                    // needing certificates.
                     .usePlaintext().build();
         } else if ("oneway".equals(ssl)) {
-            try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
-                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
-                channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
-            }
+            InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
+            ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
+            channel = Grpc.newChannelBuilder(tlsTarget, creds).build();
         } else if ("twoway".equals(ssl)) {
-            KeyStore clientKeyStore = KeyStore.getInstance("PKCS12");
-            try (InputStream clientKeyStoreStream = classLoader.getResourceAsStream("client.keystore.p12")) {
-                clientKeyStore.load(clientKeyStoreStream, "secret".toCharArray());
-            }
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            kmf.init(clientKeyStore, "secret".toCharArray());
-            try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
-                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore)
-                        .keyManager(kmf.getKeyManagers())
-                        .build();
-                channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
-            }
+            InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
+            InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
+            InputStream key = classLoader.getResourceAsStream("client.key.pem");
+            ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).keyManager(keyStore, key)
+                    .build();
+            channel = Grpc.newChannelBuilder(tlsTarget, creds).build();
         } else {
             System.err.println("unrecognized ssl value: " + ssl);
         }

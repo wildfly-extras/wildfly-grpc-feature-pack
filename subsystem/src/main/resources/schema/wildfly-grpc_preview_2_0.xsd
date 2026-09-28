@@ -5,8 +5,8 @@
 
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="urn:wildfly:grpc:preview:1.0"
-           xmlns="urn:wildfly:grpc:preview:1.0"
+           targetNamespace="urn:wildfly:grpc:preview:2.0"
+           xmlns="urn:wildfly:grpc:preview:2.0"
            elementFormDefault="qualified"
            version="1.0">
 
