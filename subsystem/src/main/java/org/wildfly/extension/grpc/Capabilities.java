@@ -6,18 +6,6 @@ package org.wildfly.extension.grpc;
 
 public interface Capabilities {
 
-    /*
-     * Security Capabilities
-     */
-    String KEY_MANAGER_CAPABILITY = "org.wildfly.security.key-manager";
-    String SSL_CONTEXT_CAPABILITY = "org.wildfly.security.ssl-context";
-    String TRUST_MANAGER_CAPABILITY = "org.wildfly.security.trust-manager";
-    /*
-     * CDI Capabilities
-     */
+    String UNDERTOW_HOST_CAPABILITY = "org.wildfly.undertow.host";
     String WELD_CAPABILITY = "org.wildfly.weld";
-    /*
-     * Socket Capabilities
-     */
-    String SOCKET_BiNDING = "org.wildfly.network.socket-binding";
 }

@@ -118,7 +118,7 @@ public class ServerReload {
         if ("reload-required".equalsIgnoreCase(runningState)) {
             executeReloadAndWaitForCompletion(client);
         } else {
-            Assert.assertEquals("running", runningState, "Server state 'running' is expected");
+            Assert.assertEquals("Server state 'running' is expected", "running", runningState);
         }
     }
 
