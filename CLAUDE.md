@@ -4,7 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-WildFly gRPC Feature Pack — a Galleon feature pack that adds gRPC subsystem support to WildFly. gRPC services implementing `io.grpc.BindableService` are auto-discovered at deployment time and registered against a Netty-based gRPC server (default port 9555). The subsystem has `PREVIEW` stability.
+WildFly gRPC Feature Pack — a Galleon feature pack that adds gRPC subsystem support to WildFly.
+gRPC services implementing `io.grpc.BindableService` are auto-discovered at deployment time and served via WildFly's existing Undertow HTTP/2 stack (default ports 8080/8443). The subsystem has `PREVIEW` stability.
 
 Group ID: `org.wildfly.grpc` (changed from `org.wildfly.extras.grpc` in 0.1.17).
 
@@ -36,10 +37,10 @@ The helloworld example provisions a WildFly server with the gRPC subsystem:
 
 ```bash
 # Start server (ssl: none, oneway, twoway)
-mvn wildfly:run -P examples -pl examples/helloworld/service -Dssl=none
+mvn wildfly:run -pl examples/helloworld/service -Dssl=none
 
 # Run client
-mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob none"
+mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob none"
 ```
 
 ## Architecture
@@ -57,18 +58,24 @@ mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob none"
 ### Key Subsystem Classes
 
 - `GrpcExtension` — Entry point; registers the subsystem with WildFly. Stability: `PREVIEW`.
-- `GrpcSubsystemDefinition` — Defines all management attributes (flow control, keep-alive, TLS, etc.).
-- `GrpcSubsystemSchema` — XML schema for subsystem configuration (`urn:wildfly:grpc:1.0`).
-- `GrpcServerService` — MSC service that starts/stops the Netty gRPC server, manages service registration, and handles SSL context setup.
-- `GrpcDeploymentProcessor` — Scans deployments for `BindableService` and `ServerInterceptor` implementations using Jandex, then registers them with the gRPC server.
+- `GrpcSubsystemDefinition` — Defines management attributes (`max-inbound-message-size`, `max-inbound-metadata-size`, `server-name`, `virtual-host`). Transport-level attributes (flow control, keep-alive, etc.) are no longer present — those are delegated to Undertow.
+- `GrpcSubsystemSchema` — XML schema for subsystem configuration (`urn:wildfly:grpc:preview:2.0`).
+- `GrpcUndertowService` — MSC service that registers a servlet filter on the Undertow virtual host. Routes `application/grpc` traffic (by `Content-Type` header predicate) through a `GrpcServlet` backed by `grpc-servlet-jakarta`; all other traffic passes through unchanged.
+- `ServletConfiguration` — Holds the message-level settings passed to `ServletServerBuilder`.
+- `GrpcDeploymentProcessor` — Scans deployments for `BindableService` and `ServerInterceptor` implementations using Jandex, then registers them with the `MutableHandlerRegistry` inside `GrpcUndertowService`.
 - `GrpcDeploymentXMLParser` — Parses per-deployment gRPC configuration from `META-INF/grpc-deployment.xml`.
 
 ### How Deployment Works
 
 1. `GrpcDependencyProcessor` adds gRPC module dependencies to the deployment.
 2. `GrpcDeploymentProcessor` uses the Jandex annotation index to find all `BindableService` implementations (leaf classes only) and `ServerInterceptor` implementations.
-3. Services are instantiated via no-arg constructor and registered with the `MutableHandlerRegistry` on the running gRPC server.
+3. Services are instantiated via no-arg constructor and registered with the `MutableHandlerRegistry` inside `GrpcUndertowService`.
 4. Interceptors are applied per-method via `InternalServerInterceptors`.
+5. gRPC traffic arrives on Undertow's standard HTTP/2 listeners (8080 for plaintext, 8443 for TLS); no dedicated port is used. The `UndertowFilter` routes requests by `Content-Type: application/grpc[+subtype]` predicate.
+
+### Key Dependency Change
+
+`grpc-netty-shaded` (and associated Netty/OkHttp/Kotlin deps) has been replaced by `io.grpc:grpc-servlet-jakarta`. TLS termination is handled entirely by Undertow/Elytron — no gRPC-level SSL configuration is needed in the subsystem.
 
 ## Conventions
 

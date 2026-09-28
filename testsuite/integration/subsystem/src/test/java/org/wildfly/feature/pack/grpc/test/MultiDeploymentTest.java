@@ -40,7 +40,7 @@ import messages.HelloRequest;
 @RunAsClient
 public class MultiDeploymentTest {
 
-    private static final String TARGET = "localhost:9555";
+    private static final String TARGET = "127.0.0.1:8080";
 
     private static ManagedChannel channel;
     private static GreeterGrpc.GreeterBlockingStub greeterStub;

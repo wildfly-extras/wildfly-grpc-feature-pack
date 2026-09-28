@@ -68,7 +68,7 @@ public class TwowaySecureStreamingTest extends StreamingTestParent {
         op = Operations.createAddOperation(address);
         op.get("credential-reference").set(credentialRef);
         op.get("type").set("JKS");
-        op.get("path").set("./../../ssl/server.truststore.jks");
+        op.get("path").set("../../../ssl/server.truststore.jks");
         // op.get("relative-to").set("jboss.server.config.dir");
         builder.addStep(op);
 
@@ -105,16 +105,13 @@ public class TwowaySecureStreamingTest extends StreamingTestParent {
         builder.addStep(op);
 
         // /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https,
-        // ssl-context="grpc-ssl-context")
+        // ssl-context="grpc-ssl-context", enable-http2=true)
         address = Operations.createAddress("subsystem", "undertow", "server", "default-server", "https-listener", "https");
         op = Operations.createAddOperation(address);
         op.get("socket-binding").set("https");
         op.get("ssl-context").set("grpc-ssl-context");
+        op.get("enable-http2").set(true);
         builder.addStep(op);
-
-        // /subsystem=grpc:write-attribute(name=key-manager-name, value="grpc-key-manager")
-        address = Operations.createAddress("subsystem", "grpc");
-        builder.addStep(Operations.createWriteAttributeOperation(address, "key-manager-name", "grpc-key-manager"));
 
         final var result = client.getControllerClient().execute(builder.build());
         if (!Operations.isSuccessfulOutcome(result)) {
@@ -141,7 +138,7 @@ public class TwowaySecureStreamingTest extends StreamingTestParent {
                 .trustManager(trustStore)
                 .keyManager(keyStore, key)
                 .build();
-        channel = Grpc.newChannelBuilderForAddress(TARGET_HOST, TARGET_PORT, creds).build();
+        channel = Grpc.newChannelBuilderForAddress(TARGET_HOST, SECURE_PORT, creds).build();
         stub = ChatServiceGrpc.newStub(channel);
     }
 }
