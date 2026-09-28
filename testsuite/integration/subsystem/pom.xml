@@ -81,6 +81,11 @@
             <artifactId>protobuf-java-util</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -143,6 +148,7 @@
                     </feature-packs>
                     <layers>
                         <layer>web-server</layer>
+                        <layer>jaxrs</layer>
                         <layer>jmx-remoting</layer>
                         <!-- Layers from this FP  -->
                         <layer>grpc</layer>

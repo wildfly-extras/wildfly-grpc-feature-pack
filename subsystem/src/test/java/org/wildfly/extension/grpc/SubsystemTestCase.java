@@ -33,7 +33,7 @@ public class SubsystemTestCase extends AbstractSubsystemBaseTest {
 
     @Override
     protected String getSubsystemXsdPath() {
-        return "schema/wildfly-grpc_preview_1_0.xsd";
+        return "schema/wildfly-grpc_preview_2_0.xsd";
     }
 
     protected AdditionalInitialization createAdditionalInitialization() {
@@ -45,6 +45,8 @@ public class SubsystemTestCase extends AbstractSubsystemBaseTest {
                 super.initializeExtraSubystemsAndModel(extensionRegistry, rootResource, rootRegistration,
                         capabilityRegistry);
                 registerCapabilities(capabilityRegistry, "org.wildfly.weld");
+                registerCapabilities(capabilityRegistry,
+                        Capabilities.UNDERTOW_HOST_CAPABILITY + ".default-server.default-host");
             }
         };
     }

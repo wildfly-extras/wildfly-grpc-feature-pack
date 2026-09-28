@@ -33,7 +33,7 @@ import messages.HelloRequest;
 @RunAsClient
 public class JsonSerializationTest {
 
-    private static final String TARGET = "localhost:9555";
+    private static final String TARGET = "localhost:8080";
 
     private static ManagedChannel channel;
     private static GreeterGrpc.GreeterBlockingStub blockingStub;
