@@ -21,8 +21,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <version.javafx>11.0.2</version.javafx>
-        <version.javafx.plugin>0.0.8</version.javafx.plugin>
+        <version.tamboui>0.5.0</version.tamboui>
+        <maven.compiler.release>17</maven.compiler.release>
     </properties>
 
     <modules>
@@ -39,22 +39,12 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-controls</artifactId>
-                <version>${version.javafx}</version>
+                <groupId>dev.tamboui</groupId>
+                <artifactId>tamboui-bom</artifactId>
+                <version>${version.tamboui}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-maven-plugin</artifactId>
-                    <version>${version.javafx.plugin}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 </project>
