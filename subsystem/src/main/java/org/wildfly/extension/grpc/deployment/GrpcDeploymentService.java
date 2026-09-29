@@ -9,10 +9,12 @@ import static org.wildfly.extension.grpc._private.GrpcLogger.LOGGER;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.AmbiguousResolutionException;
 import jakarta.enterprise.inject.spi.Bean;
@@ -22,7 +24,6 @@ import org.jboss.msc.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
-import org.wildfly.extension.grpc.InterceptorQueue;
 import org.wildfly.extension.grpc.WildFlyGrpcDeploymentRegistry;
 
 import io.grpc.BindableService;
@@ -174,16 +175,21 @@ class GrpcDeploymentService implements Service {
     }
 
     private List<Class<? extends ServerInterceptor>> getInterceptorClasses() throws StartException {
-        InterceptorQueue queue = new InterceptorQueue();
+        List<Class<? extends ServerInterceptor>> classes = new ArrayList<>();
         try {
             for (String className : interceptorClassNames) {
-                Class<? extends ServerInterceptor> clazz = classLoader.loadClass(className)
-                        .asSubclass(ServerInterceptor.class);
-                queue.add(clazz);
+                classes.add(classLoader.loadClass(className).asSubclass(ServerInterceptor.class));
             }
-            return queue.toList();
         } catch (ClassNotFoundException e) {
             throw new StartException(e);
         }
+        // Sort interceptors by their @Priority annotations.
+        // Interceptors with the highest priority comes first.
+        // Interceptors with no @Priority comes last.
+        classes.sort(Comparator.comparingInt((Class<? extends ServerInterceptor> clazz) -> {
+            Priority p = clazz.getAnnotation(Priority.class);
+            return p != null ? p.value() : Integer.MAX_VALUE - 1;
+        }).reversed());
+        return classes;
     }
 }

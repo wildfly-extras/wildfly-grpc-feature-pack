@@ -17,10 +17,12 @@ import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 import org.jboss.msc.service.StartException;
 
+import java.lang.invoke.MethodHandles;
+
 @MessageLogger(projectCode = "WFLYGRPC", length = 4)
 public interface GrpcLogger extends BasicLogger {
 
-    GrpcLogger LOGGER = Logger.getMessageLogger(GrpcLogger.class, "org.wildfly.extension.grpc");
+    GrpcLogger LOGGER = Logger.getMessageLogger(MethodHandles.lookup(), GrpcLogger.class, "org.wildfly.extension.grpc");
 
     @LogMessage(level = INFO)
     @Message(id = 1, value = "gRPC server listening on %s:%d")
