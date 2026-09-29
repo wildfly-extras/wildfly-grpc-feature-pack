@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright The WildFly Authors
-    SPDX-License-Identifier: Apache-2.0
+     Copyright The WildFly Authors
+     SPDX-License-Identifier: Apache-2.0
 
 -->
 <layer-spec xmlns="urn:jboss:galleon:layer-spec:2.0" name="grpc">
@@ -16,10 +16,7 @@
     </props>
     <dependencies>
         <layer name="cdi" />
+        <layer name="web-server" />
     </dependencies>
     <feature-group name="grpc" />
-    <feature spec="socket-binding-group">
-        <param name="socket-binding-group" value="standard-sockets" />
-        <feature-group name="grpc-sockets" />
-    </feature>
 </layer-spec>
