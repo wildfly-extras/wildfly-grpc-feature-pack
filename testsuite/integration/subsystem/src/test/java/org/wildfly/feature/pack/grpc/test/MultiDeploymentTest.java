@@ -125,11 +125,15 @@ public class MultiDeploymentTest {
     public void testDuplicateServiceFails() {
         try {
             deployer.deploy("multi-war-conflict");
-            // If we reach here the deployment did not fail — clean up and fail the test
-            deployer.undeploy("multi-war-conflict");
-            Assert.fail("Expected deployment to fail because the Greeter gRPC service is already registered by multi-war1.war");
         } catch (Exception expected) {
             // The deployment was correctly rejected due to the duplicate service name
+            return;
         }
+        // deploy() succeeded when it should have failed — clean up and fail the test
+        try {
+            deployer.undeploy("multi-war-conflict");
+        } catch (Exception ignored) {
+        }
+        Assert.fail("Expected deployment to fail because the Greeter gRPC service is already registered by multi-war1.war");
     }
 }

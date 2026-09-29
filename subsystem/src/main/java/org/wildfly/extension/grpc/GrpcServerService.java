@@ -6,16 +6,9 @@ package org.wildfly.extension.grpc;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,8 +19,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 
-import org.jboss.as.server.deployment.DeploymentUnit;
-import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.msc.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -58,8 +49,7 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
     private final Supplier<ExecutorService> executorService;
 
     private final ServerConfiguration configuration;
-    private final Map<String, Collection<ServerServiceDefinition>> deploymentServices;
-    private final Map<String, String> serviceOwners;
+    private final ConcurrentHashMap<String, String> serviceOwners;
 
     private volatile MutableHandlerRegistry registry;
     private volatile Server server;
@@ -69,7 +59,6 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
         this.serverService = serverService;
         this.executorService = executorService;
         this.configuration = configuration;
-        deploymentServices = new ConcurrentHashMap<>();
         serviceOwners = new ConcurrentHashMap<>();
     }
 
@@ -140,49 +129,28 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
     }
 
     @Override
-    public void addService(final DeploymentUnit deployment, final Class<? extends BindableService> serviceType,
-            List<ServerInterceptor> interceptors) throws DeploymentUnitProcessingException {
-        final String deploymentName = deployment.getName();
-        GrpcLogger.LOGGER.registerService(serviceType.getName(), deploymentName);
-        // We must have a no-arg constructor
-        final BindableService bindableService;
-        if (System.getSecurityManager() == null) {
-            try {
-                final Constructor<? extends BindableService> constructor = serviceType.getConstructor();
-                bindableService = constructor.newInstance();
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-                    | IllegalAccessException e) {
-                throw GrpcLogger.LOGGER.failedToRegister(e, serviceType.getName(), deploymentName);
-            }
-        } else {
-            bindableService = AccessController.doPrivileged((PrivilegedAction<BindableService>) () -> {
-                try {
-                    final Constructor<? extends BindableService> constructor = serviceType.getConstructor();
-                    return constructor.newInstance();
-                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-                        | IllegalAccessException e) {
-                    throw GrpcLogger.LOGGER.failedToRegister(e, serviceType.getName(), deploymentName);
-                }
-            });
-        }
-        final ServerServiceDefinition def = installInterceptors(bindableService.bindService(), interceptors).bindService();
-        final String serviceName = def.getServiceDescriptor().getName();
-        final String existingOwner = serviceOwners.putIfAbsent(serviceName, deploymentName);
+    public ServerServiceDefinition addService(final String deploymentName, final BindableService service,
+            List<ServerInterceptor> interceptors) throws StartException {
+        ServerServiceDefinition ssd = installInterceptors(service.bindService(), interceptors);
+        String serviceName = ssd.getServiceDescriptor().getName();
+        String existingOwner = serviceOwners.putIfAbsent(serviceName, deploymentName);
         if (existingOwner != null && !existingOwner.equals(deploymentName)) {
-            throw GrpcLogger.LOGGER.grpcServiceAlreadyRegistered(serviceName, existingOwner);
+            throw new StartException(GrpcLogger.LOGGER.grpcServiceAlreadyRegistered(serviceName, existingOwner));
         }
-        registry.addService(def);
-        deploymentServices.computeIfAbsent(deploymentName, k -> new ArrayList<>()).add(def);
+        try {
+            registry.addService(ssd);
+        } catch (RuntimeException e) {
+            serviceOwners.remove(serviceName, deploymentName);
+            throw e;
+        }
+        return ssd;
     }
 
     @Override
-    public void removeDeploymentServices(final DeploymentUnit deployment) {
-        final Collection<ServerServiceDefinition> defs = deploymentServices.remove(deployment.getName());
-        if (defs != null) {
-            for (ServerServiceDefinition def : defs) {
-                registry.removeService(def);
-                serviceOwners.remove(def.getServiceDescriptor().getName());
-            }
+    public void removeService(final ServerServiceDefinition ssd) {
+        if (registry != null && ssd != null) {
+            registry.removeService(ssd);
+            serviceOwners.remove(ssd.getServiceDescriptor().getName());
         }
     }
 
@@ -210,17 +178,13 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
         return GrpcSslContexts.configure(sslContextBuilder).build();
     }
 
-    private static BindableService installInterceptors(ServerServiceDefinition ssd,
+    private static ServerServiceDefinition installInterceptors(ServerServiceDefinition ssd,
             List<ServerInterceptor> interceptors) {
         ServerServiceDefinition.Builder builder = ServerServiceDefinition.builder(ssd.getServiceDescriptor());
         for (ServerMethodDefinition<?, ?> smd : ssd.getMethods()) {
             builder.addMethod(wrapMethod(smd, interceptors));
         }
-        return new BindableService() {
-            public ServerServiceDefinition bindService() {
-                return builder.build();
-            }
-        };
+        return builder.build();
     }
 
     private static <ReqT, RespT> ServerMethodDefinition<?, ?> wrapMethod(ServerMethodDefinition<ReqT, RespT> method,

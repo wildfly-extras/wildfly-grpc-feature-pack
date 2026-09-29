@@ -4,9 +4,9 @@
  */
 package org.wildfly.extension.grpc._private;
 
-import static org.jboss.logging.Logger.Level.DEBUG;
 import static org.jboss.logging.Logger.Level.ERROR;
 import static org.jboss.logging.Logger.Level.INFO;
+import static org.jboss.logging.Logger.Level.WARN;
 
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.BasicLogger;
@@ -15,11 +15,14 @@ import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
+import org.jboss.msc.service.StartException;
+
+import java.lang.invoke.MethodHandles;
 
 @MessageLogger(projectCode = "WFLYGRPC", length = 4)
 public interface GrpcLogger extends BasicLogger {
 
-    GrpcLogger LOGGER = Logger.getMessageLogger(GrpcLogger.class, "org.wildfly.extension.grpc");
+    GrpcLogger LOGGER = Logger.getMessageLogger(MethodHandles.lookup(), GrpcLogger.class, "org.wildfly.extension.grpc");
 
     @LogMessage(level = INFO)
     @Message(id = 1, value = "gRPC server listening on %s:%d")
@@ -33,23 +36,8 @@ public interface GrpcLogger extends BasicLogger {
     @Message(id = 3, value = "Failed to stop gRPC server")
     void failedToStopGrpcServer(@Cause Throwable cause);
 
-    @Message(id = 4, value = "Failed to register %s")
-    RuntimeException failedToRegister(@Cause Throwable cause, String serviceName);
-
     @Message(id = 5, value = "Failed to register %s for deployment %s")
-    RuntimeException failedToRegister(@Cause Throwable cause, String serviceName, String deployment);
-
-    @LogMessage(level = DEBUG)
-    @Message(id = 6, value = "Registering gRPC service %s for deployment %s.")
-    void registerService(String serviceName, String deploymentName);
-
-    @LogMessage(level = DEBUG)
-    @Message(id = 7, value = "Registering global gRPC ServerInterceptor %s.")
-    void registerServerInterceptor(String interceptorName);
-
-    @LogMessage(level = DEBUG)
-    @Message(id = 8, value = "Registering gRPC ServerInterceptor %s for deployment %s.")
-    void registerServerInterceptor(String interceptorName, String deploymentName);
+    StartException failedToRegister(@Cause Throwable cause, String serviceName, String deployment);
 
     @LogMessage(level = ERROR)
     @Message(id = 9, value = "Method %s is not implemented.")
@@ -61,4 +49,7 @@ public interface GrpcLogger extends BasicLogger {
     @Message(id = 11, value = "gRPC service '%s' is already registered by deployment '%s'")
     DeploymentUnitProcessingException grpcServiceAlreadyRegistered(String serviceName, String existingOwner);
 
+    @LogMessage(level = WARN)
+    @Message(id = 12, value = "Weld capability not available for deployment %s; CDI injection will not be available for gRPC services.")
+    void weldCapabilityUnavailable(@Cause Throwable cause, String deploymentName);
 }

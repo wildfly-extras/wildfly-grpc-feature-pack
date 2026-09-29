@@ -139,8 +139,8 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             GRPC_SERVER_SOCKET_BINDING, GRPC_SESSION_CACHE_SIZE, GRPC_SESSION_TIMEOUT, GRPC_SHUTDOWN_TIMEOUT,
             GRPC_SSL_CONTEXT_NAME, GRPC_START_TLS, GRPC_TRUST_MANAGER_NAME);
 
-    static RuntimeCapability<Void> SERVER_CAPABILITY = RuntimeCapability.Builder.of("org.wildfly.grpc.server", false)
-            .setServiceType(GrpcServerService.class).build();
+    public static RuntimeCapability<Void> SERVER_CAPABILITY = RuntimeCapability.Builder.of("org.wildfly.grpc.server", false)
+            .setServiceType(WildFlyGrpcDeploymentRegistry.class).build();
 
     // This must be initialized last to ensure the other static attributes are created first
     static final GrpcSubsystemDefinition INSTANCE = new GrpcSubsystemDefinition();

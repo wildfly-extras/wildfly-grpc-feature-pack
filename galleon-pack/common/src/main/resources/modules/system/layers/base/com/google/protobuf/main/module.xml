@@ -1,7 +1,7 @@
 <!--
 
-     Copyright The WildFly Authors
-     SPDX-License-Identifier: Apache-2.0
+    Copyright The WildFly Authors
+    SPDX-License-Identifier: Apache-2.0
 
 -->
 <module xmlns="urn:jboss:module:1.9" name="com.google.protobuf">
@@ -18,6 +18,6 @@
     <dependencies>
         <module name="com.google.guava" />
         <module name="java.logging" />
-        <module name="com.google.code.gson" optional="true"/>
+        <module name="com.google.code.gson" optional="true" />
     </dependencies>
 </module>

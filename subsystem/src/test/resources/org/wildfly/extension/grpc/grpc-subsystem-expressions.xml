@@ -1,7 +1,7 @@
 <!--
 
-     Copyright The WildFly Authors
-     SPDX-License-Identifier: Apache-2.0
+    Copyright The WildFly Authors
+    SPDX-License-Identifier: Apache-2.0
 
 -->
 <subsystem xmlns="urn:wildfly:grpc:preview:1.0" flow-control-window="${test.flow-control-window:3}"
