@@ -258,6 +258,11 @@
             <!-- External dependencies -->
             <!-- This does not go into the modules so don't worry about exclusions -->
             <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${version.bouncycastle}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wildfly.checkstyle</groupId>
                 <artifactId>wildfly-checkstyle-config</artifactId>
                 <version>${version.wildfly.checkstyle.config}</version>

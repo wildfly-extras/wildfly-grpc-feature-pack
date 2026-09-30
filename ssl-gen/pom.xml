@@ -17,7 +17,7 @@
     </parent>
 
     <artifactId>wildfly-grpc-ssl-gen</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>WildFly gRPC :: SSL Certificate Generator</name>
 
     <properties>
@@ -31,6 +31,13 @@
         <ssl.server.ext>SAN=dns:localhost,ip:127.0.0.1</ssl.server.ext>
         <ssl.client.dname>CN=client, OU=Test, O=WildFly, L=Test, ST=Test, C=US</ssl.client.dname>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -180,6 +187,31 @@
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- 8: Export client cert and private key as PEM for grpcurl mutual TLS -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <id>export-client-pem</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>org.wildfly.grpc.sslgen.ExportClientPem</mainClass>
+                            <arguments>
+                                <argument>${ssl.dir}/client.keystore.p12</argument>
+                                <argument>${ssl.password}</argument>
+                                <argument>client</argument>
+                                <argument>${ssl.dir}/client.crt.pem</argument>
+                                <argument>${ssl.dir}/client.key.pem</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
