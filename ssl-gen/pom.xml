@@ -20,6 +20,18 @@
     <packaging>pom</packaging>
     <name>WildFly gRPC :: SSL Certificate Generator</name>
 
+    <properties>
+        <ssl.dir>${project.build.directory}/generated-ssl</ssl.dir>
+        <ssl.password>secret</ssl.password>
+        <ssl.storetype>PKCS12</ssl.storetype>
+        <ssl.keyalg>RSA</ssl.keyalg>
+        <ssl.keysize>2048</ssl.keysize>
+        <ssl.validity>365</ssl.validity>
+        <ssl.server.dname>CN=localhost, OU=Test, O=WildFly, L=Test, ST=Test, C=US</ssl.server.dname>
+        <ssl.server.ext>SAN=dns:localhost,ip:127.0.0.1</ssl.server.ext>
+        <ssl.client.dname>CN=client, OU=Test, O=WildFly, L=Test, ST=Test, C=US</ssl.client.dname>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -35,16 +47,18 @@
                             <goal>generateKeyPair</goal>
                         </goals>
                         <configuration>
-                            <keystore>${project.build.directory}/generated-ssl/server.keystore.p12</keystore>
-                            <storetype>PKCS12</storetype>
-                            <storepass>secret</storepass>
-                            <keypass>secret</keypass>
+                            <keystore>${ssl.dir}/server.keystore.p12</keystore>
+                            <storetype>${ssl.storetype}</storetype>
+                            <storepass>${ssl.password}</storepass>
+                            <keypass>${ssl.password}</keypass>
                             <alias>server</alias>
-                            <dname>CN=localhost, OU=Test, O=WildFly, L=Test, ST=Test, C=US</dname>
-                            <keyalg>RSA</keyalg>
-                            <keysize>2048</keysize>
-                            <validity>365</validity>
-                            <ext>SAN=dns:localhost,ip:127.0.0.1</ext>
+                            <dname>${ssl.server.dname}</dname>
+                            <keyalg>${ssl.keyalg}</keyalg>
+                            <keysize>${ssl.keysize}</keysize>
+                            <validity>${ssl.validity}</validity>
+                            <exts>
+                                <ext>${ssl.server.ext}</ext>
+                            </exts>
                         </configuration>
                     </execution>
                     <!-- 2: Generate client keypair -->
@@ -55,15 +69,15 @@
                             <goal>generateKeyPair</goal>
                         </goals>
                         <configuration>
-                            <keystore>${project.build.directory}/generated-ssl/client.keystore.p12</keystore>
-                            <storetype>PKCS12</storetype>
-                            <storepass>secret</storepass>
-                            <keypass>secret</keypass>
+                            <keystore>${ssl.dir}/client.keystore.p12</keystore>
+                            <storetype>${ssl.storetype}</storetype>
+                            <storepass>${ssl.password}</storepass>
+                            <keypass>${ssl.password}</keypass>
                             <alias>client</alias>
-                            <dname>CN=client, OU=Test, O=WildFly, L=Test, ST=Test, C=US</dname>
-                            <keyalg>RSA</keyalg>
-                            <keysize>2048</keysize>
-                            <validity>365</validity>
+                            <dname>${ssl.client.dname}</dname>
+                            <keyalg>${ssl.keyalg}</keyalg>
+                            <keysize>${ssl.keysize}</keysize>
+                            <validity>${ssl.validity}</validity>
                         </configuration>
                     </execution>
                     <!-- 3: Export server cert (DER) for importing into client truststore -->
@@ -74,11 +88,11 @@
                             <goal>exportCertificate</goal>
                         </goals>
                         <configuration>
-                            <keystore>${project.build.directory}/generated-ssl/server.keystore.p12</keystore>
-                            <storetype>PKCS12</storetype>
-                            <storepass>secret</storepass>
+                            <keystore>${ssl.dir}/server.keystore.p12</keystore>
+                            <storetype>${ssl.storetype}</storetype>
+                            <storepass>${ssl.password}</storepass>
                             <alias>server</alias>
-                            <file>${project.build.directory}/generated-ssl/server.cer</file>
+                            <file>${ssl.dir}/server.cer</file>
                         </configuration>
                     </execution>
                     <!-- 4: Export client cert (DER) for importing into server truststore -->
@@ -89,11 +103,11 @@
                             <goal>exportCertificate</goal>
                         </goals>
                         <configuration>
-                            <keystore>${project.build.directory}/generated-ssl/client.keystore.p12</keystore>
-                            <storetype>PKCS12</storetype>
-                            <storepass>secret</storepass>
+                            <keystore>${ssl.dir}/client.keystore.p12</keystore>
+                            <storetype>${ssl.storetype}</storetype>
+                            <storepass>${ssl.password}</storepass>
                             <alias>client</alias>
-                            <file>${project.build.directory}/generated-ssl/client.cer</file>
+                            <file>${ssl.dir}/client.cer</file>
                         </configuration>
                     </execution>
                     <!-- 5: Export server cert as PEM for gRPC one-way TLS trustManager(InputStream) -->
@@ -104,11 +118,11 @@
                             <goal>exportCertificate</goal>
                         </goals>
                         <configuration>
-                            <keystore>${project.build.directory}/generated-ssl/server.keystore.p12</keystore>
-                            <storetype>PKCS12</storetype>
-                            <storepass>secret</storepass>
+                            <keystore>${ssl.dir}/server.keystore.p12</keystore>
+                            <storetype>${ssl.storetype}</storetype>
+                            <storepass>${ssl.password}</storepass>
                             <alias>server</alias>
-                            <file>${project.build.directory}/generated-ssl/client.truststore.pem</file>
+                            <file>${ssl.dir}/client.truststore.pem</file>
                             <rfc>true</rfc>
                         </configuration>
                     </execution>
@@ -120,11 +134,11 @@
                             <goal>importCertificate</goal>
                         </goals>
                         <configuration>
-                            <keystore>${project.build.directory}/generated-ssl/server.truststore.p12</keystore>
-                            <storetype>PKCS12</storetype>
-                            <storepass>secret</storepass>
+                            <keystore>${ssl.dir}/server.truststore.p12</keystore>
+                            <storetype>${ssl.storetype}</storetype>
+                            <storepass>${ssl.password}</storepass>
                             <alias>client</alias>
-                            <file>${project.build.directory}/generated-ssl/client.cer</file>
+                            <file>${ssl.dir}/client.cer</file>
                             <noprompt>true</noprompt>
                             <trustcacerts>true</trustcacerts>
                         </configuration>
@@ -137,11 +151,11 @@
                             <goal>importCertificate</goal>
                         </goals>
                         <configuration>
-                            <keystore>${project.build.directory}/generated-ssl/client.truststore.p12</keystore>
-                            <storetype>PKCS12</storetype>
-                            <storepass>secret</storepass>
+                            <keystore>${ssl.dir}/client.truststore.p12</keystore>
+                            <storetype>${ssl.storetype}</storetype>
+                            <storepass>${ssl.password}</storepass>
                             <alias>server</alias>
-                            <file>${project.build.directory}/generated-ssl/server.cer</file>
+                            <file>${ssl.dir}/server.cer</file>
                             <noprompt>true</noprompt>
                             <trustcacerts>true</trustcacerts>
                         </configuration>
@@ -159,7 +173,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-ssl</outputDirectory>
+                            <outputDirectory>${ssl.dir}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
