@@ -11,8 +11,9 @@
 
     <parent>
         <groupId>org.wildfly.grpc</groupId>
-        <artifactId>wildfly-grpc-parent</artifactId>
+        <artifactId>wildfly-grpc-code-parent</artifactId>
         <version>0.2.2-SNAPSHOT</version>
+        <relativePath>../code-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>wildfly-grpc-ssl-gen</artifactId>
@@ -22,30 +23,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>clean-generated-ssl</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>${project.build.directory}/generated-ssl</directory>
-                                </fileset>
-                            </filesets>
-                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>keytool-maven-plugin</artifactId>
-                <version>1.7</version>
+                <version>${version.keytool.plugin}</version>
                 <executions>
                     <!-- 1: Generate server keypair -->
                     <execution>
