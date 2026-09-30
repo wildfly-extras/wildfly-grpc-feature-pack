@@ -14,7 +14,7 @@ To build the feature pack, simply run
 mvn install
 ```
 
-This will build everything, and run the testsuite.
+This will build everything, and run the testsuite. The build includes the `ssl-gen` module that generates self-signed SSL certificates used by the integration tests and examples for TLS testing.
 
 Once built you can provision a server with gRPC support using Galleon provisioning. An example using the 
 `org.wildfly.plugins:wildfly-maven-plugin`:
