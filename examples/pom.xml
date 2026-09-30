@@ -30,6 +30,16 @@
         <module>helloworld</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <!-- depends on ssl-gen to ensure SSL resources
+                 required by the examples are generated -->
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wildfly-grpc-ssl-gen</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <extensions>
             <extension>

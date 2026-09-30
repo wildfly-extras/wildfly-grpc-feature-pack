@@ -33,6 +33,15 @@
         </dependency>
 
         <dependency>
+            <!-- depends on ssl-gen to ensure SSL resources
+             required by the testsuite are generated -->
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wildfly-grpc-ssl-gen</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty-shaded</artifactId>
             <scope>runtime</scope>
@@ -148,6 +157,55 @@
                             <goal>provision</goal>
                         </goals>
                         <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-ssl-to-wildfly-config</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/wildfly/standalone/configuration</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl</directory>
+                                    <includes>
+                                        <include>server.keystore.p12</include>
+                                        <include>server.truststore.p12</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-client-ssl-to-test-classes</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl</directory>
+                                    <includes>
+                                        <include>client.truststore.pem</include>
+                                        <include>client.truststore.p12</include>
+                                        <include>client.keystore.p12</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
