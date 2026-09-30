@@ -21,7 +21,7 @@ where *SSL* is either
 Then, run the server with:
 
 ```shell
-./target/bin/standalone.sh --stability preview
+./target/wildfly/bin/standalone.sh --stability preview
 ```
 
 ## Client
