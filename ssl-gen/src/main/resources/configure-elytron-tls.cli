@@ -1,5 +1,17 @@
 embed-server
 
+# Configures one-way TLS (server authentication) for the gRPC subsystem.
+#
+# Creates the following Elytron resources:
+#   - key-store: loads server.keystore.p12 from the server configuration directory
+#   - key-manager: wraps the key-store to provide the server's TLS identity
+#   - server-ssl-context: TLS 1.2 context using the key-manager; client auth is not required
+#   - https-listener: binds the SSL context to the HTTPS socket
+#
+# Sets key-manager-name on the gRPC subsystem so gRPC connections use TLS.
+#
+# Run configure-elytron-mutual-tls.cli afterward to enable mutual TLS (mTLS).
+
 # Given the unique names, assume that if the key store exists, we don't need to create the rest of the resources
 if (outcome != success) of /subsystem=elytron/key-store=key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428:read-resource
     /subsystem=elytron/key-store=key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428:add(credential-reference={clear-text="secret"}, type=PKCS12, path="server.keystore.p12", relative-to="jboss.server.config.dir", required=false)

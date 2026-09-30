@@ -1,5 +1,18 @@
 embed-server
 
+# Adds mutual TLS (mTLS) on top of the one-way TLS setup from configure-elytron-tls.cli.
+# Run configure-elytron-tls.cli before this script.
+#
+# Creates the following additional Elytron resources:
+#   - trust-store: loads server.truststore.p12 (contains the trusted client certificate)
+#   - trust-manager: wraps the trust-store to verify client certificates
+#
+# Updates the existing server-ssl-context to:
+#   - require client certificate authentication (need-client-auth=true)
+#   - use the trust-manager to verify the client's certificate
+#
+# Sets trust-manager-name on the gRPC subsystem so gRPC enforces client authentication.
+
 # Given the unique names, assume that if the trust store exists, mutual auth is already configured
 if (outcome != success) of /subsystem=elytron/key-store=trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1:read-resource
     /subsystem=elytron/key-store=trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1:add(credential-reference={clear-text="secret"}, type=PKCS12, required=false, path="server.truststore.p12", relative-to="jboss.server.config.dir")

@@ -163,7 +163,7 @@
                                 <configuration>
                                     <offline>true</offline>
                                     <scripts>
-                                        <script>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl/configure-elytron-oneway.cli</script>
+                                        <script>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl/configure-elytron-tls.cli</script>
                                     </scripts>
                                 </configuration>
                             </execution>
@@ -220,8 +220,8 @@
                                 <configuration>
                                     <offline>true</offline>
                                     <scripts>
-                                        <script>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl/configure-elytron-oneway.cli</script>
-                                        <script>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl/configure-elytron-twoway.cli</script>
+                                        <script>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl/configure-elytron-tls.cli</script>
+                                        <script>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl/configure-elytron-mutual-tls.cli</script>
                                     </scripts>
                                 </configuration>
                             </execution>
