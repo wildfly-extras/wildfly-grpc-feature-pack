@@ -81,7 +81,10 @@ The `helloworld` example is a slightly modified version of the `helloworld` exam
 To build the `helloworld` service, provision a WildFly server with the gRPC subsystem and any necessary certificate files,
 and deploy the service, run:
 
-<code>mvn wildfly:run -P examples -pl examples/helloworld/service -Dssl=*SSL*</code>
+```shell
+cd examples/helloworld/service
+mvn clean package -Dssl=<*SSL*>
+```
 
 where *SSL* is either
 
@@ -89,39 +92,47 @@ where *SSL* is either
 * oneway: server identity is verified
 * twoway: both server and client identities are verified
 
+Then, run the server with:
+
+```shell
+./target/bin/standalone.sh --stability preview
+```
+
 ### Client
 
 The `helloworld` client is a simple Java application. To build the client and call to the gRPC service, run:
 
-<code>mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob *SSL*"</code>
-
+```shell
+cd  examples/helloworld/client
+mvn package
+mvn exec:java -Dexec.args="Bob *SSL*"
+```
 where, again, *SSL* is either "none", "oneway", or "twoway"
 
 Alternatively you could also use tools like [BloomRPC](https://github.com/uw-labs/bloomrpc)
 or [gRPCurl](https://github.com/fullstorydev/grpcurl) to invoke the service:
 
 ```shell
-grpcurl \ # plaintext
-  -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
+# clear text connection
+grpcurl -proto ../proto/src/main/proto/helloworld.proto \
   -plaintext \
   -d '{"name":"Bob"}' \
   localhost:9555 helloworld.Greeter/SayHello
 ```
 or
 ```shell
-grpcurl \ # oneway
-  -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
-  -cacert examples/helloworld/client/src/main/resources/client.truststore.pem \
+# tls (oneway)
+grpcurl -proto ../proto/src/main/proto/helloworld.proto \
+  -cacert ../../../ssl-gen/target/generated-ssl/client.truststore.pem \
   -d '{"name":"Bob"}' \
   localhost:9555 helloworld.Greeter/SayHello
 ```
 or
 ```shell
-grpcurl \ # twoway
-  -proto examples/helloworld/proto/src/main/proto/helloworld.proto \
-  -cacert examples/helloworld/client/src/main/resources/client.truststore.pem \
-  -cert examples/helloworld/client/src/main/resources/client.keystore.pem \
-  -key examples/helloworld/client/src/main/resources/client.key.pem \
+# mutual TLS (twoway)
+grpcurl -proto ../proto/src/main/proto/helloworld.proto \
+  -cacert ../../../ssl-gen/target/generated-ssl/client.truststore.pem \
+  -cert ../../../ssl-gen/target/generated-ssl/client.keystore.pem \
   -d '{"name":"Bob"}' \
   localhost:9555 helloworld.Greeter/SayHello
 ```
