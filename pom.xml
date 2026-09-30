@@ -353,7 +353,6 @@
         <profile>
             <id>examples</id>
             <modules>
-                <module>ssl-gen</module>
                 <module>examples</module>
             </modules>
         </profile>
