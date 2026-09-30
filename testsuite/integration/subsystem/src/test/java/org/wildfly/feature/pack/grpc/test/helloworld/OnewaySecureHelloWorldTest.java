@@ -55,9 +55,9 @@ public class OnewaySecureHelloWorldTest extends HelloWorldParent {
         final ModelNode credentialRef = new ModelNode();
         credentialRef.get("clear-text").set("secret");
         op.get("credential-reference").set(credentialRef);
-        op.get("type").set("JKS");
-        op.get("path").set("../../../ssl/server.keystore.jks");
-        // op.get("relative-to").set("jboss.server.config.dir");
+        op.get("type").set("PKCS12");
+        op.get("path").set("server.keystore.p12");
+        op.get("relative-to").set("jboss.server.config.dir");
         op.get("required").set(false);
         builder.addStep(op);
 

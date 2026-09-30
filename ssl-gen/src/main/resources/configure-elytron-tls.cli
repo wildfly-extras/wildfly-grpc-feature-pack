@@ -1,0 +1,24 @@
+embed-server
+
+# Configures one-way TLS (server authentication) for the gRPC subsystem.
+#
+# Creates the following Elytron resources:
+#   - key-store: loads server.keystore.p12 from the server configuration directory
+#   - key-manager: wraps the key-store to provide the server's TLS identity
+#   - server-ssl-context: TLS 1.2 context using the key-manager; client auth is not required
+#   - https-listener: binds the SSL context to the HTTPS socket
+#
+# Sets key-manager-name on the gRPC subsystem so gRPC connections use TLS.
+#
+# Run configure-elytron-mutual-tls.cli afterward to enable mutual TLS (mTLS).
+
+# Given the unique names, assume that if the key store exists, we don't need to create the rest of the resources
+if (outcome != success) of /subsystem=elytron/key-store=key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428:read-resource
+    /subsystem=elytron/key-store=key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428:add(credential-reference={clear-text="secret"}, type=PKCS12, path="server.keystore.p12", relative-to="jboss.server.config.dir", required=false)
+    /subsystem=elytron/key-manager=key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428:add(key-store=key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428, credential-reference={clear-text="secret"})
+    /subsystem=elytron/server-ssl-context=ssl-context-afcdd1f8-d1a7-4137-aa13-c45237e32428:add(cipher-suite-filter=DEFAULT, protocols=["TLSv1.2"], need-client-auth=false, key-manager="key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428")
+    /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, ssl-context="ssl-context-afcdd1f8-d1a7-4137-aa13-c45237e32428")
+    /subsystem=grpc:write-attribute(name=key-manager-name, value="key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428")
+end-if
+
+stop-embedded-server
