@@ -5,9 +5,12 @@
 package org.wildfly.extension.grpc.example.helloworld;
 
 import java.io.InputStream;
+import java.security.KeyStore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.net.ssl.KeyManagerFactory;
 
 import io.grpc.Channel;
 import io.grpc.ChannelCredentials;
@@ -90,9 +93,14 @@ public class GreeterClient {
             channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
         } else if ("twoway".equals(ssl)) {
             InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
-            InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
-            InputStream key = classLoader.getResourceAsStream("client.key.pem");
-            ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).keyManager(keyStore, key)
+            KeyStore clientKeyStore = KeyStore.getInstance("PKCS12");
+            try (InputStream clientKeyStoreStream = classLoader.getResourceAsStream("client.keystore.p12")) {
+                clientKeyStore.load(clientKeyStoreStream, "secret".toCharArray());
+            }
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(clientKeyStore, "secret".toCharArray());
+            ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore)
+                    .keyManager(kmf.getKeyManagers())
                     .build();
             channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
         } else {

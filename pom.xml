@@ -121,6 +121,7 @@
         <module>code-parent</module>
         <module>subsystem</module>
         <module>galleon-pack</module>
+        <module>ssl-gen</module>
         <module>testsuite</module>
     </modules>
 
@@ -276,6 +277,11 @@
                     </dependencies>
                 </plugin>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>keytool-maven-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
+                <plugin>
                     <groupId>org.wildfly.plugins</groupId>
                     <artifactId>wildfly-maven-plugin</artifactId>
                     <version>${version.wildfly.plugin}</version>
@@ -346,6 +352,7 @@
         <profile>
             <id>examples</id>
             <modules>
+                <module>ssl-gen</module>
                 <module>examples</module>
             </modules>
         </profile>

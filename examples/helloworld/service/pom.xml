@@ -20,7 +20,6 @@
     <name>WildFly gRPC :: Examples :: Hello World :: Service</name>
 
     <properties>
-        <root.directory>${basedir}/../../..</root.directory>
         <wildfly.home>${project.build.directory}/wildfly</wildfly.home>
     </properties>
 
@@ -164,26 +163,35 @@
                                 <configuration>
                                     <offline>true</offline>
                                     <scripts>
-                                        <script>${root.directory}/ssl/configure-elytron-oneway.cli</script>
+                                        <script>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl/configure-elytron-oneway.cli</script>
                                     </scripts>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
                     <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>copy-ssl-to-wildfly</id>
                                 <phase>package</phase>
-                                <configuration>
-                                    <target>
-                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
-                                            overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
-                                    </target>
-                                </configuration>
                                 <goals>
-                                    <goal>run</goal>
+                                    <goal>copy-resources</goal>
                                 </goals>
+                                <configuration>
+                                    <outputDirectory>${wildfly.home}/standalone/configuration</outputDirectory>
+                                    <overwrite>true</overwrite>
+                                    <resources>
+                                        <resource>
+                                            <directory>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl</directory>
+                                            <includes>
+                                                <include>server.keystore.p12</include>
+                                            </includes>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -212,29 +220,36 @@
                                 <configuration>
                                     <offline>true</offline>
                                     <scripts>
-                                        <script>${root.directory}/ssl/configure-elytron-twoway.cli</script>
+                                        <script>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl/configure-elytron-twoway.cli</script>
                                     </scripts>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
                     <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>3.2.0</version>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>copy-ssl-to-wildfly</id>
                                 <phase>package</phase>
-                                <configuration>
-                                    <target>
-                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
-                                            overwrite="true" file="${root.directory}/ssl/server.keystore.jks" />
-                                        <copy todir="${wildfly.home}/standalone/configuration" failonerror="true"
-                                            overwrite="true" file="${root.directory}/ssl/server.truststore.jks" />
-                                    </target>
-                                </configuration>
                                 <goals>
-                                    <goal>run</goal>
+                                    <goal>copy-resources</goal>
                                 </goals>
+                                <configuration>
+                                    <outputDirectory>${wildfly.home}/standalone/configuration</outputDirectory>
+                                    <overwrite>true</overwrite>
+                                    <resources>
+                                        <resource>
+                                            <directory>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl</directory>
+                                            <includes>
+                                                <include>server.keystore.p12</include>
+                                                <include>server.truststore.p12</include>
+                                            </includes>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

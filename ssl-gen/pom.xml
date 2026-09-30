@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+     Copyright The WildFly Authors
+     SPDX-License-Identifier: Apache-2.0
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.wildfly.grpc</groupId>
+        <artifactId>wildfly-grpc-parent</artifactId>
+        <version>0.2.2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>wildfly-grpc-ssl-gen</artifactId>
+    <packaging>pom</packaging>
+    <name>WildFly gRPC :: SSL Certificate Generator</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean-generated-ssl</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.build.directory}/generated-ssl</directory>
+                                </fileset>
+                            </filesets>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>keytool-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <!-- 1: Generate server keypair -->
+                    <execution>
+                        <id>gen-server-keypair</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>generateKeyPair</goal>
+                        </goals>
+                        <configuration>
+                            <keystore>${project.build.directory}/generated-ssl/server.keystore.p12</keystore>
+                            <storetype>PKCS12</storetype>
+                            <storepass>secret</storepass>
+                            <keypass>secret</keypass>
+                            <alias>server</alias>
+                            <dname>CN=localhost, OU=Test, O=WildFly, L=Test, ST=Test, C=US</dname>
+                            <keyalg>RSA</keyalg>
+                            <keysize>2048</keysize>
+                            <validity>365</validity>
+                            <ext>SAN=dns:localhost,ip:127.0.0.1</ext>
+                        </configuration>
+                    </execution>
+                    <!-- 2: Generate client keypair -->
+                    <execution>
+                        <id>gen-client-keypair</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>generateKeyPair</goal>
+                        </goals>
+                        <configuration>
+                            <keystore>${project.build.directory}/generated-ssl/client.keystore.p12</keystore>
+                            <storetype>PKCS12</storetype>
+                            <storepass>secret</storepass>
+                            <keypass>secret</keypass>
+                            <alias>client</alias>
+                            <dname>CN=client, OU=Test, O=WildFly, L=Test, ST=Test, C=US</dname>
+                            <keyalg>RSA</keyalg>
+                            <keysize>2048</keysize>
+                            <validity>365</validity>
+                        </configuration>
+                    </execution>
+                    <!-- 3: Export server cert (DER) for importing into client truststore -->
+                    <execution>
+                        <id>export-server-cert</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>exportCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <keystore>${project.build.directory}/generated-ssl/server.keystore.p12</keystore>
+                            <storetype>PKCS12</storetype>
+                            <storepass>secret</storepass>
+                            <alias>server</alias>
+                            <file>${project.build.directory}/generated-ssl/server.cer</file>
+                        </configuration>
+                    </execution>
+                    <!-- 4: Export client cert (DER) for importing into server truststore -->
+                    <execution>
+                        <id>export-client-cert</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>exportCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <keystore>${project.build.directory}/generated-ssl/client.keystore.p12</keystore>
+                            <storetype>PKCS12</storetype>
+                            <storepass>secret</storepass>
+                            <alias>client</alias>
+                            <file>${project.build.directory}/generated-ssl/client.cer</file>
+                        </configuration>
+                    </execution>
+                    <!-- 5: Export server cert as PEM for gRPC one-way TLS trustManager(InputStream) -->
+                    <execution>
+                        <id>export-server-cert-pem</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>exportCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <keystore>${project.build.directory}/generated-ssl/server.keystore.p12</keystore>
+                            <storetype>PKCS12</storetype>
+                            <storepass>secret</storepass>
+                            <alias>server</alias>
+                            <file>${project.build.directory}/generated-ssl/client.truststore.pem</file>
+                            <rfc>true</rfc>
+                        </configuration>
+                    </execution>
+                    <!-- 6: Create server truststore containing the client cert -->
+                    <execution>
+                        <id>create-server-truststore</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>importCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <keystore>${project.build.directory}/generated-ssl/server.truststore.p12</keystore>
+                            <storetype>PKCS12</storetype>
+                            <storepass>secret</storepass>
+                            <alias>client</alias>
+                            <file>${project.build.directory}/generated-ssl/client.cer</file>
+                            <noprompt>true</noprompt>
+                            <trustcacerts>true</trustcacerts>
+                        </configuration>
+                    </execution>
+                    <!-- 7: Create client truststore containing the server cert -->
+                    <execution>
+                        <id>create-client-truststore</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>importCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <keystore>${project.build.directory}/generated-ssl/client.truststore.p12</keystore>
+                            <storetype>PKCS12</storetype>
+                            <storepass>secret</storepass>
+                            <alias>server</alias>
+                            <file>${project.build.directory}/generated-ssl/server.cer</file>
+                            <noprompt>true</noprompt>
+                            <trustcacerts>true</trustcacerts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-cli-scripts</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-ssl</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

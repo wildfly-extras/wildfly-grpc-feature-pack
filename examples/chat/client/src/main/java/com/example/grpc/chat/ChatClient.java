@@ -5,6 +5,9 @@
 package com.example.grpc.chat;
 
 import java.io.InputStream;
+import java.security.KeyStore;
+
+import javax.net.ssl.KeyManagerFactory;
 
 import org.wildfly.extension.grpc.example.chat.ChatMessage;
 import org.wildfly.extension.grpc.example.chat.ChatMessageFromServer;
@@ -121,9 +124,14 @@ public class ChatClient extends Application {
                 channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
             } else if ("twoway".equals(ssl)) {
                 InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
-                InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
-                InputStream key = classLoader.getResourceAsStream("client.key.pem");
-                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).keyManager(keyStore, key)
+                KeyStore clientKeyStore = KeyStore.getInstance("PKCS12");
+                try (InputStream clientKeyStoreStream = classLoader.getResourceAsStream("client.keystore.p12")) {
+                    clientKeyStore.load(clientKeyStoreStream, "secret".toCharArray());
+                }
+                KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                kmf.init(clientKeyStore, "secret".toCharArray());
+                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore)
+                        .keyManager(kmf.getKeyManagers())
                         .build();
                 channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
             } else {
