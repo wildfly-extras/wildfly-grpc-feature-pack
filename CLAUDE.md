@@ -48,6 +48,7 @@ mvn exec:java -P examples -pl examples/helloworld/client -Dexec.args="Bob none"
 
 - **`subsystem/`** — The WildFly subsystem extension (`org.wildfly.extension.grpc`). Contains the management model definition, XML schema parsing, deployment processors, and the gRPC server service.
 - **`galleon-pack/`** — Galleon packaging. `common/` holds shared JBoss Module descriptors and layer definitions. `feature-pack/` and `preview-feature-pack/` produce the installable Galleon feature packs.
+- **`ssl-gen/`** — Generates self-signed SSL certificates and Elytron CLI scripts at build time (into `ssl-gen/target/generated-ssl/`). Used by the integration tests and examples for TLS and mutual TLS testing. See [ssl-gen/README.md](ssl-gen/README.md).
 - **`build/`** — Provisions a local WildFly server with the gRPC subsystem for integration testing.
 - **`testsuite/integration/subsystem/`** — Arquillian-based integration tests (helloworld, interceptors, SSL variants).
 - **`examples/`** — Standalone examples (helloworld, chat), each split into proto/service/client modules.

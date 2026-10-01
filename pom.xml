@@ -72,6 +72,7 @@
         <version.org.jboss.logging.jboss-logging-annotations>3.0.4.Final</version.org.jboss.logging.jboss-logging-annotations>
         <version.org.jboss.logging.jboss-logging>3.6.3.Final</version.org.jboss.logging.jboss-logging>
         <version.org.wildfly.arquillian>5.1.0.Final</version.org.wildfly.arquillian>
+        <version.bouncycastle>1.80</version.bouncycastle>
         <version.perfmark>0.27.0</version.perfmark>
         <version.proto-google-common-protos>2.75.0</version.proto-google-common-protos>
         <version.protobuf>4.36.2</version.protobuf>
@@ -88,6 +89,7 @@
         <version.impsort.plugin>1.13.0</version.impsort.plugin>
         <version.jandex.plugin>3.6.0</version.jandex.plugin>
         <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
+        <version.keytool.plugin>1.7</version.keytool.plugin>
         <version.license.plugin>5.1.2</version.license.plugin>
         <version.wildfly.plugin>6.0.1.Final</version.wildfly.plugin>
 
@@ -121,6 +123,7 @@
         <module>code-parent</module>
         <module>subsystem</module>
         <module>galleon-pack</module>
+        <module>ssl-gen</module>
         <module>testsuite</module>
     </modules>
 
@@ -274,6 +277,11 @@
                             <version>${version.wildfly.common}</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>keytool-maven-plugin</artifactId>
+                    <version>1.7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.wildfly.plugins</groupId>
