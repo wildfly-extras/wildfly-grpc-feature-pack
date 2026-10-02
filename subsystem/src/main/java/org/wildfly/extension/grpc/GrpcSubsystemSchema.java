@@ -16,7 +16,8 @@ import org.jboss.as.version.Stability;
 import org.jboss.staxmapper.IntVersion;
 
 enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchema> {
-    VERSION_1_0_PREVIEW(1, 0, Stability.PREVIEW),;
+    VERSION_1_0_PREVIEW(1, 0, Stability.PREVIEW),
+    VERSION_1_0_EXPERIMENTAL(1, 0, Stability.EXPERIMENTAL),;
 
     static final GrpcSubsystemSchema CURRENT = VERSION_1_0_PREVIEW;
 
@@ -34,8 +35,8 @@ enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchem
     @Override
     public PersistentResourceXMLDescription getXMLDescription() {
         // TODO - How can this avoid this deprecated variant?
-        return builder(SUBSYSTEM_PATH, namespace).addAttributes(GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW,
-                GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT,
+        var descriptionBuilder = builder(SUBSYSTEM_PATH, namespace).addAttributes(
+                GrpcSubsystemDefinition.GRPC_FLOW_CONTROL_WINDOW, GrpcSubsystemDefinition.GRPC_HANDSHAKE_TIMEOUT,
                 GrpcSubsystemDefinition.GRPC_INITIAL_FLOW_CONTROL_WINDOW, GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIME,
                 GrpcSubsystemDefinition.GRPC_KEEP_ALIVE_TIMEOUT, GrpcSubsystemDefinition.GRPC_KEY_MANAGER_NAME,
                 GrpcSubsystemDefinition.GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION,
@@ -47,7 +48,11 @@ enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchem
                 GrpcSubsystemDefinition.GRPC_PROTOCOL_PROVIDER, GrpcSubsystemDefinition.GRPC_SERVER_SOCKET_BINDING,
                 GrpcSubsystemDefinition.GRPC_SESSION_CACHE_SIZE, GrpcSubsystemDefinition.GRPC_SESSION_TIMEOUT,
                 GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT, GrpcSubsystemDefinition.GRPC_SSL_CONTEXT_NAME,
-                GrpcSubsystemDefinition.GRPC_START_TLS, GrpcSubsystemDefinition.GRPC_TRUST_MANAGER_NAME).build();
+                GrpcSubsystemDefinition.GRPC_START_TLS, GrpcSubsystemDefinition.GRPC_TRUST_MANAGER_NAME);
+        if (this == VERSION_1_0_EXPERIMENTAL) {
+            descriptionBuilder = descriptionBuilder.addAttributes(GrpcSubsystemDefinition.GRPC_ENABLE_SERVER_REFLECTION);
+        }
+        return descriptionBuilder.build();
     }
 
 }

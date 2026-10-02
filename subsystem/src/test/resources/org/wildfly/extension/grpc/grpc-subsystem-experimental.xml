@@ -1,0 +1,7 @@
+<!--
+
+     Copyright The WildFly Authors
+     SPDX-License-Identifier: Apache-2.0
+
+-->
+<subsystem xmlns="urn:wildfly:grpc:experimental:1.0" enable-server-reflection="true" socket-binding="grpc" />
