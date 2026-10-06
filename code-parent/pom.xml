@@ -97,6 +97,19 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>wildfly-grpc-ssl-gen</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <!-- WildFly dependencies -->
             <dependency>
                 <groupId>org.wildfly</groupId>
@@ -257,6 +270,11 @@
 
             <!-- External dependencies -->
             <!-- This does not go into the modules so don't worry about exclusions -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${version.bouncycastle}</version>
+            </dependency>
             <dependency>
                 <groupId>org.wildfly.checkstyle</groupId>
                 <artifactId>wildfly-checkstyle-config</artifactId>

@@ -86,7 +86,7 @@ parse_params() {
 
 parse_params "$@"
 setup_colors
-mvn -P examples \
+mvn \
   org.apache.maven.plugins:maven-enforcer-plugin:enforce \
   org.apache.maven.plugins:maven-checkstyle-plugin:check \
   com.mycila:license-maven-plugin:check \

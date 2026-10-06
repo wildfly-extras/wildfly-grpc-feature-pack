@@ -84,4 +84,4 @@ parse_params() {
 
 parse_params "$@"
 setup_colors
-mvn -P examples process-sources
+mvn process-sources
