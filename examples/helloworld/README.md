@@ -2,64 +2,79 @@
 
 The `helloworld` example is a slightly modified version of the `helloworld` example from [gRPC Java examples](https://github.com/grpc/grpc-java/tree/master/examples).
 
-## Service
+## Prerequisites
 
-To build the `helloworld` service, provision a WildFly server with the gRPC subsystem and any necessary certificate files,
-and deploy the service, run:
+Build the whole project first so that SSL certificates and the feature pack are available:
 
 ```shell
-cd service
-mvn clean package -Dssl=<*SSL*>
+mvn install
 ```
 
-where *SSL* is either
+## Service
 
-* none: plaintext
-* oneway: server identity is verified
-* twoway: both server and client identities are verified
-
-Then, run the server with:
+From the `examples/helloworld/service` directory, build and provision the server with the gRPC service pre-deployed:
 
 ```shell
-./target/wildfly/bin/standalone.sh --stability preview
+cd examples/helloworld/service
+mvn clean package
+```
+
+This provisions a WildFly server with:
+- **Port 8080** — HTTP/2 cleartext (h2c)
+- **Port 8443** — HTTPS with HTTP/2 via ALPN (one-way TLS)
+
+For mutual TLS on port 8443, pass `-Dssl=twoway`:
+
+```shell
+mvn clean package -Dssl=twoway
+```
+
+Then start WildFly:
+
+```shell
+./target/wildfly/bin/standalone.sh --stability=preview
 ```
 
 ## Client
 
-The `helloworld` client is a simple Java application. To build the client and call to the gRPC service, run:
+The `helloworld` client is a simple Java application. From the project root, run:
 
 ```shell
-cd client
-mvn package
-mvn exec:java -Dexec.args="Bob *SSL*"
+mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob none"    # plaintext (port 8080)
+mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob oneway"  # TLS (port 8443)
+mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob twoway"  # mutual TLS (port 8443)
 ```
-where, again, *SSL* is either "none", "oneway", or "twoway"
 
-Alternatively you could also use tools like [BloomRPC](https://github.com/uw-labs/bloomrpc)
-or [gRPCurl](https://github.com/fullstorydev/grpcurl) to invoke the service:
+Alternatively, use [grpcurl](https://github.com/fullstorydev/grpcurl) to invoke the service directly.
+From the `examples/helloworld` directory, pass the proto file with `-import-path` and `-proto`
+since the server does not expose the gRPC reflection API:
 
 ```shell
-# clear text connection
-grpcurl -proto proto/src/main/proto/helloworld.proto \
+cd examples/helloworld
+
+# plaintext (port 8080, h2c)
+grpcurl \
   -plaintext \
+  -import-path proto/src/main/proto \
+  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
-```
-or
-```shell
-# tls (oneway)
-grpcurl -proto proto/src/main/proto/helloworld.proto \
+  localhost:8080 helloworld.Greeter/SayHello
+
+# TLS, one-way (port 8443) — server authenticates to client, no client cert
+grpcurl \
   -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
+  -import-path proto/src/main/proto \
+  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
-```
-or
-```shell
-# mutual TLS (twoway)
-grpcurl -proto proto/src/main/proto/helloworld.proto \
+  localhost:8443 helloworld.Greeter/SayHello
+
+# TLS, two-way (port 8443) — mutual authentication (requires -Dssl=twoway on service build)
+grpcurl \
   -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
   -cert ../../ssl-gen/target/generated-ssl/client.crt.pem \
   -key ../../ssl-gen/target/generated-ssl/client.key.pem \
+  -import-path proto/src/main/proto \
+  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+  localhost:8443 helloworld.Greeter/SayHello
 ```
