@@ -89,7 +89,7 @@
         <version.impsort.plugin>1.13.0</version.impsort.plugin>
         <version.jandex.plugin>3.6.0</version.jandex.plugin>
         <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
-        <version.keytool.plugin>1.7</version.keytool.plugin>
+        <version.keytool.plugin>2.0.2</version.keytool.plugin>
         <version.license.plugin>5.1.2</version.license.plugin>
         <version.wildfly.plugin>6.0.1.Final</version.wildfly.plugin>
 
@@ -282,7 +282,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>keytool-maven-plugin</artifactId>
-                    <version>1.7</version>
+                    <version>2.0.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.wildfly.plugins</groupId>
