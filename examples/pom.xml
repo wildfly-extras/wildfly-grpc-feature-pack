@@ -23,6 +23,7 @@
     <properties>
         <version.os.plugin>1.7.1</version.os.plugin>
         <version.protobuf.plugin>0.6.1</version.protobuf.plugin>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <modules>
