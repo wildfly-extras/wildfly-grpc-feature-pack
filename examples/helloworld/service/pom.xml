@@ -91,10 +91,10 @@
                             <outputDirectory>${project.build.directory}/server-content/standalone/configuration</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${root.directory}/ssl</directory>
+                                    <directory>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl</directory>
                                     <includes>
-                                        <include>server.keystore</include>
-                                        <include>server.truststore.jks</include>
+                                        <include>configure-elytron-tls.cli</include>
+                                        <include>server.keystore.p12</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
@@ -131,14 +131,13 @@
                     </galleon-options>
                     <stability>preview</stability>
                     <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
-                    <stability>preview</stability>
                     <extra-server-content-dirs>
                         <extra-content-dir>${project.build.directory}/server-content</extra-content-dir>
                     </extra-server-content-dirs>
                     <packaging-scripts>
                         <execution>
                             <scripts>
-                                <script>${root.directory}/ssl/configure-elytron-tls.cli</script>
+                                <script>${project.build.directory}/server-content/standalone/configuration/configure-elytron-tls.cli</script>
                             </scripts>
                         </execution>
                     </packaging-scripts>
