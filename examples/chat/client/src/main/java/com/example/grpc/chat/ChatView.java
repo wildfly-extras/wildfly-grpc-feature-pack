@@ -63,8 +63,7 @@ class ChatView {
     private void renderHeader(Rect area, Frame frame) {
         Paragraph header = Paragraph.builder()
                 .text(Text.from(Line.from(
-                        Span.raw(" gRPC Chat ").bold().fg(theme.accent),
-                        Span.raw("[TamboUI]").fg(theme.border))))
+                        Span.raw(" gRPC Chat ").bold().fg(theme.accent))))
                 .block(Block.builder()
                         .borders(Borders.ALL)
                         .borderType(BorderType.ROUNDED)
@@ -144,8 +143,21 @@ class ChatView {
     }
 
     private void renderStatusBar(Rect area, Frame frame, ChatState state) {
-        String status = state.connected ? "Connected" : "Disconnected";
-        Color statusColor = state.connected ? theme.statusConnected : theme.statusDisconnected;
+        String status;
+        Color statusColor = switch (state.connectionState) {
+            case CONNECTED -> {
+                status = "Connected";
+                yield theme.statusConnected;
+            }
+            case DISCONNECTED -> {
+                status = "Disconnected";
+                yield theme.statusDisconnected;
+            }
+            default -> {
+                status = "Connecting...";
+                yield theme.statusInfo;
+            }
+        };
 
         List<Span> spans = new ArrayList<>();
         spans.add(Span.raw(" " + status).fg(statusColor).bold());

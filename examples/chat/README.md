@@ -28,20 +28,25 @@ Then, run the server with:
 
 ## Client
 
-The `chat` client is a TamboUI terminal application. To build and launch it, run:
+The `chat` client is a TamboUI terminal application. To build it, run:
 
 ```shell
 cd client
 mvn package
-mvn exec:java
+```
+
+This produces a fat JAR that can be launched directly:
+
+```shell
+java -jar target/chat-client.jar [options] [username]
 ```
 
 ### Command Line Arguments
 
 | Argument | Default | Description |
 |----------|---------|-------------|
-| `-Dchat.ssl=<SSL>` | `none` | SSL mode: `none`, `oneway`, or `twoway` (must match the server) |
-| `-Dchat.username=<name>` | `User<pid>` | Chat username (defaults to `User` followed by the process ID) |
+| `--ssl=<mode>` | `none` | SSL mode: `none`, `oneway`, or `twoway` (defaults to `none`, must match the server) |
+| `username` | `User<pid>` | Chat username (defaults to `User` followed by the process ID) |
 
 ### Example: Multi-User Chat
 
@@ -57,14 +62,14 @@ Start Alice in a second terminal:
 
 ```shell
 cd client
-mvn exec:java -Dchat.username=Alice
+java -jar target/chat-client.jar Alice
 ```
 
 Start Bob in a third terminal:
 
 ```shell
 cd client
-mvn exec:java -Dchat.username=Bob
+java -jar target/chat-client.jar Bob
 ```
 
 Messages sent by Alice will appear in Bob's terminal and vice versa.

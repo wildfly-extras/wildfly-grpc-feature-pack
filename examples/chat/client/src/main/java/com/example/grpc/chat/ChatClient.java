@@ -19,6 +19,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListState;
+import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 
@@ -45,15 +46,27 @@ public class ChatClient {
     }
 
     public static void main(String[] args) throws Exception {
-        String sslArg = args.length > 0 ? args[0] : "none";
-        String username = args.length > 1 && args[1] != null && !args[1].isEmpty()
-                ? args[1]
-                : "User" + ProcessHandle.current().pid();
-        if ("--help".equals(sslArg)) {
-            System.err.println("Usage: [ssl] [username]");
-            System.err.println("  ssl       none, oneway, or twoway");
-            System.err.println("  username  your chat name (default: User<pid>)");
-            System.exit(1);
+        String sslArg = "none";
+        String username = null;
+
+        for (int i = 0; i < args.length; i++) {
+            if ("--help".equals(args[i]) || "-h".equals(args[i])) {
+                System.err.println("Usage: [options] [username]");
+                System.err.println("  username              chat name (default: User<pid>)");
+                System.err.println("  --ssl=<mode>          none, oneway, or twoway (default: none)");
+                System.exit(1);
+            } else if (args[i].startsWith("--ssl=")) {
+                sslArg = args[i].substring("--ssl=".length());
+            } else if (args[i].startsWith("-")) {
+                System.err.println("Unknown option: " + args[i]);
+                System.err.println("Try --help for usage.");
+                System.exit(1);
+            } else {
+                username = args[i];
+            }
+        }
+        if (username == null || username.isEmpty()) {
+            username = "User" + ProcessHandle.current().pid();
         }
 
         SslMode sslMode = SslMode.fromString(sslArg);
@@ -83,13 +96,18 @@ public class ChatClient {
                             return handleKeyEvent((KeyEvent) event, runner);
                         }
                         if (event instanceof TickEvent) {
+                            boolean redraw = false;
+                            if (state.connectionStateChanged) {
+                                state.connectionStateChanged = false;
+                                redraw = true;
+                            }
                             int current = state.messages.size();
                             if (current > lastRenderedCount.getAndSet(current)) {
                                 state.listState.applyScrollToEnd(current,
                                         state.listState.offset() + current);
-                                return true;
+                                redraw = true;
                             }
-                            return false;
+                            return redraw;
                         }
                         return false;
                     },
@@ -145,6 +163,7 @@ public class ChatClient {
     }
 
     private void connectToServer() {
+        watchChannelState();
         ChatServiceGrpc.ChatServiceStub chatService = ChatServiceGrpc.newStub(channel);
         chatStream = chatService.chat(new StreamObserver<>() {
             @Override
@@ -154,15 +173,31 @@ public class ChatClient {
 
             @Override
             public void onError(Throwable t) {
-                state.connected = false;
                 state.errorMessage = t.getMessage();
             }
 
             @Override
             public void onCompleted() {
-                state.connected = false;
             }
         });
-        state.connected = true;
+    }
+
+    private void watchChannelState() {
+        ConnectivityState current = channel.getState(true);
+        switch (current) {
+            case READY:
+                state.connectionState = ConnectionState.CONNECTED;
+                state.errorMessage = null;
+                break;
+            case TRANSIENT_FAILURE:
+            case SHUTDOWN:
+                state.connectionState = ConnectionState.DISCONNECTED;
+                break;
+            default:
+                state.connectionState = ConnectionState.CONNECTING;
+                break;
+        }
+        state.connectionStateChanged = true;
+        channel.notifyWhenStateChanged(current, this::watchChannelState);
     }
 }

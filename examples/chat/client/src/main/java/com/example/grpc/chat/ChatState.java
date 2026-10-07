@@ -19,7 +19,8 @@ class ChatState {
     final TextInputState messageState;
     final SslMode sslMode;
     boolean nameFieldFocused;
-    volatile boolean connected;
+    volatile ConnectionState connectionState;
+    volatile boolean connectionStateChanged;
     volatile String errorMessage;
 
     ChatState(List<ChatMessageFromServer> messages, ListState listState,

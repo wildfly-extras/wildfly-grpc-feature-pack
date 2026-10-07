@@ -53,7 +53,7 @@ mvn clean package -Dssl=none
 # Run client (in another terminal)
 cd examples/chat/client
 mvn package
-mvn exec:java -Dchat.ssl=none -Dchat.username=Alice
+java -jar target/chat-client.jar Alice
 ```
 
 ## Architecture
