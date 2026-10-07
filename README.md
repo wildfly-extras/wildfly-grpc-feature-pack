@@ -80,29 +80,9 @@ See [examples/helloworld/README.md](examples/helloworld/README.md) for instructi
 
 ## Chat
 
-The `chat` example is taken from [gRPC by example](https://github.com/saturnism/grpc-by-example-java). 
+The `chat` example demonstrates bidirectional streaming gRPC. The client is a terminal UI (TUI) application built with [TamboUI](https://tamboui.dev/).
 
-### Service
-
-To build the `chat` service, provision a WildFly server with the gRPC subsystem and any necessary certificate files,
-and deploy the service, run:
-
-<code>mvn wildfly:run -pl examples/chat/service -Dssl=*SSL*</code>
-
-where *SSL* is either
-
-* none: plaintext
-* oneway: server identity is verified
-* twoway: both server and client identities are verified
-
-
-### Client
-
-The `chat` client is a JavaFX application. To build the client and connect to the gRPC service, run:
-
-<code>mvn javafx:run -pl examples/chat/client -Dexec.args="*SSL*"</code>
-
-To see the `chat` example in action, you should start multiple chat clients. 
+See [examples/chat/README.md](examples/chat/README.md) for instructions on building and running the service and client.
 
 # Feature Pack Documentation
 

@@ -185,6 +185,7 @@
                                     <exclude>**/*.cli</exclude>
                                     <exclude>**/*.keystore</exclude>
                                     <exclude>**/*.pem</exclude>
+                                    <exclude>**/*.tcss</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>

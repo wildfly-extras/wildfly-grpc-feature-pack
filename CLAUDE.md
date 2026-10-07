@@ -42,6 +42,20 @@ mvn wildfly:run -pl examples/helloworld/service -Dssl=none
 mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob none"
 ```
 
+The chat example uses a TamboUI terminal UI client:
+
+```bash
+# Build and start server
+cd examples/chat/service
+mvn clean package -Dssl=none
+./target/wildfly/bin/standalone.sh --stability preview
+
+# Run client (in another terminal)
+cd examples/chat/client
+mvn package
+java -jar target/chat-client.jar Alice
+```
+
 ## Architecture
 
 ### Module Structure
