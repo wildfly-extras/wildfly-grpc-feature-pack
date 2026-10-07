@@ -36,7 +36,7 @@ public class PlaintextHelloWorldTest extends HelloWorldParent {
 
     @BeforeClass
     public static void beforeClass() {
-        channel = ManagedChannelBuilder.forTarget(TARGET).usePlaintext().build();
+        channel = ManagedChannelBuilder.forTarget(TARGET_HOST + ":" + UNSECURE_PORT).usePlaintext().build();
         blockingStub = GreeterGrpc.newBlockingStub(channel);
     }
 }
