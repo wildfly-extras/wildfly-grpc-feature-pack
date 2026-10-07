@@ -22,9 +22,8 @@ import io.grpc.stub.StreamObserver;
  */
 public abstract class StreamingTestParent {
 
-    protected static final String TARGET = "127.0.0.1:8080";
     protected static final String TARGET_HOST = "127.0.0.1";
-    protected static final int TARGET_PORT = 8080;
+    protected static final int UNSECURE_PORT = 8080;
     protected static final int SECURE_PORT = 8443;
 
     protected static ManagedChannel channel = null;
