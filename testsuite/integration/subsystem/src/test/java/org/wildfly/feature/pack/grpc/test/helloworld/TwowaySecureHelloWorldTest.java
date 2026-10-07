@@ -5,6 +5,9 @@
 package org.wildfly.feature.pack.grpc.test.helloworld;
 
 import java.io.InputStream;
+import java.security.KeyStore;
+
+import javax.net.ssl.KeyManagerFactory;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -134,14 +137,19 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
     public static void beforeClass() throws Exception {
 
         ClassLoader classLoader = TwowaySecureHelloWorldTest.class.getClassLoader();
-        InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
-        InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
-        InputStream key = classLoader.getResourceAsStream("client.key.pem");
-        ChannelCredentials creds = TlsChannelCredentials.newBuilder()
-                .trustManager(trustStore)
-                .keyManager(keyStore, key)
-                .build();
-        channel = Grpc.newChannelBuilderForAddress(TARGET_HOST, SECURE_PORT, creds).build();
+        KeyStore clientKeyStore = KeyStore.getInstance("PKCS12");
+        try (InputStream clientKeyStoreStream = classLoader.getResourceAsStream("client.keystore.p12")) {
+            clientKeyStore.load(clientKeyStoreStream, "secret".toCharArray());
+        }
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        kmf.init(clientKeyStore, "secret".toCharArray());
+        try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
+            ChannelCredentials creds = TlsChannelCredentials.newBuilder()
+                    .trustManager(trustStore)
+                    .keyManager(kmf.getKeyManagers())
+                    .build();
+            channel = Grpc.newChannelBuilderForAddress(TARGET_HOST, SECURE_PORT, creds).build();
+        }
         blockingStub = GreeterGrpc.newBlockingStub(channel);
     }
 }
