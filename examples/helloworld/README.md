@@ -9,14 +9,14 @@ and deploy the service, run:
 
 ```shell
 cd service
-mvn clean package -Dssl=<*SSL*>
+mvn clean package -Dssl=<SSL>
 ```
 
-where *SSL* is either
+where `SSL` is either
 
-* none: plaintext
-* oneway: server identity is verified
-* twoway: both server and client identities are verified
+* `none`: plaintext
+* `oneway`: server identity is verified
+* `twoway`: both server and client identities are verified
 
 Then, run the server with:
 
@@ -26,40 +26,39 @@ Then, run the server with:
 
 ## Client
 
-The `helloworld` client is a simple Java application. To build the client and call to the gRPC service, run:
+The `helloworld` client is a simple Java application. To build it, run:
 
 ```shell
 cd client
 mvn package
-mvn exec:java -Dexec.args="Bob *SSL*"
 ```
-where, again, *SSL* is either "none", "oneway", or "twoway"
 
-Alternatively you could also use tools like [BloomRPC](https://github.com/uw-labs/bloomrpc)
-or [gRPCurl](https://github.com/fullstorydev/grpcurl) to invoke the service:
+This produces a fat JAR that can be launched directly:
 
 ```shell
-# clear text connection
-grpcurl -proto proto/src/main/proto/helloworld.proto \
-  -plaintext \
-  -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+java -jar target/helloworld-client.jar [options] [name]
 ```
-or
+
+### Command Line Arguments
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--ssl=<mode>` | `none` | SSL mode: `none`, `oneway`, or `twoway` (defaults to `none`, must match the server) |
+| `name` | `world` | Name to greet (defaults to `world`) |
+
+### Examples
+
+Start the server in one terminal:
+
 ```shell
-# tls (oneway)
-grpcurl -proto proto/src/main/proto/helloworld.proto \
-  -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
-  -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+cd service
+mvn clean package -Dssl=none
+./target/wildfly/bin/standalone.sh --stability preview
 ```
-or
+
+Run the client in another terminal:
+
 ```shell
-# mutual TLS (twoway)
-grpcurl -proto proto/src/main/proto/helloworld.proto \
-  -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
-  -cert ../../ssl-gen/target/generated-ssl/client.crt.pem \
-  -key ../../ssl-gen/target/generated-ssl/client.key.pem \
-  -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+cd client
+java -jar target/helloworld-client.jar Bob
 ```
