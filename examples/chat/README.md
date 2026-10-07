@@ -6,8 +6,7 @@ The client is a terminal UI (TUI) application built with [TamboUI](https://tambo
 
 ## Service
 
-To build the `chat` service, provision a WildFly server with the gRPC subsystem and any necessary certificate files,
-and deploy the service, run:
+Build the whole project first so that SSL certificates and the feature pack are available:
 
 ```shell
 cd service
@@ -23,7 +22,16 @@ where `SSL` is either
 Then, run the server with:
 
 ```shell
-./target/wildfly/bin/standalone.sh --stability preview
+cd examples/chat/service
+mvn clean package          # plaintext (port 8080)
+mvn clean package -Dssl=oneway   # + one-way TLS (port 8443)
+mvn clean package -Dssl=twoway   # + mutual TLS (port 8443)
+```
+
+Then start WildFly:
+
+```shell
+./target/wildfly/bin/standalone.sh --stability=preview
 ```
 
 ## Client

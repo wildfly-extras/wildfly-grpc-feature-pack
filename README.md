@@ -61,11 +61,9 @@ galleon.sh install org.wildfly.grpc:wildfly-grpc-feature-pack:$GRPC_VERSION --di
 
 # Examples
 
-Each example consists of three modules:
+Each example consists of three modules: proto definitions, a gRPC service deployed to WildFly, and a client.
 
-1. Proto: Contains the proto definitions 
-2. Service: Contains the gRPC service
-3. Client: Contains a client to call the deployed gRPC service
+Before running the examples, build the project first so that SSL certificates and the feature pack are available:
 
 Before running the examples, please make sure that all necessary dependencies are available in your local maven repository:
 
