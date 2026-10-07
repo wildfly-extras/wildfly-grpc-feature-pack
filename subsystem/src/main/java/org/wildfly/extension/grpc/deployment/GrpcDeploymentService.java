@@ -6,7 +6,6 @@ package org.wildfly.extension.grpc.deployment;
 
 import static org.wildfly.extension.grpc._private.GrpcLogger.LOGGER;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -60,121 +59,49 @@ class GrpcDeploymentService implements Service {
     public void start(final StartContext context) throws StartException {
         final WildFlyGrpcDeploymentRegistry serverService = serverServiceSupplier.get();
         try {
+            // Interceptors are shared across all service sof the deployment — instantiate once, not per service.
+            final List<ServerInterceptor> interceptors = createInterceptors();
             for (Class<? extends BindableService> serviceType : serviceClasses) {
-                final List<ServerInterceptor> interceptors = createInterceptors();
-                final BindableService instance = createServiceInstance(serviceType);
+                final BindableService instance = createInstance(serviceType);
                 LOGGER.debugf("Registering gRPC service %s for deployment %s.", serviceType.getName(), deploymentName);
                 ServerServiceDefinition ssd = serverService.addService(deploymentName, instance, interceptors);
                 registeredServices.add(ssd);
             }
-        } catch (StartException e) {
-            for (ServerServiceDefinition ssd : registeredServices) {
-                serverService.removeService(ssd);
+        } catch (Exception e) {
+            unregister(serverService, e);
+            if (e instanceof StartException) {
+                throw (StartException) e;
             }
-            registeredServices.clear();
-            for (CreationalContext<?> ctx : creationalContexts) {
-                ctx.release();
-            }
-            creationalContexts.clear();
-            throw e;
+            throw new StartException(e);
         }
     }
 
     @Override
     public void stop(final StopContext context) {
-        final WildFlyGrpcDeploymentRegistry serverService = serverServiceSupplier.get();
-        for (ServerServiceDefinition ssd : registeredServices) {
-            serverService.removeService(ssd);
-        }
-        registeredServices.clear();
+        unregister(serverServiceSupplier.get(), null);
+    }
 
-        for (CreationalContext<?> ctx : creationalContexts) {
-            ctx.release();
+    private void unregister(final WildFlyGrpcDeploymentRegistry serverService, final Exception cause) {
+        if (serverService == null) {
+            return;
         }
+        registeredServices.forEach(ssd -> runSafely(() -> serverService.removeService(ssd), cause));
+        registeredServices.clear();
+        creationalContexts.forEach(ctx -> runSafely(ctx::release, cause));
         creationalContexts.clear();
     }
 
-    private BindableService createServiceInstance(Class<? extends BindableService> serviceType) throws StartException {
-        if (beanManagerSupplier != null) {
-            final BeanManager bm = beanManagerSupplier.get();
-            if (bm != null) {
-                Set<Bean<?>> beans = bm.getBeans(serviceType);
-                if (!beans.isEmpty()) {
-                    final Bean<?> bean;
-                    try {
-                        bean = bm.resolve(beans);
-                    } catch (AmbiguousResolutionException e) {
-                        throw LOGGER.failedToRegister(e, serviceType.getName(), deploymentName);
-                    }
-                    CreationalContext<?> ctx = bm.createCreationalContext(bean);
-                    BindableService instance = (BindableService) bm.getReference(bean, serviceType, ctx);
-                    creationalContexts.add(ctx);
-                    LOGGER.debugf("Instantiating gRPC service %s as CDI bean for deployment %s.", serviceType.getName(),
-                            deploymentName);
-                    return instance;
-                }
-            }
-        }
-        return createViaReflection(serviceType);
-    }
-
-    private BindableService createViaReflection(Class<? extends BindableService> serviceType) throws StartException {
+    private static void runSafely(final Runnable action, final Exception cause) {
         try {
-            final Constructor<? extends BindableService> constructor = serviceType.getConstructor();
-            return constructor.newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-                | IllegalAccessException e) {
-            throw LOGGER.failedToRegister(e, serviceType.getName(), deploymentName);
+            action.run();
+        } catch (RuntimeException suppressed) {
+            if (cause != null) {
+                cause.addSuppressed(suppressed);
+            }
         }
     }
 
     private List<ServerInterceptor> createInterceptors() throws StartException {
-        List<Class<? extends ServerInterceptor>> sortedClasses = getInterceptorClasses();
-        List<ServerInterceptor> interceptors = new ArrayList<>();
-        for (Class<? extends ServerInterceptor> interceptorType : sortedClasses) {
-            LOGGER.debugf("Registering global gRPC ServerInterceptor %s.", interceptorType.getName());
-            interceptors.add(createInterceptorInstance(interceptorType));
-        }
-        return interceptors;
-    }
-
-    private ServerInterceptor createInterceptorInstance(Class<? extends ServerInterceptor> interceptorType)
-            throws StartException {
-        if (beanManagerSupplier != null) {
-            final BeanManager bm = beanManagerSupplier.get();
-            if (bm != null) {
-                Set<Bean<?>> beans = bm.getBeans(interceptorType);
-                if (!beans.isEmpty()) {
-                    final Bean<?> bean;
-                    try {
-                        bean = bm.resolve(beans);
-                    } catch (AmbiguousResolutionException e) {
-                        throw LOGGER.failedToRegister(e, interceptorType.getName(), deploymentName);
-                    }
-                    CreationalContext<?> ctx = bm.createCreationalContext(bean);
-                    ServerInterceptor instance = (ServerInterceptor) bm.getReference(bean, interceptorType, ctx);
-                    creationalContexts.add(ctx);
-                    LOGGER.debugf("Instantiating gRPC ServerInterceptor %s as CDI bean for deployment %s.",
-                            interceptorType.getName(), deploymentName);
-                    return instance;
-                }
-            }
-        }
-        return createInterceptorViaReflection(interceptorType);
-    }
-
-    private ServerInterceptor createInterceptorViaReflection(Class<? extends ServerInterceptor> interceptorType)
-            throws StartException {
-        try {
-            final Constructor<? extends ServerInterceptor> constructor = interceptorType.getConstructor();
-            return constructor.newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-                | IllegalAccessException e) {
-            throw LOGGER.failedToRegister(e, interceptorType.getName(), deploymentName);
-        }
-    }
-
-    private List<Class<? extends ServerInterceptor>> getInterceptorClasses() throws StartException {
         List<Class<? extends ServerInterceptor>> classes = new ArrayList<>();
         try {
             for (String className : interceptorClassNames) {
@@ -183,13 +110,48 @@ class GrpcDeploymentService implements Service {
         } catch (ClassNotFoundException e) {
             throw new StartException(e);
         }
-        // Sort interceptors by their @Priority annotations.
-        // Interceptors with the highest priority comes first.
-        // Interceptors with no @Priority comes last.
+        // Sort by @Priority descending; unannotated interceptors come last.
         classes.sort(Comparator.comparingInt((Class<? extends ServerInterceptor> clazz) -> {
             Priority p = clazz.getAnnotation(Priority.class);
-            return p != null ? p.value() : Integer.MAX_VALUE - 1;
+            return p != null ? p.value() : Integer.MAX_VALUE;
         }).reversed());
-        return classes;
+        List<ServerInterceptor> interceptors = new ArrayList<>();
+        for (Class<? extends ServerInterceptor> interceptorType : classes) {
+            LOGGER.debugf("Registering global gRPC ServerInterceptor %s.", interceptorType.getName());
+            interceptors.add(createInstance(interceptorType));
+        }
+        return interceptors;
     }
+
+    private <T> T createInstance(Class<T> type) throws StartException {
+        if (beanManagerSupplier != null) {
+            final BeanManager bm = beanManagerSupplier.get();
+            if (bm == null) {
+                LOGGER.debugf("BeanManager not available for deployment %s; instantiating %s via reflection.",
+                        deploymentName, type.getName());
+            } else {
+                Set<Bean<?>> beans = bm.getBeans(type);
+                if (!beans.isEmpty()) {
+                    final Bean<?> bean;
+                    try {
+                        bean = bm.resolve(beans);
+                    } catch (AmbiguousResolutionException e) {
+                        throw LOGGER.failedToRegister(e, type.getName(), deploymentName);
+                    }
+                    CreationalContext<?> ctx = bm.createCreationalContext(bean);
+                    T instance = type.cast(bm.getReference(bean, type, ctx));
+                    creationalContexts.add(ctx);
+                    LOGGER.debugf("Instantiating %s as CDI bean for deployment %s.", type.getName(), deploymentName);
+                    return instance;
+                }
+            }
+        }
+        try {
+            return type.getConstructor().newInstance();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
+                | IllegalAccessException e) {
+            throw LOGGER.failedToRegister(e, type.getName(), deploymentName);
+        }
+    }
+
 }
