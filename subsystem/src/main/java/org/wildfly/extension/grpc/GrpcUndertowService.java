@@ -49,7 +49,8 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
 
     private final Consumer<GrpcUndertowService> serviceConsumer;
     private final Supplier<Host> undertowHost;
-    private final ServletConfiguration configuration;
+    private final int maxInboundMessageSize;
+    private final int maxInboundMetadataSize;
     private final Map<String, String> serviceOwners;
 
     private volatile MutableHandlerRegistry registry;
@@ -60,10 +61,12 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
 
     GrpcUndertowService(final Consumer<GrpcUndertowService> serviceConsumer,
             final Supplier<Host> undertowHost,
-            final ServletConfiguration configuration) {
+            final int maxInboundMessageSize,
+            final int maxInboundMetadataSize) {
         this.serviceConsumer = serviceConsumer;
         this.undertowHost = undertowHost;
-        this.configuration = configuration;
+        this.maxInboundMessageSize = maxInboundMessageSize;
+        this.maxInboundMetadataSize = maxInboundMetadataSize;
         this.serviceOwners = new ConcurrentHashMap<>();
     }
 
@@ -75,8 +78,8 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
         // to the servlet container (Undertow). Only message-level settings are applicable.
         final ServletServerBuilder builder = new ServletServerBuilder()
                 .fallbackHandlerRegistry(registry)
-                .maxInboundMessageSize(configuration.maxInboundMessageSize())
-                .maxInboundMetadataSize(configuration.maxInboundMetadataSize());
+                .maxInboundMessageSize(maxInboundMessageSize)
+                .maxInboundMetadataSize(maxInboundMetadataSize);
 
         grpcServlet = builder.buildServlet();
 
