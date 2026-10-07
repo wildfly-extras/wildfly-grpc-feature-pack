@@ -118,36 +118,15 @@ public class ChatClient {
         }
 
         TextInputState activeState = state.nameFieldFocused ? state.nameState : state.messageState;
-        if (event.isDeleteBackward()) {
-            activeState.deleteBackward();
-            return true;
-        }
-        if (event.isDeleteForward()) {
-            activeState.deleteForward();
-            return true;
-        }
-        if (event.isLeft()) {
-            activeState.moveCursorLeft();
-            return true;
-        }
-        if (event.isRight()) {
-            activeState.moveCursorRight();
-            return true;
-        }
-        if (event.isHome()) {
-            activeState.moveCursorToStart();
-            return true;
-        }
-        if (event.isEnd()) {
-            activeState.moveCursorToEnd();
-            return true;
-        }
-        if (event.code() == KeyCode.CHAR) {
-            activeState.insert(event.string());
-            return true;
-        }
-
-        return false;
+        if (event.isDeleteBackward()) activeState.deleteBackward();
+        else if (event.isDeleteForward()) activeState.deleteForward();
+        else if (event.isLeft()) activeState.moveCursorLeft();
+        else if (event.isRight()) activeState.moveCursorRight();
+        else if (event.isHome()) activeState.moveCursorToStart();
+        else if (event.isEnd()) activeState.moveCursorToEnd();
+        else if (event.code() == KeyCode.CHAR) activeState.insert(event.string());
+        else return false;
+        return true;
     }
 
     private void sendMessage() {
