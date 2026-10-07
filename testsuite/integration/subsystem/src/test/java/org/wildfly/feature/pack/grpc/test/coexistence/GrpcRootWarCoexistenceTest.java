@@ -49,8 +49,8 @@ import messages.HelloRequest;
 @RunAsClient
 public class GrpcRootWarCoexistenceTest {
 
-    private static final String GRPC_TARGET = "127.0.0.1:8080";
-    private static final String HTTP_BASE = "http://127.0.0.1:8080";
+    private static final String TARGET = "127.0.0.1:8080";
+    private static final String HTTP_BASE = "http://" + TARGET;
 
     private static ManagedChannel channel;
     private static GreeterGrpc.GreeterBlockingStub grpcStub;
@@ -68,7 +68,7 @@ public class GrpcRootWarCoexistenceTest {
 
     @BeforeClass
     public static void beforeClass() {
-        channel = ManagedChannelBuilder.forTarget(GRPC_TARGET).usePlaintext().build();
+        channel = ManagedChannelBuilder.forTarget(TARGET).usePlaintext().build();
         grpcStub = GreeterGrpc.newBlockingStub(channel);
     }
 
