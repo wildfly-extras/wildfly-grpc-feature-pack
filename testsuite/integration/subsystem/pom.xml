@@ -21,7 +21,8 @@
     <name>WildFly gRPC :: Test Suite :: Integration :: Subsystem</name>
 
     <properties>
-        <server.jboss.args>--stability=preview</server.jboss.args>
+        <wildfly.stability.level>preview</wildfly.stability.level>
+        <server.jboss.args>--stability=${wildfly.stability.level}</server.jboss.args>
     </properties>
 
     <dependencies>
@@ -126,58 +127,17 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <configuration>
-                    <feature-packs>
-                        <feature-pack>
-                            <groupId>org.wildfly</groupId>
-                            <artifactId>wildfly-galleon-pack</artifactId>
-                            <version>${version.wildfly}</version>
-                        </feature-pack>
-                        <feature-pack>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>wildfly-grpc-feature-pack</artifactId>
-                            <version>${project.version}</version>
-                        </feature-pack>
-                    </feature-packs>
-                    <layers>
-                        <layer>web-server</layer>
-                        <layer>jaxrs</layer>
-                        <layer>jmx-remoting</layer>
-                        <!-- Layers from this FP  -->
-                        <layer>grpc</layer>
-                    </layers>
-                    <galleon-options>
-                        <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
-                        <stability-level>preview</stability-level>
-                    </galleon-options>
-                    <provisioning-dir>wildfly</provisioning-dir>
-                    <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
-                    <offline>true</offline>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>server-provisioning</id>
-                        <goals>
-                            <goal>provision</goal>
-                        </goals>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>copy-ssl-to-wildfly-config</id>
-                        <phase>process-test-resources</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/wildfly/standalone/configuration</outputDirectory>
+                            <outputDirectory>${project.build.directory}/server-content/standalone/configuration</outputDirectory>
                             <overwrite>true</overwrite>
                             <resources>
                                 <resource>
@@ -211,6 +171,58 @@
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <configuration>
+                    <feature-packs>
+                        <feature-pack>
+                            <groupId>org.wildfly</groupId>
+                            <artifactId>wildfly-galleon-pack</artifactId>
+                            <version>${version.wildfly}</version>
+                        </feature-pack>
+                        <feature-pack>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>wildfly-grpc-feature-pack</artifactId>
+                            <version>${project.version}</version>
+                        </feature-pack>
+                    </feature-packs>
+                    <layers>
+                        <layer>web-server</layer>
+                        <layer>jaxrs</layer>
+                        <layer>jmx-remoting</layer>
+                        <!-- Layers from this FP  -->
+                        <layer>grpc</layer>
+                    </layers>
+                    <galleon-options>
+                        <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+                        <stability-level>${wildfly.stability.level}</stability-level>
+                    </galleon-options>
+                    <provisioning-dir>wildfly</provisioning-dir>
+                    <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
+                    <offline>true</offline>
+                    <stability>${wildfly.stability.level}</stability>
+                    <extra-server-content-dirs>
+                        <extra-content-dir>${project.build.directory}/server-content</extra-content-dir>
+                    </extra-server-content-dirs>
+                    <packaging-scripts>
+                        <execution>
+                            <scripts>
+                                <script>${maven.multiModuleProjectDirectory}/ssl-gen/src/main/resources/configure-elytron-tls.cli</script>
+                            </scripts>
+                        </execution>
+                    </packaging-scripts>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>server-provisioning</id>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <phase>compile</phase>
                     </execution>
                 </executions>
             </plugin>
