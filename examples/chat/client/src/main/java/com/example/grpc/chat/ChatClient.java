@@ -4,143 +4,186 @@
  */
 package com.example.grpc.chat;
 
-import java.io.InputStream;
-import java.security.KeyStore;
-
-import javax.net.ssl.KeyManagerFactory;
+import java.time.Duration;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.wildfly.extension.grpc.example.chat.ChatMessage;
 import org.wildfly.extension.grpc.example.chat.ChatMessageFromServer;
 import org.wildfly.extension.grpc.example.chat.ChatServiceGrpc;
 
-import io.grpc.ChannelCredentials;
-import io.grpc.Grpc;
+import dev.tamboui.tui.TuiConfig;
+import dev.tamboui.tui.TuiRunner;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.TickEvent;
+import dev.tamboui.widgets.input.TextInputState;
+import dev.tamboui.widgets.list.ListState;
 import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.TlsChannelCredentials;
 import io.grpc.stub.StreamObserver;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
-public class ChatClient extends Application {
+import static java.util.concurrent.TimeUnit.SECONDS;
 
-    private static ManagedChannel channel = null;
+public class ChatClient {
 
-    private final ObservableList<String> messages = FXCollections.observableArrayList();
-    private final ListView<String> messagesView = new ListView<>();
-    private final TextField name = new TextField("name");
-    private final TextField message = new TextField();
-    private final Button send = new Button();
+    private final ManagedChannel channel;
+    private final ChatView view;
+    private final ChatState state;
+    private final AtomicInteger lastRenderedCount;
+    private StreamObserver<ChatMessage> chatStream;
 
-    public static void main(String[] args) {
-        setup(args);
-        launch(args);
+    public ChatClient(SslMode sslMode, String username, ManagedChannel channel) {
+        this.channel = channel;
+        this.view = new ChatView(new ChatTheme());
+        this.state = new ChatState(
+                new CopyOnWriteArrayList<>(),
+                new ListState(),
+                new TextInputState(username),
+                new TextInputState(),
+                sslMode);
+        this.lastRenderedCount = new AtomicInteger(0);
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        messagesView.setItems(messages);
+    public static void main(String[] args) throws Exception {
+        String sslArg = args.length > 0 ? args[0] : "none";
+        String username = args.length > 1 && args[1] != null && !args[1].isEmpty()
+                ? args[1]
+                : "User" + ProcessHandle.current().pid();
+        if ("--help".equals(sslArg)) {
+            System.err.println("Usage: [ssl] [username]");
+            System.err.println("  ssl       none, oneway, or twoway");
+            System.err.println("  username  your chat name (default: User<pid>)");
+            System.exit(1);
+        }
 
-        send.setText("Send");
+        SslMode sslMode = SslMode.fromString(sslArg);
+        ManagedChannel channel = sslMode.createChannel();
+        ChatClient client = new ChatClient(sslMode, username, channel);
+        try {
+            client.run();
+        } finally {
+            channel.shutdown();
+            if (!channel.awaitTermination(3, SECONDS)) {
+                channel.shutdownNow();
+            }
+        }
+    }
 
-        BorderPane pane = new BorderPane();
-        pane.setLeft(name);
-        pane.setCenter(message);
-        pane.setRight(send);
+    private void run() throws Exception {
+        connectToServer();
 
-        BorderPane root = new BorderPane();
-        root.setCenter(messagesView);
-        root.setBottom(pane);
+        TuiConfig config = TuiConfig.builder()
+                .tickRate(Duration.ofMillis(100))
+                .build();
 
-        primaryStage.setTitle("gRPC Chat");
-        primaryStage.setScene(new Scene(root, 480, 320));
+        try (TuiRunner tui = TuiRunner.create(config)) {
+            tui.run(
+                    (event, runner) -> {
+                        if (event instanceof KeyEvent) {
+                            return handleKeyEvent((KeyEvent) event, runner);
+                        }
+                        if (event instanceof TickEvent) {
+                            int current = state.messages.size();
+                            if (current > lastRenderedCount.getAndSet(current)) {
+                                state.listState.applyScrollToEnd(current,
+                                        state.listState.offset() + current);
+                                return true;
+                            }
+                            return false;
+                        }
+                        return false;
+                    },
+                    frame -> view.render(frame, state));
+        } finally {
+            if (chatStream != null) {
+                chatStream.onCompleted();
+            }
+        }
+    }
 
-        primaryStage.show();
+    private boolean handleKeyEvent(KeyEvent event, TuiRunner runner) {
+        if (event.isCtrlC()) {
+            runner.quit();
+            return false;
+        }
 
+        if (event.isKey(KeyCode.TAB)) {
+            state.nameFieldFocused = !state.nameFieldFocused;
+            return true;
+        }
+
+        if (event.isKey(KeyCode.ENTER)) {
+            sendMessage();
+            return true;
+        }
+
+        TextInputState activeState = state.nameFieldFocused ? state.nameState : state.messageState;
+        if (event.isDeleteBackward()) {
+            activeState.deleteBackward();
+            return true;
+        }
+        if (event.isDeleteForward()) {
+            activeState.deleteForward();
+            return true;
+        }
+        if (event.isLeft()) {
+            activeState.moveCursorLeft();
+            return true;
+        }
+        if (event.isRight()) {
+            activeState.moveCursorRight();
+            return true;
+        }
+        if (event.isHome()) {
+            activeState.moveCursorToStart();
+            return true;
+        }
+        if (event.isEnd()) {
+            activeState.moveCursorToEnd();
+            return true;
+        }
+        if (event.code() == KeyCode.CHAR) {
+            activeState.insert(event.string());
+            return true;
+        }
+
+        return false;
+    }
+
+    private void sendMessage() {
+        String text = state.messageState.text();
+        String name = state.nameState.text();
+        if (text.isEmpty() || name.isEmpty()) {
+            return;
+        }
+        if (chatStream != null) {
+            chatStream.onNext(ChatMessage.newBuilder()
+                    .setFrom(name)
+                    .setMessage(text)
+                    .build());
+            state.messageState.clear();
+        }
+    }
+
+    private void connectToServer() {
         ChatServiceGrpc.ChatServiceStub chatService = ChatServiceGrpc.newStub(channel);
-        StreamObserver<ChatMessage> chat = chatService.chat(new StreamObserver<>() {
+        chatStream = chatService.chat(new StreamObserver<>() {
             @Override
             public void onNext(ChatMessageFromServer value) {
-                Platform.runLater(() -> {
-                    messages.add(value.getMessage().getFrom() + ": " + value.getMessage().getMessage());
-                    messagesView.scrollTo(messages.size());
-                });
+                state.messages.add(value);
             }
 
             @Override
             public void onError(Throwable t) {
-                t.printStackTrace();
-                System.out.println("Disconnected");
+                state.connected = false;
+                state.errorMessage = t.getMessage();
             }
 
             @Override
             public void onCompleted() {
-                System.out.println("Disconnected");
+                state.connected = false;
             }
         });
-
-        send.setOnAction(e -> {
-            chat.onNext(ChatMessage.newBuilder().setFrom(name.getText()).setMessage(message.getText()).build());
-            message.setText("");
-        });
-        primaryStage.setOnCloseRequest(e -> {
-            chat.onCompleted();
-            channel.shutdown();
-        });
-    }
-
-    private static void setup(String[] args) {
-        String target = "localhost:9555";
-        String ssl = "none";
-
-        // Allow passing in the user and target strings as command line arguments
-        if (args.length > 0) {
-            if ("--help".equals(args[0])) {
-                System.err.println("Usage: [ssl]");
-                System.err.println("");
-                System.err.println("  ssl     none, oneway, or twoway");
-                System.exit(1);
-            }
-            ssl = args[0];
-        }
-        try {
-            ClassLoader classLoader = ChatClient.class.getClassLoader();
-            if ("none".equals(ssl)) {
-                channel = ManagedChannelBuilder.forTarget(target)
-                        // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
-                        // needing certificates.
-                        .usePlaintext().build();
-            } else if ("oneway".equals(ssl)) {
-                try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
-                    ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
-                    channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
-                }
-            } else if ("twoway".equals(ssl)) {
-                KeyStore clientKeyStore = KeyStore.getInstance("PKCS12");
-                try (InputStream clientKeyStoreStream = classLoader.getResourceAsStream("client.keystore.p12")) {
-                    clientKeyStore.load(clientKeyStoreStream, "secret".toCharArray());
-                }
-                KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-                kmf.init(clientKeyStore, "secret".toCharArray());
-                try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
-                    ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore)
-                            .keyManager(kmf.getKeyManagers())
-                            .build();
-                    channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
-                }
-            } else {
-                System.err.println("unrecognized ssl value: " + ssl);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        state.connected = true;
     }
 }

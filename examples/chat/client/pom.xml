@@ -20,7 +20,8 @@
     <name>WildFly gRPC :: Examples :: Chat :: Client</name>
 
     <properties>
-        <exec.args>none</exec.args>
+        <chat.ssl>none</chat.ssl>
+        <chat.username/>
     </properties>
 
     <dependencies>
@@ -33,19 +34,31 @@
             <artifactId>grpc-netty-shaded</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-tui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-jline3-backend</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-css</artifactId>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.example.grpc.chat.ChatClient</mainClass>
-                    <commandlineArgs>${exec.args}</commandlineArgs>
+                    <arguments>
+                        <argument>${chat.ssl}</argument>
+                        <argument>${chat.username}</argument>
+                    </arguments>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
                 </configuration>
             </plugin>
             <plugin>

@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.protobuf.Timestamp;
 
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 
 public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
@@ -27,13 +28,17 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
                         .setTimestamp(Timestamp.newBuilder().setSeconds(System.currentTimeMillis() / 1000)).build();
 
                 for (StreamObserver<ChatMessageFromServer> observer : observers) {
-                    observer.onNext(message);
+                    try {
+                        observer.onNext(message);
+                    } catch (StatusRuntimeException e) {
+                        observers.remove(observer);
+                    }
                 }
             }
 
             @Override
             public void onError(Throwable t) {
-                // do something;
+                observers.remove(responseObserver);
             }
 
             @Override
