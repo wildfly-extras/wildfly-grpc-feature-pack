@@ -5,7 +5,10 @@
 package org.wildfly.extension.grpc.example.helloworld;
 
 import java.io.InputStream;
+import java.security.KeyStore;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.KeyManagerFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -84,16 +87,22 @@ public class GreeterClient {
             channel = ManagedChannelBuilder.forTarget(target)
                     .usePlaintext().build();
         } else if ("oneway".equals(ssl)) {
-            InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
-            ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
-            channel = Grpc.newChannelBuilder(tlsTarget, creds).build();
+            try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
+                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
+                channel = Grpc.newChannelBuilder(tlsTarget, creds).build();
+            }
         } else if ("twoway".equals(ssl)) {
-            InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem");
-            InputStream keyStore = classLoader.getResourceAsStream("client.keystore.pem");
-            InputStream key = classLoader.getResourceAsStream("client.key.pem");
-            ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).keyManager(keyStore, key)
-                    .build();
-            channel = Grpc.newChannelBuilder(tlsTarget, creds).build();
+            KeyStore clientKeyStore = KeyStore.getInstance("PKCS12");
+            try (InputStream clientKeyStoreStream = classLoader.getResourceAsStream("client.keystore.p12")) {
+                clientKeyStore.load(clientKeyStoreStream, "secret".toCharArray());
+            }
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(clientKeyStore, "secret".toCharArray());
+            try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
+                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore)
+                        .keyManager(kmf.getKeyManagers()).build();
+                channel = Grpc.newChannelBuilder(tlsTarget, creds).build();
+            }
         } else {
             System.err.println("unrecognized ssl value: " + ssl);
         }
