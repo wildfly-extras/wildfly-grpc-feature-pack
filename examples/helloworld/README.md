@@ -62,3 +62,34 @@ Run the client in another terminal:
 cd client
 java -jar target/helloworld-client.jar Bob
 ```
+
+### Using gRPCurl
+
+Alternatively, you can use [gRPCurl](https://github.com/fullstorydev/grpcurl) to invoke the service.
+Run these commands from the `examples/helloworld` directory:
+
+```shell
+# clear text connection
+grpcurl -proto proto/src/main/proto/helloworld.proto \
+  -plaintext \
+  -d '{"name":"Bob"}' \
+  localhost:9555 helloworld.Greeter/SayHello
+```
+
+```shell
+# tls (oneway)
+grpcurl -proto proto/src/main/proto/helloworld.proto \
+  -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
+  -d '{"name":"Bob"}' \
+  localhost:9555 helloworld.Greeter/SayHello
+```
+
+```shell
+# mutual TLS (twoway)
+grpcurl -proto proto/src/main/proto/helloworld.proto \
+  -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
+  -cert ../../ssl-gen/target/generated-ssl/client.crt.pem \
+  -key ../../ssl-gen/target/generated-ssl/client.key.pem \
+  -d '{"name":"Bob"}' \
+  localhost:9555 helloworld.Greeter/SayHello
+```
