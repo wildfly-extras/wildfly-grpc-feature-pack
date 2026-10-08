@@ -22,6 +22,5 @@
     <modules>
         <module>common</module>
         <module>feature-pack</module>
-        <module>preview-feature-pack</module>
     </modules>
 </project>
