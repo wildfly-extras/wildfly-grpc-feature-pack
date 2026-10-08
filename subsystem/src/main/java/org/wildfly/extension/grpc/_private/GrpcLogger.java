@@ -52,4 +52,8 @@ public interface GrpcLogger extends BasicLogger {
     @LogMessage(level = WARN)
     @Message(id = 12, value = "Weld capability not available for deployment %s; CDI injection will not be available for gRPC services.")
     void weldCapabilityUnavailable(@Cause Throwable cause, String deploymentName);
+
+    @LogMessage(level = WARN)
+    @Message(id = 13, value = "Exception during gRPC service cleanup; resources may not have been fully released.")
+    void failedToCleanupGrpcResources(@Cause Throwable cause);
 }
