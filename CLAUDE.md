@@ -35,11 +35,15 @@ mvn test -pl subsystem
 The helloworld example provisions a WildFly server with the gRPC subsystem:
 
 ```bash
-# Start server (ssl: none, oneway, twoway)
-mvn wildfly:run -pl examples/helloworld/service -Dssl=none
+# Build and start server (ssl: none, oneway, twoway)
+cd examples/helloworld/service
+mvn clean package -Dssl=none
+./target/wildfly/bin/standalone.sh --stability preview
 
-# Run client
-mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob none"
+# Run client (in another terminal)
+cd examples/helloworld/client
+mvn package
+java -jar target/helloworld-client.jar Bob
 ```
 
 The chat example uses a TamboUI terminal UI client:
