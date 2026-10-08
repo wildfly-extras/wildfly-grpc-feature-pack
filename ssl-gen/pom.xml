@@ -68,6 +68,7 @@
                             <validity>${ssl.validity}</validity>
                             <exts>
                                 <ext>${ssl.server.ext}</ext>
+                                <ext>BC=ca:true</ext>
                             </exts>
                         </configuration>
                     </execution>
@@ -120,22 +121,7 @@
                             <file>${ssl.dir}/client.cer</file>
                         </configuration>
                     </execution>
-                    <!-- 5: Export server cert as PEM for gRPC one-way TLS trustManager(InputStream) -->
-                    <execution>
-                        <id>export-server-cert-pem</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>exportCertificate</goal>
-                        </goals>
-                        <configuration>
-                            <keystore>${ssl.dir}/server.keystore.p12</keystore>
-                            <storetype>${ssl.storetype}</storetype>
-                            <storepass>${ssl.password}</storepass>
-                            <alias>server</alias>
-                            <file>${ssl.dir}/client.truststore.pem</file>
-                            <rfc>true</rfc>
-                        </configuration>
-                    </execution>
+                    <!-- 5: Export server cert as PEM — see exec-maven-plugin below -->
                     <!-- 6: Create server truststore containing the client cert -->
                     <execution>
                         <id>create-server-truststore</id>
@@ -194,12 +180,34 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- 5: Export server cert as PEM for gRPC TLS (keytool-maven-plugin 2.x dropped rfc support) -->
             <!-- 8: Export client cert and private key as PEM for grpcurl mutual TLS -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.4</version>
+                <version>${version.exec.plugin}</version>
                 <executions>
+                    <execution>
+                        <id>export-server-cert-pem</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>keytool</executable>
+                            <arguments>
+                                <argument>-exportcert</argument>
+                                <argument>-alias</argument>
+                                <argument>server</argument>
+                                <argument>-keystore</argument>
+                                <argument>${ssl.dir}/server.keystore.p12</argument>
+                                <argument>-storepass</argument>
+                                <argument>${ssl.password}</argument>
+                                <argument>-rfc</argument>
+                            </arguments>
+                            <outputFile>${ssl.dir}/client.truststore.pem</outputFile>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>export-client-pem</id>
                         <phase>prepare-package</phase>
