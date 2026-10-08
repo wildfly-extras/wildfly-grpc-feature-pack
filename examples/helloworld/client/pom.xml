@@ -61,7 +61,6 @@
                                     <directory>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl</directory>
                                     <includes>
                                         <include>client.truststore.pem</include>
-                                        <include>client.truststore.p12</include>
                                         <include>client.keystore.p12</include>
                                     </includes>
                                     <filtering>false</filtering>

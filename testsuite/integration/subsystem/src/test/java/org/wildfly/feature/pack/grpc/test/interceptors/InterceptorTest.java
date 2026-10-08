@@ -54,7 +54,7 @@ import messages.HelloRequest;
 @RunWith(Arquillian.class)
 @RunAsClient
 public class InterceptorTest {
-    protected static final String TARGET = "localhost:9555";
+    protected static final String TARGET = "127.0.0.1:8080";
 
     protected static GreeterGrpc.GreeterBlockingStub blockingStub;
     protected static Greeter1Grpc.Greeter1BlockingStub blockingStub1;

@@ -15,6 +15,5 @@ if (outcome != success) of /subsystem=elytron/key-store=key-store-afcdd1f8-d1a7-
     /subsystem=elytron/key-store=key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428:add(credential-reference={clear-text="secret"}, type=PKCS12, path="server.keystore.p12", relative-to="jboss.server.config.dir", required=false)
     /subsystem=elytron/key-manager=key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428:add(key-store=key-store-afcdd1f8-d1a7-4137-aa13-c45237e32428, credential-reference={clear-text="secret"})
     /subsystem=elytron/server-ssl-context=ssl-context-afcdd1f8-d1a7-4137-aa13-c45237e32428:add(cipher-suite-filter=DEFAULT, protocols=["TLSv1.2"], need-client-auth=false, key-manager="key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428")
-    /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, ssl-context="ssl-context-afcdd1f8-d1a7-4137-aa13-c45237e32428")
-    /subsystem=grpc:write-attribute(name=key-manager-name, value="key-manager-afcdd1f8-d1a7-4137-aa13-c45237e32428")
+    /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, ssl-context="ssl-context-afcdd1f8-d1a7-4137-aa13-c45237e32428", enable-http2=true)
 end-if
