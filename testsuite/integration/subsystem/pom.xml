@@ -73,6 +73,10 @@
             <artifactId>failureaccess</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-services</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wildfly.grpc</groupId>
             <artifactId>wildfly-grpc-subsystem</artifactId>
         </dependency>
