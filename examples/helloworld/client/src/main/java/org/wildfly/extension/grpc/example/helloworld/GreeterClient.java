@@ -4,21 +4,13 @@
  */
 package org.wildfly.extension.grpc.example.helloworld;
 
-import java.io.InputStream;
-import java.security.KeyStore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.net.ssl.KeyManagerFactory;
-
 import io.grpc.Channel;
-import io.grpc.ChannelCredentials;
-import io.grpc.Grpc;
 import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-import io.grpc.TlsChannelCredentials;
 
 public class GreeterClient {
 
@@ -26,20 +18,10 @@ public class GreeterClient {
 
     private final GreeterGrpc.GreeterBlockingStub blockingStub;
 
-    /**
-     * Construct client for accessing HelloWorld server using the existing channel.
-     */
     public GreeterClient(Channel channel) {
-        // 'channel' here is a Channel, not a ManagedChannel, so it is not this code's responsibility to
-        // shut it down.
-
-        // Passing Channels to code makes code easier to test and makes it easier to reuse Channels.
         blockingStub = GreeterGrpc.newBlockingStub(channel);
     }
 
-    /**
-     * Say hello to server.
-     */
     public void greet(String name) {
         logger.info("Will try to greet " + name + " ...");
         HelloRequest request = HelloRequest.newBuilder().setName(name).build();
@@ -53,69 +35,33 @@ public class GreeterClient {
         logger.info("Greeting: " + response.getMessage());
     }
 
-    /**
-     * Greet server. If provided, the first element of {@code args} is the name to use in the greeting. The second argument is
-     * the target server.
-     */
     public static void main(String[] args) throws Exception {
-        String user = "world";
-        // Access a service running on the local machine on port 50051
-        String target = "localhost:9555";
-        String ssl = "none";
-        ManagedChannel channel = null;
+        String sslArg = "none";
+        String name = "world";
 
-        // Allow passing in the user and target strings as command line arguments
-        if (args.length > 0) {
-            if ("--help".equals(args[0])) {
-                System.err.println("Usage: [name ssl [target]]");
-                System.err.println("");
-                System.err.println("  name    The name you wish to be greeted by. Defaults to " + user);
-                System.err.println("  ssl     none, oneway, or twoway");
-                System.err.println("  target  The server to connect to. Defaults to " + target);
+        for (int i = 0; i < args.length; i++) {
+            if ("--help".equals(args[i]) || "-h".equals(args[i])) {
+                System.err.println("Usage: [options] [name]");
+                System.err.println("  name                  name to greet (default: world)");
+                System.err.println("  --ssl=<mode>          none, oneway, or twoway (default: none)");
                 System.exit(1);
+            } else if (args[i].startsWith("--ssl=")) {
+                sslArg = args[i].substring("--ssl=".length());
+            } else if (args[i].startsWith("-")) {
+                System.err.println("Unknown option: " + args[i]);
+                System.err.println("Try --help for usage.");
+                System.exit(1);
+            } else {
+                name = args[i];
             }
-            user = args[0];
-            ssl = args[1];
-        }
-        if (args.length > 2) {
-            target = args[2];
-        }
-
-        ClassLoader classLoader = GreeterClient.class.getClassLoader();
-        if ("none".equals(ssl)) {
-            channel = ManagedChannelBuilder.forTarget(target)
-                    // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
-                    // needing certificates.
-                    .usePlaintext().build();
-        } else if ("oneway".equals(ssl)) {
-            try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
-                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
-                channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
-            }
-        } else if ("twoway".equals(ssl)) {
-            KeyStore clientKeyStore = KeyStore.getInstance("PKCS12");
-            try (InputStream clientKeyStoreStream = classLoader.getResourceAsStream("client.keystore.p12")) {
-                clientKeyStore.load(clientKeyStoreStream, "secret".toCharArray());
-            }
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            kmf.init(clientKeyStore, "secret".toCharArray());
-            try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
-                ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore)
-                        .keyManager(kmf.getKeyManagers())
-                        .build();
-                channel = Grpc.newChannelBuilderForAddress("localhost", 9555, creds).build();
-            }
-        } else {
-            System.err.println("unrecognized ssl value: " + ssl);
         }
 
+        SslMode sslMode = SslMode.fromString(sslArg);
+        ManagedChannel channel = sslMode.createChannel();
         try {
             GreeterClient client = new GreeterClient(channel);
-            client.greet(user);
+            client.greet(name);
         } finally {
-            // ManagedChannels use resources like threads and TCP connections. To prevent leaking these
-            // resources the channel should be shut down when it will no longer be used. If it may be used
-            // again leave it running.
             channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
         }
     }
