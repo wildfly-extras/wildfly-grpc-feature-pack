@@ -59,7 +59,7 @@ class GrpcDeploymentService implements Service {
     public void start(final StartContext context) throws StartException {
         final WildFlyGrpcDeploymentRegistry serverService = serverServiceSupplier.get();
         try {
-            // Interceptors are shared across all service sof the deployment — instantiate once, not per service.
+            // Interceptors are shared across all services of the deployment — instantiate once, not per service.
             final List<ServerInterceptor> interceptors = createInterceptors();
             for (Class<? extends BindableService> serviceType : serviceClasses) {
                 final BindableService instance = createInstance(serviceType);
@@ -67,12 +67,9 @@ class GrpcDeploymentService implements Service {
                 ServerServiceDefinition ssd = serverService.addService(deploymentName, instance, interceptors);
                 registeredServices.add(ssd);
             }
-        } catch (Exception e) {
+        } catch (StartException | RuntimeException e) {
             unregister(serverService, e);
-            if (e instanceof StartException) {
-                throw (StartException) e;
-            }
-            throw new StartException(e);
+            throw e;
         }
     }
 
@@ -97,6 +94,8 @@ class GrpcDeploymentService implements Service {
         } catch (RuntimeException suppressed) {
             if (cause != null) {
                 cause.addSuppressed(suppressed);
+            } else {
+                LOGGER.failedToCleanupGrpcResources(suppressed);
             }
         }
     }
