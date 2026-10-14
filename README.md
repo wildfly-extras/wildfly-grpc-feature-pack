@@ -1,6 +1,6 @@
 # WildFly gRPC
 
-Feature pack to bring gRPC support to WildFly. gRPC services are registered against a gRPC server listening, by default, to port 9555.
+Feature pack to bring gRPC support to WildFly. gRPC services are served via WildFly's Undertow HTTP/2 stack — no separate port is needed. The `grpc` Galleon layer enables HTTP/2 cleartext (h2c) on the standard HTTP listener (port 8080) automatically. For TLS (port 8443), configure an Undertow `https-listener` with `enable-http2="true"` — HTTP/2 is not enabled on HTTPS listeners by default even though TLS supports ALPN.
 
 Only gRPC services are supported at the moment. Support for gRPC clients is coming soon.
 
@@ -37,13 +37,14 @@ Once built you can provision a server with gRPC support using Galleon provisioni
             </feature-pack>
         </feature-packs>
         <layers>
-            <layer>core-server</layer>
-            <layer>web-server</layer>
+            <layer>jaxrs-server</layer>
             <layer>grpc</layer>
         </layers>
         <galleon-options>
             <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+            <stability-level>preview</stability-level>
         </galleon-options>
+        <stability>preview</stability>
         <provisioning-dir>wildfly</provisioning-dir>
         <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
         <offline>true</offline>
@@ -65,12 +66,6 @@ Each example consists of three modules:
 1. Proto: Contains the proto definitions 
 2. Service: Contains the gRPC service
 3. Client: Contains a client to call the deployed gRPC service
-
-Before running the examples, please make sure that all necessary dependencies are available in your local maven repository:
-
-```shell
-mvn install
-```
 
 ## Hello World
 

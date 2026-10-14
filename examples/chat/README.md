@@ -16,14 +16,14 @@ mvn clean package -Dssl=<SSL>
 
 where `SSL` is either
 
-* `none`: plaintext
-* `oneway`: server identity is verified
-* `twoway`: both server and client identities are verified
+* `none`: plaintext (port 8080)
+* `oneway`: server identity is verified - one-way TLS (port 8443)
+* `twoway`: both server and client identities are verified - mutual TLS (port 8443)
 
 Then, run the server with:
 
 ```shell
-./target/wildfly/bin/standalone.sh --stability preview
+./target/wildfly/bin/standalone.sh --stability=preview
 ```
 
 ## Client
