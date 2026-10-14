@@ -2,79 +2,98 @@
 
 The `helloworld` example is a slightly modified version of the `helloworld` example from [gRPC Java examples](https://github.com/grpc/grpc-java/tree/master/examples).
 
-## Prerequisites
-
-Build the whole project first so that SSL certificates and the feature pack are available:
-
-```shell
-mvn install
-```
-
 ## Service
 
-From the `examples/helloworld/service` directory, build and provision the server with the gRPC service pre-deployed:
+To build the `helloworld` service, provision a WildFly server with the gRPC subsystem and any necessary certificate files,
+and deploy the service, run:
 
 ```shell
-cd examples/helloworld/service
-mvn clean package
+cd service
+mvn clean package -Dssl=<SSL>
 ```
+
+where `SSL` is either
+
+* `none`: plaintext
+* `oneway`: server identity is verified
+* `twoway`: both server and client identities are verified
 
 This provisions a WildFly server with:
 - **Port 8080** — HTTP/2 cleartext (h2c)
 - **Port 8443** — HTTPS with HTTP/2 via ALPN (one-way TLS)
 
-For mutual TLS on port 8443, pass `-Dssl=twoway`:
+Then, run the server with:
 
 ```shell
-mvn clean package -Dssl=twoway
-```
-
-Then start WildFly:
-
-```shell
-./target/wildfly/bin/standalone.sh --stability=preview
+./target/wildfly/bin/standalone.sh --stability preview
 ```
 
 ## Client
 
-The `helloworld` client is a simple Java application. From the project root, run:
+The `helloworld` client is a simple Java application. To build it, run:
 
 ```shell
-mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob none"    # plaintext (port 8080)
-mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob oneway"  # TLS (port 8443)
-mvn exec:java -pl examples/helloworld/client -Dexec.args="Bob twoway"  # mutual TLS (port 8443)
+cd client
+mvn package
 ```
 
-Alternatively, use [grpcurl](https://github.com/fullstorydev/grpcurl) to invoke the service directly.
-From the `examples/helloworld` directory, pass the proto file with `-import-path` and `-proto`
-since the server does not expose the gRPC reflection API:
+This produces a fat JAR that can be launched directly:
 
 ```shell
-cd examples/helloworld
+java -jar target/helloworld-client.jar [options] [name]
+```
 
+### Command Line Arguments
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--ssl=<mode>` | `none` | SSL mode: `none`, `oneway`, or `twoway` (defaults to `none`, must match the server) |
+| `name` | `world` | Name to greet (defaults to `world`) |
+
+### Examples
+
+Start the server in one terminal:
+
+```shell
+cd service
+mvn clean package -Dssl=none
+./target/wildfly/bin/standalone.sh --stability preview
+```
+
+Run the client in another terminal:
+
+```shell
+cd client
+java -jar target/helloworld-client.jar Bob
+```
+
+### Using gRPCurl
+
+Alternatively, you can use [gRPCurl](https://github.com/fullstorydev/grpcurl) to invoke the service.
+Run these commands from the `examples/helloworld` directory:
+
+```shell
 # plaintext (port 8080, h2c)
-grpcurl \
+grpcurl -proto proto/src/main/proto/helloworld.proto \
   -plaintext \
-  -import-path proto/src/main/proto \
-  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
   localhost:8080 helloworld.Greeter/SayHello
+```
 
+```shell
 # TLS, one-way (port 8443) — server authenticates to client, no client cert
-grpcurl \
+grpcurl -proto proto/src/main/proto/helloworld.proto \
   -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
-  -import-path proto/src/main/proto \
-  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
   localhost:8443 helloworld.Greeter/SayHello
+```
 
+```shell
 # TLS, two-way (port 8443) — mutual authentication (requires -Dssl=twoway on service build)
-grpcurl \
+grpcurl -proto proto/src/main/proto/helloworld.proto \
   -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
   -cert ../../ssl-gen/target/generated-ssl/client.crt.pem \
   -key ../../ssl-gen/target/generated-ssl/client.key.pem \
-  -import-path proto/src/main/proto \
-  -proto helloworld.proto \
   -d '{"name":"Bob"}' \
   localhost:8443 helloworld.Greeter/SayHello
 ```
