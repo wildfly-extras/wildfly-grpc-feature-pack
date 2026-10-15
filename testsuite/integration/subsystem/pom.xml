@@ -76,6 +76,11 @@
             <groupId>org.wildfly.grpc</groupId>
             <artifactId>wildfly-grpc-subsystem</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
