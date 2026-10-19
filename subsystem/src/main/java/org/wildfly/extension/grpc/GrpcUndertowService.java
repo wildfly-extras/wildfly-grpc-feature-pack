@@ -6,6 +6,7 @@ package org.wildfly.extension.grpc;
 
 import static org.wildfly.extension.grpc._private.GrpcLogger.LOGGER;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -180,7 +181,12 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     @Override
     public ServerServiceDefinition addService(final String deploymentName, final BindableService service,
             final List<ServerInterceptor> interceptors) throws StartException {
-        final ServerServiceDefinition ssd = ServerInterceptors.intercept(service, interceptors);
+        // Prepend the built-in Elytron identity interceptor so it runs outermost
+        // (before any user-provided interceptors), establishing the security context first.
+        final List<ServerInterceptor> all = new ArrayList<>(interceptors.size() + 1);
+        all.add(ElytronSecurityIdentityInterceptor.INSTANCE);
+        all.addAll(interceptors);
+        final ServerServiceDefinition ssd = ServerInterceptors.intercept(service, all);
         final String serviceName = ssd.getServiceDescriptor().getName();
         final String existingOwner = serviceOwners.get(serviceName);
         if (existingOwner != null && !existingOwner.equals(deploymentName)) {
