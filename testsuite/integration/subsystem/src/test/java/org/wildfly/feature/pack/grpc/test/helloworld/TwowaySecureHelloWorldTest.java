@@ -57,7 +57,7 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
 
         // Add trust-store containing the client certificate
         ModelNode address = Operations.createAddress("subsystem", "elytron", "key-store",
-                "trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1");
+                "grpc-trust-store");
         ModelNode op = Operations.createAddOperation(address);
         op.get("credential-reference").set(credentialRef);
         op.get("type").set("PKCS12");
@@ -68,17 +68,17 @@ public class TwowaySecureHelloWorldTest extends HelloWorldParent {
 
         // Add trust-manager wrapping the trust-store
         address = Operations.createAddress("subsystem", "elytron", "trust-manager",
-                "trust-manager-eeeecd12-36f9-4156-92c7-a889383f17a1");
+                "grpc-trust-manager");
         op = Operations.createAddOperation(address);
-        op.get("key-store").set("trust-store-eeeecd12-36f9-4156-92c7-a889383f17a1");
+        op.get("key-store").set("grpc-trust-store");
         builder.addStep(op);
 
         // Update the existing ssl-context to require client authentication
         address = Operations.createAddress("subsystem", "elytron", "server-ssl-context",
-                "ssl-context-afcdd1f8-d1a7-4137-aa13-c45237e32428");
+                "grpc-ssl-context");
         builder.addStep(Operations.createWriteAttributeOperation(address, "need-client-auth", new ModelNode(true)));
         builder.addStep(Operations.createWriteAttributeOperation(address, "trust-manager",
-                new ModelNode("trust-manager-eeeecd12-36f9-4156-92c7-a889383f17a1")));
+                new ModelNode("grpc-trust-manager")));
 
         final var result = client.getControllerClient().execute(builder.build());
         if (!Operations.isSuccessfulOutcome(result)) {
