@@ -18,7 +18,6 @@ import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.capability.RuntimeCapability;
 import org.jboss.as.controller.client.helpers.MeasurementUnit;
 import org.jboss.as.controller.operations.validation.IntRangeValidator;
-import org.jboss.as.controller.operations.validation.ModelTypeValidator;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
 
@@ -37,12 +36,15 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
     static final SimpleAttributeDefinition SERVER_NAME = new SimpleAttributeDefinitionBuilder(
             "server-name", ModelType.STRING).setAllowExpression(false).setRequired(false)
             .setDefaultValue(new ModelNode("default-server")).setRestartAllServices()
-            .setValidator(new ModelTypeValidator(ModelType.STRING, true)).build();
+            .setCapabilityReference(Capabilities.UNDERTOW_SERVER_CAPABILITY).build();
 
+    // VIRTUAL_HOST references the binary undertow host capability: org.wildfly.undertow.host.<serverName>.<virtualHost>.
+    // The composite recorder reads SERVER_NAME from the model and appends the virtual-host value
+    // to form the full capability name.
     static final SimpleAttributeDefinition VIRTUAL_HOST = new SimpleAttributeDefinitionBuilder(
             "virtual-host", ModelType.STRING).setAllowExpression(false).setRequired(false)
             .setDefaultValue(new ModelNode("default-host")).setRestartAllServices()
-            .setValidator(new ModelTypeValidator(ModelType.STRING, true)).build();
+            .setCapabilityReference(Capabilities.UNDERTOW_HOST_CAPABILITY, SERVER_NAME).build();
 
     static final List<AttributeDefinition> ATTRIBUTES = List.of(MAX_INBOUND_MESSAGE_SIZE,
             MAX_INBOUND_METADATA_SIZE, SERVER_NAME, VIRTUAL_HOST);
