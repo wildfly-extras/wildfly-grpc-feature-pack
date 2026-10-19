@@ -46,6 +46,8 @@ public class SubsystemTestCase extends AbstractSubsystemBaseTest {
                         capabilityRegistry);
                 registerCapabilities(capabilityRegistry, "org.wildfly.weld");
                 registerCapabilities(capabilityRegistry,
+                        Capabilities.UNDERTOW_SERVER_CAPABILITY + ".default-server");
+                registerCapabilities(capabilityRegistry,
                         Capabilities.UNDERTOW_HOST_CAPABILITY + ".default-server.default-host");
             }
         };
