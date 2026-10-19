@@ -58,6 +58,9 @@ class GrpcDeploymentService implements Service {
     @Override
     public void start(final StartContext context) throws StartException {
         final WildFlyGrpcDeploymentRegistry serverService = serverServiceSupplier.get();
+        if (!serverService.isHttp2Configured()) {
+            LOGGER.noHttp2ListenerConfigured(deploymentName);
+        }
         try {
             // Interceptors are shared across all services of the deployment — instantiate once, not per service.
             final List<ServerInterceptor> interceptors = createInterceptors();
