@@ -42,4 +42,16 @@ public interface WildFlyGrpcDeploymentRegistry {
      *                the service definition to remove
      */
     void removeService(ServerServiceDefinition ssd);
+
+    /**
+     * Returns {@code true} if the backing Undertow server has at least one HTTP/2-capable listener.
+     * An HTTPS listener always supports h2 via ALPN. A plain HTTP listener requires
+     * {@code enable-http2="true"} to support h2c, but that setting cannot be detected
+     * via the public API — only HTTPS listeners can be reliably identified here.
+     * <p>
+     * Returns {@code true} by default (no warning) when the server has not yet started.
+     */
+    default boolean isHttp2Configured() {
+        return true;
+    }
 }

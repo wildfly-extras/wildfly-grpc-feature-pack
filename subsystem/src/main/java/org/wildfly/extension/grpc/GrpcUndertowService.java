@@ -18,6 +18,7 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.wildfly.extension.undertow.Host;
 import org.wildfly.extension.undertow.UndertowFilter;
+import org.wildfly.extension.undertow.UndertowListener;
 
 import io.grpc.BindableService;
 import io.grpc.ServerInterceptor;
@@ -188,6 +189,19 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
         registry.addService(ssd);
         serviceOwners.put(serviceName, deploymentName);
         return ssd;
+    }
+
+    @Override
+    public boolean isHttp2Configured() {
+        final Host host = resolvedHost;
+        if (host == null) {
+            return true; // service not yet started; skip warning
+        }
+        // HTTPS listeners always support h2 via ALPN.
+        // Plain HTTP listeners need enable-http2="true" for h2c, but there is no public API
+        // to inspect that option — only secure listeners can be reliably detected here.
+        return host.getServer().getListeners().stream()
+                .anyMatch(UndertowListener::isSecure);
     }
 
     @Override
