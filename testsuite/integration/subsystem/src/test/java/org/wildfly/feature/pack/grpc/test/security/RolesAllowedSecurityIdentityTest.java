@@ -21,6 +21,7 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -127,6 +128,15 @@ public class RolesAllowedSecurityIdentityTest {
                     "http-authentication-factory",
                     new ModelNode(HTTP_AUTH_FACTORY_NAME)));
 
+            // 6. Undertow application-security-domain mapping — required to activate
+            // WildFly's CDI security interceptors (which enforce @RolesAllowed) for
+            // deployments that declare <security-domain> in jboss-web.xml.
+            ModelNode appDomainAddress = Operations.createAddress(
+                    "subsystem", "undertow", "application-security-domain", DOMAIN_NAME);
+            op = Operations.createAddOperation(appDomainAddress);
+            op.get("http-authentication-factory").set(HTTP_AUTH_FACTORY_NAME);
+            builder.addStep(op);
+
             ModelNode compositeResult = client.getControllerClient().execute(builder.build());
             if (!Operations.isSuccessfulOutcome(compositeResult)) {
                 throw new RuntimeException("Failed to set up Elytron roles config: "
@@ -163,17 +173,34 @@ public class RolesAllowedSecurityIdentityTest {
     }
 
     // -------------------------------------------------------------------------
-    // Deployment: CDI-enabled WAR with beans.xml
+    // Deployment: CDI-enabled WAR with security domain
     // -------------------------------------------------------------------------
+
+    // jboss-web.xml declares the security domain so WildFly activates the CDI security
+    // interceptors that enforce @RolesAllowed for this deployment.
+    private static final String JBOSS_WEB_XML =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<jboss-web>\n"
+            + "    <security-domain>" + DOMAIN_NAME + "</security-domain>\n"
+            + "</jboss-web>\n";
+
+    // Minimal web.xml required so WildFly parses jboss-web.xml into WarMetaData.
+    private static final String WEB_XML =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\"/>\n";
 
     @Deployment
     public static Archive<?> createTestArchive() {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "RolesAllowedSecurityIdentityTest.war");
-        war.addClasses(RolesAllowedGreeterServiceImpl.class, RoleProtectedGreetingService.class);
+        war.addClasses(RolesAllowedGreeterServiceImpl.class, RoleProtectedGreetingService.class,
+                ElytronRolesAllowedInterceptor.class, ElytronRolesAllowedBinding.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
         // beans.xml enables CDI — required for @Inject and @RolesAllowed CDI interceptor
         war.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        // Security domain declaration activates WildFly's CDI @RolesAllowed interceptors
+        war.addAsWebInfResource(new StringAsset(WEB_XML), "web.xml");
+        war.addAsWebInfResource(new StringAsset(JBOSS_WEB_XML), "jboss-web.xml");
         return war;
     }
 
