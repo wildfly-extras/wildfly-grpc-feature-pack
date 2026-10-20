@@ -20,7 +20,6 @@ import org.jboss.as.controller.client.helpers.MeasurementUnit;
 import org.jboss.as.controller.operations.validation.IntRangeValidator;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
-import org.wildfly.security.auth.server.http.HttpAuthenticationFactory;
 
 public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
 
