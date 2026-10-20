@@ -12,6 +12,7 @@ import org.jboss.as.server.deployment.module.ModuleDependency;
 import org.jboss.as.server.deployment.module.ModuleSpecification;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleLoader;
+import org.jboss.modules.filter.PathFilters;
 
 public class GrpcDependencyProcessor implements DeploymentUnitProcessor {
 
@@ -39,6 +40,16 @@ public class GrpcDependencyProcessor implements DeploymentUnitProcessor {
 
         moduleSpecification.addSystemDependency(cdiDependency(
                 new ModuleDependency(moduleLoader, "org.wildfly.grpc-dependency", false, false, true, false)));
+
+        // Expose the gRPC subsystem's public API package to user deployments.
+        // GrpcSecurity.SECURITY_IDENTITY_KEY must be loaded from the subsystem ClassLoader
+        // so that the same Context.Key instance is shared between the built-in interceptor
+        // and service code that reads from the gRPC Context.
+        final ModuleDependency grpcSubsystem = new ModuleDependency(
+                moduleLoader, "org.wildfly.extension.grpc", false, false, false, false);
+        grpcSubsystem.addImportFilter(PathFilters.isOrIsChildOf("org/wildfly/extension/grpc"), true);
+        grpcSubsystem.addImportFilter(PathFilters.acceptAll(), false);
+        moduleSpecification.addSystemDependency(grpcSubsystem);
     }
 
     private ModuleDependency cdiDependency(ModuleDependency moduleDependency) {
