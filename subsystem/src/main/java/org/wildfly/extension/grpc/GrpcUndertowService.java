@@ -323,11 +323,44 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
         public <ReqT, RespT> io.grpc.ServerCall.Listener<ReqT> interceptCall(
                 io.grpc.ServerCall<ReqT, RespT> call, io.grpc.Metadata headers,
                 io.grpc.ServerCallHandler<ReqT, RespT> next) {
+            // Set the subsystem ClassLoader during startCall() so ElytronSecurityIdentityInterceptor
+            // can call SecurityDomain.getCurrent() in its interceptCall() method.
             final Thread thread = Thread.currentThread();
             final ClassLoader previous = thread.getContextClassLoader();
             thread.setContextClassLoader(subsystemClassLoader);
             try {
-                return next.startCall(call, headers);
+                final io.grpc.ServerCall.Listener<ReqT> delegate = next.startCall(call, headers);
+                // Also switch the ClassLoader for every listener callback so that
+                // SecurityDomain.getCurrent() works within the service method thread too,
+                // which is required for SecurityIdentity.runAs() called by the inner interceptor.
+                return new io.grpc.ForwardingServerCallListener
+                        .SimpleForwardingServerCallListener<>(delegate) {
+                    @Override public void onMessage(ReqT message) {
+                        withCL(() -> super.onMessage(message));
+                    }
+                    @Override public void onHalfClose() {
+                        withCL(super::onHalfClose);
+                    }
+                    @Override public void onCancel() {
+                        withCL(super::onCancel);
+                    }
+                    @Override public void onComplete() {
+                        withCL(super::onComplete);
+                    }
+                    @Override public void onReady() {
+                        withCL(super::onReady);
+                    }
+                    private void withCL(Runnable action) {
+                        final Thread t = Thread.currentThread();
+                        final ClassLoader prev = t.getContextClassLoader();
+                        t.setContextClassLoader(subsystemClassLoader);
+                        try {
+                            action.run();
+                        } finally {
+                            t.setContextClassLoader(prev);
+                        }
+                    }
+                };
             } finally {
                 thread.setContextClassLoader(previous);
             }
