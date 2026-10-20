@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.security.PrivilegedAction;
 import java.util.Base64;
 
 import org.wildfly.security.auth.server.SecurityDomain;
@@ -19,6 +20,7 @@ import org.wildfly.security.evidence.PasswordGuessEvidence;
 
 import io.grpc.Context;
 import io.grpc.Contexts;
+import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener;
 import io.grpc.Grpc;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
@@ -27,22 +29,28 @@ import io.grpc.ServerInterceptor;
 
 /**
  * Built-in {@link ServerInterceptor} that propagates the Elytron {@link SecurityIdentity}
- * of the caller into the gRPC {@link Context} via {@link GrpcSecurity#SECURITY_IDENTITY_KEY}.
+ * of the caller into the gRPC {@link Context} and wraps every listener callback with
+ * {@link SecurityIdentity#runAs} so that:
+ * <ul>
+ *   <li>{@link GrpcSecurity#SECURITY_IDENTITY_KEY} returns the authenticated identity in
+ *       service methods (and CDI beans called from them).</li>
+ *   <li>{@link SecurityDomain#getCurrent()}.{@link SecurityDomain#getCurrentSecurityIdentity()}
+ *       returns a non-null identity on the service method thread, enabling
+ *       Elytron-aware CDI interceptors (e.g. {@code @RolesAllowed}) to work transparently.</li>
+ * </ul>
  *
- * <p>When {@code http-authentication-factory} is configured on the gRPC subsystem, the
- * {@code SubsystemClassLoaderInterceptor} (which wraps this one) switches the thread's
- * context ClassLoader to the subsystem ClassLoader before this interceptor runs, making
- * {@link SecurityDomain#getCurrent()} return the configured domain.
- *
- * <p>Two identity sources are tried in order:
+ * <p>Two authentication sources are tried in order when no identity has been established:
  * <ol>
- *   <li><b>Undertow security context</b> — if Undertow has already authenticated the caller
- *       (e.g. via host-level authentication), {@link SecurityDomain#getCurrent()} returns a
- *       domain and {@link SecurityDomain#getCurrentSecurityIdentity()} returns the identity.
- *   <li><b>HTTP BASIC from gRPC metadata</b> — if the call carries an
- *       {@code Authorization: Basic <credentials>} header and a security domain is available,
- *       the credentials are verified and the resulting identity is used.
+ *   <li><b>Mutual TLS</b> — the client certificate's subject principal extracted from the
+ *       Undertow SSL session by {@link GrpcUndertowService} and stored keyed by the client's
+ *       {@link InetSocketAddress}.</li>
+ *   <li><b>HTTP BASIC</b> — credentials in the {@code Authorization: Basic ...} gRPC metadata
+ *       header, verified via {@link ServerAuthenticationContext}.</li>
  * </ol>
+ *
+ * <p>For unauthenticated requests the domain's anonymous identity is used for {@code runAs()},
+ * keeping the security context non-null on the service method thread while leaving
+ * {@link GrpcSecurity#SECURITY_IDENTITY_KEY} set to {@code null}.
  */
 final class ElytronSecurityIdentityInterceptor implements ServerInterceptor {
 
@@ -58,50 +66,90 @@ final class ElytronSecurityIdentityInterceptor implements ServerInterceptor {
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
             ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
         final SecurityDomain domain = SecurityDomain.getCurrent();
-        if (domain != null) {
-            SecurityIdentity identity = domain.getCurrentSecurityIdentity();
+        if (domain == null) {
+            return next.startCall(call, headers);
+        }
 
-            // If no identity has been established by Undertow, try in order:
-            // 1. Mutual TLS: authenticate the client certificate principal extracted by the
-            //    Undertow filter and propagated via GrpcUndertowService.PEER_PRINCIPAL_KEY.
-            // 2. HTTP BASIC: authenticate from the Authorization header in gRPC metadata.
-            if (identity == null || identity.isAnonymous()) {
-                // Look up the mTLS peer principal by the client's remote address.
-                // The filter stores it keyed by InetSocketAddress when the TLS session has
-                // a peer certificate; gRPC's ServletAdapter sets the same address as
-                // TRANSPORT_ATTR_REMOTE_ADDR, so we can correlate without crossing thread boundaries.
-                final SocketAddress remoteAddr = call.getAttributes().get(Grpc.TRANSPORT_ATTR_REMOTE_ADDR);
-                if (remoteAddr instanceof InetSocketAddress) {
-                    final Principal peerPrincipal =
-                            GrpcUndertowService.PEER_PRINCIPAL_BY_ADDRESS.get(remoteAddr);
-                    if (peerPrincipal != null) {
-                        identity = authenticateCertificate(domain, peerPrincipal);
-                    }
+        // --- Resolve the authenticated identity ---
+        SecurityIdentity identity = domain.getCurrentSecurityIdentity();
+
+        if (identity == null || identity.isAnonymous()) {
+            // 1. Try mTLS: peer principal keyed by remote address
+            final SocketAddress remoteAddr = call.getAttributes().get(Grpc.TRANSPORT_ATTR_REMOTE_ADDR);
+            if (remoteAddr instanceof InetSocketAddress) {
+                final Principal peerPrincipal =
+                        GrpcUndertowService.PEER_PRINCIPAL_BY_ADDRESS.get(remoteAddr);
+                if (peerPrincipal != null) {
+                    identity = authenticateCertificate(domain, peerPrincipal);
                 }
             }
-            if (identity == null || identity.isAnonymous()) {
-                identity = authenticateBasic(domain, headers);
+        }
+        if (identity == null || identity.isAnonymous()) {
+            // 2. Try HTTP BASIC from gRPC call metadata
+            identity = authenticateBasic(domain, headers);
+        }
+
+        final boolean authenticated = identity != null && !identity.isAnonymous();
+
+        // SECURITY_IDENTITY_KEY is set only for authenticated callers.
+        final Context ctx = authenticated
+                ? Context.current().withValue(GrpcSecurity.SECURITY_IDENTITY_KEY, identity)
+                : Context.current();
+
+        // For runAs(): use the authenticated identity or fall back to anonymous.
+        // Anonymous keeps the security context non-null on the service thread so that
+        // @RolesAllowed interceptors can deny access correctly rather than seeing no domain.
+        final SecurityIdentity runAsIdentity = authenticated
+                ? identity : domain.getAnonymousSecurityIdentity();
+
+        // Build the downstream listener, then wrap each callback with runAs() so that
+        // SecurityDomain.getCurrent().getCurrentSecurityIdentity() works inside service methods.
+        final ServerCall.Listener<ReqT> delegate = Contexts.interceptCall(ctx, call, headers, next);
+        return new SimpleForwardingServerCallListener<>(delegate) {
+            @Override
+            public void onMessage(ReqT message) {
+                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                    super.onMessage(message);
+                    return null;
+                });
             }
 
-            if (identity != null && !identity.isAnonymous()) {
-                final Context ctx = Context.current()
-                        .withValue(GrpcSecurity.SECURITY_IDENTITY_KEY, identity);
-                return Contexts.interceptCall(ctx, call, headers, next);
+            @Override
+            public void onHalfClose() {
+                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                    super.onHalfClose();
+                    return null;
+                });
             }
-        }
-        return next.startCall(call, headers);
+
+            @Override
+            public void onCancel() {
+                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                    super.onCancel();
+                    return null;
+                });
+            }
+
+            @Override
+            public void onComplete() {
+                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                    super.onComplete();
+                    return null;
+                });
+            }
+
+            @Override
+            public void onReady() {
+                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                    super.onReady();
+                    return null;
+                });
+            }
+        };
     }
 
-    /**
-     * Authenticates the caller using the TLS client certificate's subject principal.
-     * The principal was extracted from the Undertow exchange's SSL session by
-     * {@link GrpcUndertowService} and propagated via {@link GrpcUndertowService#PEER_PRINCIPAL_KEY}.
-     * The security domain's configured {@code principal-decoder} (e.g. {@code x500-attribute-principal-decoder}
-     * with {@code attribute-name=CN}) converts the X.500 subject to a realm identity name.
-     * <p>
-     * The client certificate's CN is {@code "client"} when generated by the ssl-gen module.
-     */
-    private static SecurityIdentity authenticateCertificate(SecurityDomain domain, Principal peerPrincipal) {
+    private static SecurityIdentity authenticateCertificate(SecurityDomain domain,
+            Principal peerPrincipal) {
         try {
             final ServerAuthenticationContext sac = domain.createNewAuthenticationContext();
             try {

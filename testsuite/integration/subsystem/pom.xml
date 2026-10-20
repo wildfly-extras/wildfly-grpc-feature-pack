@@ -194,6 +194,8 @@
                         <layer>web-server</layer>
                         <layer>jaxrs</layer>
                         <layer>jmx-remoting</layer>
+                        <!-- ee-security enables @RolesAllowed enforcement on CDI beans -->
+                        <layer>ee-security</layer>
                         <!-- Layers from this FP  -->
                         <layer>grpc</layer>
                     </layers>
