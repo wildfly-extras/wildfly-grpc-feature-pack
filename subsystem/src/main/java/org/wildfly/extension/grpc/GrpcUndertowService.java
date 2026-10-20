@@ -17,6 +17,11 @@ import org.jboss.msc.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
+import java.net.InetSocketAddress;
+import java.security.Principal;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+
 import org.wildfly.extension.undertow.Host;
 import org.wildfly.extension.undertow.UndertowFilter;
 import org.wildfly.extension.undertow.UndertowListener;
@@ -32,6 +37,7 @@ import io.grpc.servlet.jakarta.ServletServerBuilder;
 import io.grpc.util.MutableHandlerRegistry;
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
+import io.undertow.server.HttpServerExchange;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
@@ -50,6 +56,24 @@ import io.undertow.util.Headers;
 class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
 
     private static final String GRPC_CONTENT_TYPE = "application/grpc";
+
+    /**
+     * gRPC {@link io.grpc.Context} key carrying the client certificate's {@link Principal}.
+     * Unused — kept as a fallback for transports that do propagate {@code Context.current()}.
+     */
+    static final io.grpc.Context.Key<Principal> PEER_PRINCIPAL_KEY =
+            io.grpc.Context.key("wildfly.grpc.peer-principal");
+
+    /**
+     * Maps each client's remote {@link InetSocketAddress} to the TLS peer certificate's
+     * subject {@link Principal}. The filter populates this map when a client certificate is
+     * present; the interceptor looks up by {@link io.grpc.Grpc#TRANSPORT_ATTR_REMOTE_ADDR}.
+     * <p>
+     * Entries persist for the lifetime of the TLS connection — all multiplexed gRPC calls on
+     * the same connection share the same client certificate, so reuse is correct.
+     */
+    static final ConcurrentHashMap<InetSocketAddress, Principal> PEER_PRINCIPAL_BY_ADDRESS =
+            new ConcurrentHashMap<>();
 
     private final Consumer<GrpcUndertowService> serviceConsumer;
     private final Supplier<Host> undertowHost;
@@ -138,7 +162,14 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
                                     && (ct.length() == GRPC_CONTENT_TYPE.length()
                                             || ct.charAt(GRPC_CONTENT_TYPE.length()) == '+');
                         },
-                        servletHandler, next);
+                        // When http-authentication-factory is configured, wrap the servlet handler
+                        // to propagate the TLS peer principal via gRPC Context before the RPC call
+                        // is dispatched to the gRPC executor. gRPC captures Context.current() when
+                        // submitting the call task, so values attached here are visible to interceptors.
+                        httpAuthFactorySupplier != null
+                                ? peerPrincipalAttachingHandler(servletHandler)
+                                : servletHandler,
+                        next);
             }
         };
         resolvedHost = undertowHost.get();
@@ -232,6 +263,49 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
         // to inspect that option — only secure listeners can be reliably detected here.
         return host.getServer().getListeners().stream()
                 .anyMatch(UndertowListener::isSecure);
+    }
+
+    /**
+     * Wraps the servlet handler to attach the mTLS peer principal to the gRPC {@link io.grpc.Context}
+     * before the RPC call is submitted to the gRPC executor. gRPC captures {@link io.grpc.Context#current()}
+     * when it enqueues the call task, so the principal becomes visible to interceptors running on
+     * the gRPC executor thread via {@link #PEER_PRINCIPAL_KEY}.
+     */
+    /**
+     * Wraps the servlet handler to store the mTLS peer principal in {@link #PEER_PRINCIPAL_BY_ADDRESS}
+     * keyed by the client's remote address. gRPC's {@code ServletAdapter} sets the same address as
+     * {@link io.grpc.Grpc#TRANSPORT_ATTR_REMOTE_ADDR} on the {@code ServerCall}, so the interceptor
+     * can look it up without crossing thread boundaries.
+     */
+    private static HttpHandler peerPrincipalAttachingHandler(final HttpHandler next) {
+        return exchange -> {
+            final Principal peerPrincipal = extractPeerPrincipal(exchange);
+            if (peerPrincipal != null) {
+                final InetSocketAddress remoteAddr =
+                        (InetSocketAddress) exchange.getConnection().getPeerAddress(InetSocketAddress.class);
+                if (remoteAddr != null) {
+                    PEER_PRINCIPAL_BY_ADDRESS.put(remoteAddr, peerPrincipal);
+                }
+            }
+            next.handleRequest(exchange);
+        };
+    }
+
+    private static Principal extractPeerPrincipal(HttpServerExchange exchange) {
+        try {
+            final io.undertow.server.SSLSessionInfo sslInfo =
+                    exchange.getConnection().getSslSessionInfo();
+            if (sslInfo == null) {
+                return null;
+            }
+            final Certificate[] certs = sslInfo.getPeerCertificates();
+            if (certs == null || certs.length == 0) {
+                return null;
+            }
+            return ((X509Certificate) certs[0]).getSubjectX500Principal();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
