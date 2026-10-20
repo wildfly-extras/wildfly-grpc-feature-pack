@@ -20,8 +20,8 @@ import org.jboss.msc.service.StopContext;
 import org.wildfly.extension.undertow.Host;
 import org.wildfly.extension.undertow.UndertowFilter;
 import org.wildfly.extension.undertow.UndertowListener;
+import org.wildfly.security.auth.server.HttpAuthenticationFactory;
 import org.wildfly.security.auth.server.SecurityDomain;
-import org.wildfly.security.auth.server.http.HttpAuthenticationFactory;
 
 import io.grpc.BindableService;
 import io.grpc.ServerInterceptor;

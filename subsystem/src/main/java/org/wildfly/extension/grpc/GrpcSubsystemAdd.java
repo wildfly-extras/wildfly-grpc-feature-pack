@@ -20,7 +20,7 @@ import org.wildfly.extension.grpc.deployment.GrpcDependencyProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcDeploymentProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcServiceInstallProcessor;
 import org.wildfly.extension.undertow.Host;
-import org.wildfly.security.auth.server.http.HttpAuthenticationFactory;
+import org.wildfly.security.auth.server.HttpAuthenticationFactory;
 
 class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
