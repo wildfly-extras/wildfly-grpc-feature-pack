@@ -20,6 +20,7 @@ import org.wildfly.extension.grpc.deployment.GrpcDependencyProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcDeploymentProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcServiceInstallProcessor;
 import org.wildfly.extension.undertow.Host;
+import org.wildfly.security.auth.server.http.HttpAuthenticationFactory;
 
 class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
@@ -52,10 +53,19 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
         final int maxInboundMetadataSize = GrpcSubsystemDefinition.MAX_INBOUND_METADATA_SIZE
                 .resolveModelAttribute(context, model).asInt();
 
+        final String httpAuthFactoryName = GrpcSubsystemDefinition.HTTP_AUTHENTICATION_FACTORY
+                .resolveModelAttribute(context, model).asStringOrNull();
+        Supplier<HttpAuthenticationFactory> httpAuthFactorySupplier = null;
+        if (httpAuthFactoryName != null) {
+            httpAuthFactorySupplier = builder.requiresCapability(
+                    Capabilities.HTTP_AUTHENTICATION_FACTORY_CAPABILITY,
+                    HttpAuthenticationFactory.class, httpAuthFactoryName);
+        }
+
         final Consumer<GrpcUndertowService> provides = builder.provides(GrpcSubsystemDefinition.SERVER_CAPABILITY);
 
         final GrpcUndertowService service = new GrpcUndertowService(provides, undertowHost,
-                maxInboundMessageSize, maxInboundMetadataSize);
+                maxInboundMessageSize, maxInboundMetadataSize, httpAuthFactorySupplier);
 
         builder.setInstance(service).install();
 

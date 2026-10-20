@@ -20,6 +20,8 @@ import org.jboss.msc.service.StopContext;
 import org.wildfly.extension.undertow.Host;
 import org.wildfly.extension.undertow.UndertowFilter;
 import org.wildfly.extension.undertow.UndertowListener;
+import org.wildfly.security.auth.server.SecurityDomain;
+import org.wildfly.security.auth.server.http.HttpAuthenticationFactory;
 
 import io.grpc.BindableService;
 import io.grpc.ServerInterceptor;
@@ -53,6 +55,7 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     private final Supplier<Host> undertowHost;
     private final int maxInboundMessageSize;
     private final int maxInboundMetadataSize;
+    private final Supplier<HttpAuthenticationFactory> httpAuthFactorySupplier;
     private final Map<String, String> serviceOwners;
 
     private volatile MutableHandlerRegistry registry;
@@ -64,11 +67,13 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     GrpcUndertowService(final Consumer<GrpcUndertowService> serviceConsumer,
             final Supplier<Host> undertowHost,
             final int maxInboundMessageSize,
-            final int maxInboundMetadataSize) {
+            final int maxInboundMetadataSize,
+            final Supplier<HttpAuthenticationFactory> httpAuthFactorySupplier) {
         this.serviceConsumer = serviceConsumer;
         this.undertowHost = undertowHost;
         this.maxInboundMessageSize = maxInboundMessageSize;
         this.maxInboundMetadataSize = maxInboundMetadataSize;
+        this.httpAuthFactorySupplier = httpAuthFactorySupplier;
         this.serviceOwners = new ConcurrentHashMap<>();
     }
 
@@ -139,6 +144,15 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
         resolvedHost = undertowHost.get();
         resolvedHost.addFilter(grpcFilter);
 
+        // When an http-authentication-factory is configured, register the subsystem ClassLoader
+        // with its security domain. This makes SecurityDomain.getCurrent() return the domain
+        // on any gRPC executor thread whose context ClassLoader is set by SUBSYSTEM_CLASS_LOADER_INTERCEPTOR,
+        // allowing ElytronSecurityIdentityInterceptor to authenticate from gRPC call metadata.
+        if (httpAuthFactorySupplier != null) {
+            httpAuthFactorySupplier.get().getSecurityDomain()
+                    .registerWithClassLoader(GrpcUndertowService.class.getClassLoader());
+        }
+
         LOGGER.grpcServingViaUndertow(resolvedHost.getName());
         serviceConsumer.accept(this);
     }
@@ -170,6 +184,10 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
         // grpcServlet.destroy() is called by deploymentManager.stop() via the servlet lifecycle
         grpcServlet = null;
 
+        if (httpAuthFactorySupplier != null) {
+            SecurityDomain.unregisterClassLoader(GrpcUndertowService.class.getClassLoader());
+        }
+
         // Nullify the MSC service value first so no new addService() calls can arrive
         // before registry is cleared. Any concurrent caller that passes the supplier check
         // after this point will see a null registry in addService() and NPE — but MSC
@@ -181,9 +199,15 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     @Override
     public ServerServiceDefinition addService(final String deploymentName, final BindableService service,
             final List<ServerInterceptor> interceptors) throws StartException {
-        // Prepend the built-in Elytron identity interceptor so it runs outermost
-        // (before any user-provided interceptors), establishing the security context first.
-        final List<ServerInterceptor> all = new ArrayList<>(interceptors.size() + 1);
+        // Prepend built-in interceptors outermost (before any user-provided interceptors).
+        // When http-authentication-factory is configured, the SubsystemClassLoaderInterceptor
+        // sets the thread context ClassLoader to the subsystem ClassLoader (which is registered
+        // with the security domain) so that ElytronSecurityIdentityInterceptor can call
+        // SecurityDomain.getCurrent() and authenticate from gRPC call metadata.
+        final List<ServerInterceptor> all = new ArrayList<>(interceptors.size() + 2);
+        if (httpAuthFactorySupplier != null) {
+            all.add(SUBSYSTEM_CLASS_LOADER_INTERCEPTOR);
+        }
         all.add(ElytronSecurityIdentityInterceptor.INSTANCE);
         all.addAll(interceptors);
         final ServerServiceDefinition ssd = ServerInterceptors.intercept(service, all);
@@ -209,6 +233,32 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
         return host.getServer().getListeners().stream()
                 .anyMatch(UndertowListener::isSecure);
     }
+
+    /**
+     * Singleton interceptor that sets the thread context ClassLoader to the gRPC subsystem's
+     * own ClassLoader during each call setup. When {@code http-authentication-factory} is
+     * configured, the subsystem ClassLoader is registered with the security domain at startup,
+     * so switching to it here makes {@link SecurityDomain#getCurrent()} return the domain
+     * for the {@link ElytronSecurityIdentityInterceptor} to authenticate against.
+     */
+    private static final io.grpc.ServerInterceptor SUBSYSTEM_CLASS_LOADER_INTERCEPTOR =
+            new io.grpc.ServerInterceptor() {
+        private final ClassLoader subsystemClassLoader = GrpcUndertowService.class.getClassLoader();
+
+        @Override
+        public <ReqT, RespT> io.grpc.ServerCall.Listener<ReqT> interceptCall(
+                io.grpc.ServerCall<ReqT, RespT> call, io.grpc.Metadata headers,
+                io.grpc.ServerCallHandler<ReqT, RespT> next) {
+            final Thread thread = Thread.currentThread();
+            final ClassLoader previous = thread.getContextClassLoader();
+            thread.setContextClassLoader(subsystemClassLoader);
+            try {
+                return next.startCall(call, headers);
+            } finally {
+                thread.setContextClassLoader(previous);
+            }
+        }
+    };
 
     @Override
     public void removeService(final ServerServiceDefinition ssd) {
