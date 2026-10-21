@@ -14,17 +14,20 @@ import messages.HelloRequest;
 import org.wildfly.feature.pack.grpc.test.helloworld.GreeterGrpc;
 
 /**
- * Returns the Elytron {@link SecurityIdentity} principal name from the gRPC {@link io.grpc.Context},
- * or {@code "no-security-identity"} if none was propagated by the built-in interceptor.
+ * Returns the Elytron {@link SecurityIdentity} principal name from the gRPC {@link io.grpc.Context}.
+ * {@link GrpcSecurity#SECURITY_IDENTITY_KEY} is always set — to the authenticated identity
+ * or the anonymous identity — so {@code isAnonymous()} is the correct predicate for
+ * distinguishing authenticated from unauthenticated callers.
  */
 public class SecurityIdentityGreeterServiceImpl extends GreeterGrpc.GreeterImplBase {
 
     @Override
     public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
         final SecurityIdentity identity = GrpcSecurity.SECURITY_IDENTITY_KEY.get();
-        final String principalName = identity != null
+        // identity is never null; use isAnonymous() to detect unauthenticated callers
+        final String principalName = (identity != null && !identity.isAnonymous())
                 ? identity.getPrincipal().getName()
-                : "no-security-identity";
+                : "anonymous";
         responseObserver.onNext(HelloReply.newBuilder().setMessage(principalName).build());
         responseObserver.onCompleted();
     }
