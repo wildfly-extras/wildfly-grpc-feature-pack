@@ -192,8 +192,9 @@ public class RolesAllowedSecurityIdentityTest {
     @Deployment
     public static Archive<?> createTestArchive() {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "RolesAllowedSecurityIdentityTest.war");
-        war.addClasses(RolesAllowedGreeterServiceImpl.class, RoleProtectedGreetingService.class,
-                ElytronRolesAllowedInterceptor.class, ElytronRolesAllowedBinding.class);
+        // No @ElytronRolesAllowedBinding needed — GrpcSecurityCdiExtension automatically applies
+        // the gRPC @RolesAllowed interceptor to any CDI bean whose methods have @RolesAllowed.
+        war.addClasses(RolesAllowedGreeterServiceImpl.class, RoleProtectedGreetingService.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
         // beans.xml enables CDI — required for @Inject and @RolesAllowed CDI interceptor

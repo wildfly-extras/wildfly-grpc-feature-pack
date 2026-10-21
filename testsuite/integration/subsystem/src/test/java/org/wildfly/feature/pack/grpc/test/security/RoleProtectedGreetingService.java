@@ -10,18 +10,15 @@ import jakarta.enterprise.context.ApplicationScoped;
 /**
  * CDI bean whose {@code greet()} method is protected by {@code @RolesAllowed("grpc-user")}.
  *
- * <p>{@link ElytronRolesAllowedBinding} activates {@link ElytronRolesAllowedInterceptor},
- * which reads the caller's {@link org.wildfly.security.auth.server.SecurityIdentity} from
- * {@link org.wildfly.security.auth.server.SecurityDomain#getCurrent()} and enforces
- * {@code @RolesAllowed} using Elytron's role model.
- *
- * <p>This works because the gRPC subsystem's {@code ElytronSecurityIdentityInterceptor}
- * wraps every service-method callback with {@link org.wildfly.security.auth.server.SecurityIdentity#runAs},
- * making the identity ambient on the calling thread — exactly as
- * {@code ElytronContextAssociationHandler} does for regular servlet deployments.
+ * <p>The gRPC subsystem provides {@code GrpcSecurityCdiExtension}, a CDI Portable Extension
+ * that replaces WildFly's exchange-based {@code SecurityContext} bean with an Elytron-backed
+ * implementation reading from {@code SecurityDomain.getCurrent()}. Combined with the
+ * {@code ElytronSecurityIdentityInterceptor} wrapping every listener callback with
+ * {@code SecurityIdentity.runAs()}, standard {@code @RolesAllowed} enforcement works
+ * transparently for CDI beans injected into gRPC services — exactly as it does for
+ * regular servlet deployments via {@code ElytronContextAssociationHandler}.
  */
 @ApplicationScoped
-@ElytronRolesAllowedBinding
 public class RoleProtectedGreetingService {
 
     @RolesAllowed("grpc-user")
