@@ -41,7 +41,7 @@ import messages.HelloRequest;
  * (which enables {@code need-client-auth=true} on the Undertow HTTPS listener) and makes a
  * two-way-TLS gRPC call. The service returns the principal name from
  * {@link org.wildfly.extension.grpc.GrpcSecurity#SECURITY_IDENTITY_KEY}, or
- * {@code "no-security-identity"} if the context key was not set.
+ * {@code "anonymous"} if the context key was not set.
  *
  * <p>This test answers the question: does mTLS at the Undertow listener level make
  * {@code SecurityDomain.getCurrent()} non-null by the time the gRPC interceptor runs?
@@ -100,7 +100,7 @@ public class MutualTlsSecurityIdentityTest {
      *
      * <p>If the identity is propagated, the service returns the client certificate's principal
      * name. If not (i.e. {@code SecurityDomain.getCurrent()} was null in the interceptor),
-     * the service returns {@code "no-security-identity"}.
+     * the service returns {@code "anonymous"}.
      */
     /**
      * Verifies that mTLS at the Undertow listener level does NOT automatically propagate
@@ -117,13 +117,13 @@ public class MutualTlsSecurityIdentityTest {
      * lets the interceptor authenticate directly from gRPC call metadata).
      */
     @Test
-    public void securityIdentityIsNullAfterMutualTlsAuthentication() {
+    public void securityIdentityIsAnonymousWithoutElytronConfig() {
         HelloRequest request = HelloRequest.newBuilder().setName("test").build();
         HelloReply reply = blockingStub.sayHello(request);
 
         Assert.assertEquals(
                 "mTLS at the Undertow listener level should NOT propagate a SecurityIdentity " +
                 "to the gRPC context without explicit elytron-security-domain configuration",
-                "no-security-identity", reply.getMessage());
+                "anonymous", reply.getMessage());
     }
 }
