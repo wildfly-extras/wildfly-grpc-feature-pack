@@ -185,11 +185,11 @@ public class SecurityIdentityTest {
     }
 
     @Test
-    public void securityIdentityIsNullForUnauthenticatedRequest() {
+    public void securityIdentityIsAnonymousForUnauthenticatedRequest() {
         HelloReply reply = blockingStub.sayHello(HelloRequest.newBuilder().setName("test").build());
         Assert.assertEquals(
                 "Unauthenticated gRPC call must not expose a security identity",
-                "no-security-identity", reply.getMessage());
+                "anonymous", reply.getMessage());
     }
 
     // -------------------------------------------------------------------------

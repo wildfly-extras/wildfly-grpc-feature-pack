@@ -91,16 +91,17 @@ final class ElytronSecurityIdentityInterceptor implements ServerInterceptor {
 
         final boolean authenticated = identity != null && !identity.isAnonymous();
 
-        // SECURITY_IDENTITY_KEY is set only for authenticated callers.
-        final Context ctx = authenticated
-                ? Context.current().withValue(GrpcSecurity.SECURITY_IDENTITY_KEY, identity)
-                : Context.current();
-
-        // For runAs(): use the authenticated identity or fall back to anonymous.
-        // Anonymous keeps the security context non-null on the service thread so that
-        // @RolesAllowed interceptors can deny access correctly rather than seeing no domain.
-        final SecurityIdentity runAsIdentity = authenticated
+        // Use the authenticated identity or the anonymous identity as a unified "effective" identity.
+        // Anonymous keeps the security context non-null for @RolesAllowed interceptors.
+        final SecurityIdentity effectiveIdentity = authenticated
                 ? identity : domain.getAnonymousSecurityIdentity();
+
+        // SECURITY_IDENTITY_KEY is always set — to the authenticated identity or to the
+        // anonymous identity — so service code can use isAnonymous() consistently instead
+        // of null-checking, and both SECURITY_IDENTITY_KEY.get() and
+        // SecurityDomain.getCurrent().getCurrentSecurityIdentity() behave identically.
+        final Context ctx = Context.current()
+                .withValue(GrpcSecurity.SECURITY_IDENTITY_KEY, effectiveIdentity);
 
         // Build the downstream listener, then wrap each callback with runAs() so that
         // SecurityDomain.getCurrent().getCurrentSecurityIdentity() works inside service methods.
@@ -108,7 +109,7 @@ final class ElytronSecurityIdentityInterceptor implements ServerInterceptor {
         return new SimpleForwardingServerCallListener<>(delegate) {
             @Override
             public void onMessage(ReqT message) {
-                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
                     super.onMessage(message);
                     return null;
                 });
@@ -116,7 +117,7 @@ final class ElytronSecurityIdentityInterceptor implements ServerInterceptor {
 
             @Override
             public void onHalfClose() {
-                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
                     super.onHalfClose();
                     return null;
                 });
@@ -124,7 +125,7 @@ final class ElytronSecurityIdentityInterceptor implements ServerInterceptor {
 
             @Override
             public void onCancel() {
-                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
                     super.onCancel();
                     return null;
                 });
@@ -132,7 +133,7 @@ final class ElytronSecurityIdentityInterceptor implements ServerInterceptor {
 
             @Override
             public void onComplete() {
-                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
                     super.onComplete();
                     return null;
                 });
@@ -140,7 +141,7 @@ final class ElytronSecurityIdentityInterceptor implements ServerInterceptor {
 
             @Override
             public void onReady() {
-                runAsIdentity.runAs((PrivilegedAction<Void>) () -> {
+                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
                     super.onReady();
                     return null;
                 });
