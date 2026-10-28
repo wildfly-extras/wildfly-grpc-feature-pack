@@ -74,10 +74,11 @@ public class GrpcSecurityCdiExtension implements Extension {
         if (types.contains(SecurityContext.class)
                 && event.getBeanAttributes().getQualifiers().stream()
                         .anyMatch(q -> q.annotationType() == Default.class)) {
-            final String desc = event.getBeanAttributes().toString();
-            if (!desc.contains(GrpcElytronSecurityContext.class.getName())) {
-                event.veto();
-            }
+            // Safe to veto unconditionally: ProcessBeanAttributes fires only for beans
+            // discovered during type scanning, never for synthetic beans added via
+            // AfterBeanDiscovery.addBean(). Our GrpcElytronSecurityContext bean is
+            // synthetic, so it is not subject to this event.
+            event.veto();
         }
     }
 
