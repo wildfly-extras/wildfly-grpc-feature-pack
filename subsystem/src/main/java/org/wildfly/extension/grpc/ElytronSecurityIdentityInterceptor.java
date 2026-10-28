@@ -4,10 +4,9 @@
  */
 package org.wildfly.extension.grpc;
 
-import java.security.PrivilegedAction;
-
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.security.PrivilegedAction;
 
 import org.wildfly.security.auth.server.SecurityDomain;
 import org.wildfly.security.auth.server.SecurityIdentity;
@@ -50,11 +49,6 @@ public final class ElytronSecurityIdentityInterceptor implements ServerIntercept
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
             ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
-        // Primary: identity bridged from the Undertow request thread via a per-connection map.
-        // The inner handler chain wrapper (GrpcServletInstallProcessor) captures the authenticated
-        // identity inside ElytronRunAsHandler.runAs() on the Undertow thread, and stores it keyed
-        // by the client's remote address. On the gRPC executor thread where interceptCall() runs,
-        // we look it up by the same remote address from the ServerCall attributes.
         SecurityIdentity identity = null;
         final SocketAddress remoteSocketAddr = call.getAttributes().get(Grpc.TRANSPORT_ATTR_REMOTE_ADDR);
         if (remoteSocketAddr instanceof InetSocketAddress) {
@@ -73,9 +67,7 @@ public final class ElytronSecurityIdentityInterceptor implements ServerIntercept
             return next.startCall(call, headers);
         }
 
-        final SecurityIdentity effectiveIdentity = identity.isAnonymous()
-                ? identity
-                : identity;
+        final SecurityIdentity effectiveIdentity = identity;
 
         // Propagate the identity into the gRPC Context so service code can use
         // GrpcSecurity.SECURITY_IDENTITY_KEY.get() on any thread.
