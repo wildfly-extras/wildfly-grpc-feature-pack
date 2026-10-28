@@ -33,12 +33,13 @@ public final class GrpcSecurity {
     public static final Context.Key<SecurityIdentity> SECURITY_IDENTITY_KEY = Context.key("wildfly.grpc.security-identity");
 
     /**
-     * Bridges the authenticated {@link SecurityIdentity} from the Undertow request thread
+     * Bridges the authenticated {@link SecurityIdentity} from the Undertow handler chain
      * (where {@code ElytronContextAssociationHandler} runs) to the gRPC executor thread
      * (where {@code ElytronSecurityIdentityInterceptor.interceptCall()} runs).
      * <p>
-     * The key is the client's remote {@link InetSocketAddress} — unique per HTTP/2 connection.
-     * The inner handler chain wrapper populates this map; the interceptor reads and clears it.
+     * Keyed by the client's remote {@link InetSocketAddress}. Entries are added per-exchange
+     * and removed when the underlying connection closes, ensuring the identity remains
+     * available for all multiplexed HTTP/2 streams on the same connection.
      */
     public static final ConcurrentHashMap<InetSocketAddress, SecurityIdentity>
             AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR = new ConcurrentHashMap<>();
