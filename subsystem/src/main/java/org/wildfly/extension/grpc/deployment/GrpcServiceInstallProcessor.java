@@ -16,7 +16,9 @@ import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.as.web.common.WarMetaData;
 import org.jboss.as.weld.WeldCapability;
+import org.jboss.metadata.web.jboss.JBossWebMetaData;
 import org.jboss.modules.Module;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
@@ -46,7 +48,7 @@ public class GrpcServiceInstallProcessor implements DeploymentUnitProcessor {
 
         final Module module = deploymentUnit.getAttachment(Attachments.MODULE);
         final String deploymentName = deploymentUnit.getName();
-        final String contextPath = resolveContextPath(deploymentName);
+        final String contextPath = resolveContextPath(deploymentUnit);
 
         final ServiceName serviceName = deploymentUnit.getServiceName().append("grpc");
         // Use getRequirementServiceTarget() so WildFly tracks this service as a deployment
@@ -93,8 +95,18 @@ public class GrpcServiceInstallProcessor implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit context) {
     }
 
-    private static String resolveContextPath(String deploymentName) {
-        final String baseName = deploymentName.replaceAll("\\.[^.]+$", "");
+    private static String resolveContextPath(DeploymentUnit deploymentUnit) {
+        final WarMetaData warMetaData = deploymentUnit.getAttachment(WarMetaData.ATTACHMENT_KEY);
+        if (warMetaData != null) {
+            final JBossWebMetaData merged = warMetaData.getMergedJBossWebMetaData();
+            if (merged != null) {
+                final String contextRoot = merged.getContextRoot();
+                if (contextRoot != null && !contextRoot.isEmpty()) {
+                    return contextRoot.startsWith("/") ? contextRoot : "/" + contextRoot;
+                }
+            }
+        }
+        final String baseName = deploymentUnit.getName().replaceAll("\\.[^.]+$", "");
         return "ROOT".equals(baseName) ? "/" : "/" + baseName;
     }
 }
