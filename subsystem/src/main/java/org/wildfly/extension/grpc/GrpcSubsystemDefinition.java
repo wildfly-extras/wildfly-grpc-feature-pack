@@ -46,24 +46,8 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .setDefaultValue(new ModelNode("default-host")).setRestartAllServices()
             .setCapabilityReference(Capabilities.UNDERTOW_HOST_CAPABILITY, SERVER_NAME).build();
 
-    /**
-     * Optional HTTP authentication factory (same attribute name and capability as
-     * Undertow's {@code application-security-domain} resource). When configured, the
-     * subsystem registers its ClassLoader with the factory's security domain so that
-     * {@link org.wildfly.security.auth.server.SecurityDomain#getCurrent()} resolves
-     * during gRPC call processing, enabling {@link GrpcSecurity#SECURITY_IDENTITY_KEY}
-     * to be populated from credentials in the gRPC call metadata.
-     */
-    static final SimpleAttributeDefinition HTTP_AUTHENTICATION_FACTORY = new SimpleAttributeDefinitionBuilder(
-            "http-authentication-factory", ModelType.STRING)
-            .setAllowExpression(false)
-            .setRequired(false)
-            .setRestartAllServices()
-            .setCapabilityReference(Capabilities.HTTP_AUTHENTICATION_FACTORY_CAPABILITY)
-            .build();
-
     static final List<AttributeDefinition> ATTRIBUTES = List.of(MAX_INBOUND_MESSAGE_SIZE,
-            MAX_INBOUND_METADATA_SIZE, SERVER_NAME, VIRTUAL_HOST, HTTP_AUTHENTICATION_FACTORY);
+            MAX_INBOUND_METADATA_SIZE, SERVER_NAME, VIRTUAL_HOST);
 
     public static RuntimeCapability<Void> SERVER_CAPABILITY = RuntimeCapability.Builder.of("org.wildfly.grpc.server", false)
             .setServiceType(GrpcUndertowService.class).build();

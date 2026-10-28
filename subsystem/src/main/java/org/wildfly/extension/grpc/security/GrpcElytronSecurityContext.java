@@ -5,7 +5,6 @@
 package org.wildfly.extension.grpc.security;
 
 import java.security.Principal;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,24 +22,21 @@ import org.wildfly.security.auth.server.SecurityIdentity;
  * Elytron-backed implementation of Jakarta Security's {@link SecurityContext}.
  *
  * <p>WildFly's built-in {@link SecurityContext} reads from the Undertow exchange-based
- * security context (set by {@code ElytronContextAssociationHandler}), which is not
- * populated for gRPC requests that bypass the normal Undertow deployment handler chain.
+ * security context, which is not available on gRPC executor threads. This implementation
+ * reads from {@link SecurityDomain#getCurrent()}, which is populated by
+ * {@code ElytronSecurityIdentityInterceptor} wrapping every listener callback with
+ * {@link SecurityIdentity#runAs}.
  *
- * <p>This implementation reads directly from
- * {@link SecurityDomain#getCurrent()}.{@link SecurityDomain#getCurrentSecurityIdentity()},
- * which IS populated for gRPC service methods because {@code ElytronSecurityIdentityInterceptor}
- * wraps every listener callback with {@link SecurityIdentity#runAs}.
- *
- * <p>This enables standard Jakarta Security annotations such as {@code @RolesAllowed}
- * to work on CDI beans injected into gRPC services without any additional
- * configuration by the application developer.
+ * <p>Registered by {@link GrpcSecurityCdiExtension}, which vetoes WildFly's default
+ * {@link SecurityContext} bean and substitutes this one for CDI deployments that contain
+ * gRPC services.
  */
 public class GrpcElytronSecurityContext implements SecurityContext {
 
     @Override
     public Principal getCallerPrincipal() {
         final SecurityIdentity identity = getIdentity();
-        return identity != null && !identity.isAnonymous() ? identity.getPrincipal() : null;
+        return (identity != null && !identity.isAnonymous()) ? identity.getPrincipal() : null;
     }
 
     @Override
@@ -60,9 +56,7 @@ public class GrpcElytronSecurityContext implements SecurityContext {
         if (identity == null || identity.isAnonymous()) {
             return false;
         }
-        // Roles are mapped from the "groups" attribute by a role-decoder in the security domain
-        final Collection<String> groups = identity.getAttributes().get("groups");
-        return groups != null && groups.contains(role);
+        return identity.getRoles().contains(role);
     }
 
     @Override
@@ -71,19 +65,20 @@ public class GrpcElytronSecurityContext implements SecurityContext {
         if (identity == null || identity.isAnonymous()) {
             return Collections.emptySet();
         }
-        final Collection<String> groups = identity.getAttributes().get("groups");
-        return groups != null ? new HashSet<>(groups) : Collections.emptySet();
+        final Set<String> result = new HashSet<>();
+        identity.getRoles().forEach(result::add);
+        return Collections.unmodifiableSet(result);
     }
 
     @Override
     public boolean hasAccessToWebResource(String resource, String... methods) {
-        return false; // Not applicable for gRPC
+        return false;
     }
 
     @Override
     public AuthenticationStatus authenticate(HttpServletRequest request,
             HttpServletResponse response, AuthenticationParameters parameters) {
-        return AuthenticationStatus.NOT_DONE; // Not applicable for gRPC
+        return AuthenticationStatus.NOT_DONE;
     }
 
     private static SecurityIdentity getIdentity() {

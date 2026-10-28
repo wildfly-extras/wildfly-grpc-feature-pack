@@ -15,10 +15,8 @@ import jakarta.interceptor.InterceptorBinding;
 
 /**
  * CDI interceptor binding that activates {@link GrpcRolesAllowedInterceptor}.
- *
- * <p>Added automatically by {@link GrpcSecurityCdiExtension} to any annotated type
- * whose methods carry {@link jakarta.annotation.security.RolesAllowed}, so application
- * code only needs {@code @RolesAllowed} — no extra annotation required.
+ * Added automatically by {@link GrpcSecurityCdiExtension} to any annotated type
+ * whose methods carry {@link jakarta.annotation.security.RolesAllowed}.
  */
 @InterceptorBinding
 @Target({ElementType.TYPE, ElementType.METHOD})

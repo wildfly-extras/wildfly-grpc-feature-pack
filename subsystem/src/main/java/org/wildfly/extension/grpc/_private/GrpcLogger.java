@@ -66,4 +66,8 @@ public interface GrpcLogger extends BasicLogger {
             + "for production), or set enable-http2=\"true\" on the http-listener for plaintext h2c. "
             + "gRPC calls will fail until HTTP/2 is available.")
     void noHttp2ListenerConfigured(String deploymentName);
+
+    @LogMessage(level = INFO)
+    @Message(id = 15, value = "Registered gRPC service '%s' for deployment '%s' at context path '%s'")
+    void grpcServiceRegistered(String serviceName, String deploymentName, String contextPath);
 }

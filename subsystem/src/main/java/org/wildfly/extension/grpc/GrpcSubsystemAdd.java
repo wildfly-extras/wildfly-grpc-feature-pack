@@ -19,13 +19,14 @@ import org.jboss.dmr.ModelNode;
 import org.wildfly.extension.grpc.deployment.GrpcDependencyProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcDeploymentProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcServiceInstallProcessor;
+import org.wildfly.extension.grpc.deployment.GrpcServletInstallProcessor;
 import org.wildfly.extension.undertow.Host;
-import org.wildfly.security.auth.server.HttpAuthenticationFactory;
 
 class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     private static final int DEPENDENCIES_PRIORITY = 6304;
-    private static final int POST_MODULE_PRIORITY = 6305;
+    private static final int POST_MODULE_SCAN_PRIORITY = 6305;
+    private static final int POST_MODULE_SERVLET_PRIORITY = 6306;
     private static final int INSTALL_PRIORITY = 6306;
 
     static GrpcSubsystemAdd INSTANCE = new GrpcSubsystemAdd();
@@ -53,19 +54,10 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
         final int maxInboundMetadataSize = GrpcSubsystemDefinition.MAX_INBOUND_METADATA_SIZE
                 .resolveModelAttribute(context, model).asInt();
 
-        final String httpAuthFactoryName = GrpcSubsystemDefinition.HTTP_AUTHENTICATION_FACTORY
-                .resolveModelAttribute(context, model).asStringOrNull();
-        Supplier<HttpAuthenticationFactory> httpAuthFactorySupplier = null;
-        if (httpAuthFactoryName != null) {
-            httpAuthFactorySupplier = builder.requiresCapability(
-                    Capabilities.HTTP_AUTHENTICATION_FACTORY_CAPABILITY,
-                    HttpAuthenticationFactory.class, httpAuthFactoryName);
-        }
-
         final Consumer<GrpcUndertowService> provides = builder.provides(GrpcSubsystemDefinition.SERVER_CAPABILITY);
 
         final GrpcUndertowService service = new GrpcUndertowService(provides, undertowHost,
-                maxInboundMessageSize, maxInboundMetadataSize, httpAuthFactorySupplier);
+                maxInboundMessageSize, maxInboundMetadataSize);
 
         builder.setInstance(service).install();
 
@@ -74,7 +66,10 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
                 processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES,
                         DEPENDENCIES_PRIORITY, new GrpcDependencyProcessor());
                 processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.POST_MODULE,
-                        POST_MODULE_PRIORITY, new GrpcDeploymentProcessor());
+                        POST_MODULE_SCAN_PRIORITY, new GrpcDeploymentProcessor());
+                processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.POST_MODULE,
+                        POST_MODULE_SERVLET_PRIORITY,
+                        new GrpcServletInstallProcessor(maxInboundMessageSize, maxInboundMetadataSize));
                 processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.INSTALL,
                         INSTALL_PRIORITY, new GrpcServiceInstallProcessor());
             }
