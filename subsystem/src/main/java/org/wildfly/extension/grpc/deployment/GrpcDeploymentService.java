@@ -23,11 +23,14 @@ import org.jboss.msc.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
+import org.wildfly.extension.grpc.ElytronSecurityIdentityInterceptor;
 import org.wildfly.extension.grpc.WildFlyGrpcDeploymentRegistry;
 
 import io.grpc.BindableService;
 import io.grpc.ServerInterceptor;
+import io.grpc.ServerInterceptors;
 import io.grpc.ServerServiceDefinition;
+import io.grpc.util.MutableHandlerRegistry;
 
 class GrpcDeploymentService implements Service {
 
@@ -35,8 +38,10 @@ class GrpcDeploymentService implements Service {
     private final List<Class<? extends BindableService>> serviceClasses;
     private final List<String> interceptorClassNames;
     private final ClassLoader classLoader;
-    private final Supplier<WildFlyGrpcDeploymentRegistry> serverServiceSupplier;
+    private final Supplier<WildFlyGrpcDeploymentRegistry> routingRegistrySupplier;
     private final Supplier<BeanManager> beanManagerSupplier;
+    private final MutableHandlerRegistry handlerRegistry;
+    private final String contextPath;
 
     private final List<ServerServiceDefinition> registeredServices = new ArrayList<>();
     private final List<CreationalContext<?>> creationalContexts = new ArrayList<>();
@@ -45,47 +50,65 @@ class GrpcDeploymentService implements Service {
             final List<Class<? extends BindableService>> serviceClasses,
             final List<String> interceptorClassNames,
             final ClassLoader classLoader,
-            final Supplier<WildFlyGrpcDeploymentRegistry> serverServiceSupplier,
-            final Supplier<BeanManager> beanManagerSupplier) {
+            final Supplier<WildFlyGrpcDeploymentRegistry> routingRegistrySupplier,
+            final Supplier<BeanManager> beanManagerSupplier,
+            final MutableHandlerRegistry handlerRegistry,
+            final String contextPath) {
         this.deploymentName = deploymentName;
         this.serviceClasses = serviceClasses;
         this.interceptorClassNames = interceptorClassNames;
         this.classLoader = classLoader;
-        this.serverServiceSupplier = serverServiceSupplier;
+        this.routingRegistrySupplier = routingRegistrySupplier;
         this.beanManagerSupplier = beanManagerSupplier;
+        this.handlerRegistry = handlerRegistry;
+        this.contextPath = contextPath;
     }
 
     @Override
     public void start(final StartContext context) throws StartException {
-        final WildFlyGrpcDeploymentRegistry serverService = serverServiceSupplier.get();
-        if (!serverService.isHttp2Configured()) {
+        final WildFlyGrpcDeploymentRegistry routingRegistry = routingRegistrySupplier.get();
+        if (!routingRegistry.isHttp2Configured()) {
             LOGGER.noHttp2ListenerConfigured(deploymentName);
         }
+
         try {
-            // Interceptors are shared across all services of the deployment — instantiate once, not per service.
             final List<ServerInterceptor> interceptors = createInterceptors();
+            // Prepend the identity bridge interceptor so GrpcSecurity.SECURITY_IDENTITY_KEY is
+            // populated from the Elytron thread-local set by ElytronContextAssociationHandler.
+            // This runs in interceptCall() on the Undertow request thread, before gRPC dispatches
+            // the call to its executor — so the security context is captured before thread switch.
+            final List<ServerInterceptor> allInterceptors = new ArrayList<>();
+            allInterceptors.add(ElytronSecurityIdentityInterceptor.INSTANCE);
+            allInterceptors.addAll(interceptors);
             for (Class<? extends BindableService> serviceType : serviceClasses) {
                 final BindableService instance = createInstance(serviceType);
-                LOGGER.debugf("Registering gRPC service %s for deployment %s.", serviceType.getName(), deploymentName);
-                ServerServiceDefinition ssd = serverService.addService(deploymentName, instance, interceptors);
+                final ServerServiceDefinition ssd = ServerInterceptors.intercept(instance, allInterceptors);
+                // Register with the routing registry first. If this throws (duplicate service name
+                // across deployments), ssd is not yet in registeredServices, so the catch-block
+                // cleanup will not call unregisterService() for this entry — preserving the
+                // routing entry that was legitimately registered by another deployment.
+                routingRegistry.registerService(ssd.getServiceDescriptor().getName(), contextPath);
+                handlerRegistry.addService(ssd);
                 registeredServices.add(ssd);
+                LOGGER.grpcServiceRegistered(ssd.getServiceDescriptor().getName(), deploymentName, contextPath);
             }
         } catch (StartException | RuntimeException e) {
-            unregister(serverService, e);
+            unregister(routingRegistry, e);
             throw e;
         }
     }
 
     @Override
     public void stop(final StopContext context) {
-        unregister(serverServiceSupplier.get(), null);
+        unregister(routingRegistrySupplier.get(), null);
     }
 
-    private void unregister(final WildFlyGrpcDeploymentRegistry serverService, final Exception cause) {
-        if (serverService == null) {
-            return;
+    private void unregister(final WildFlyGrpcDeploymentRegistry routingRegistry, final Exception cause) {
+        if (routingRegistry != null) {
+            registeredServices.forEach(ssd -> runSafely(
+                    () -> routingRegistry.unregisterService(ssd.getServiceDescriptor().getName()), cause));
         }
-        registeredServices.forEach(ssd -> runSafely(() -> serverService.removeService(ssd), cause));
+        registeredServices.forEach(ssd -> runSafely(() -> handlerRegistry.removeService(ssd), cause));
         registeredServices.clear();
         creationalContexts.forEach(ctx -> runSafely(ctx::release, cause));
         creationalContexts.clear();
@@ -112,7 +135,6 @@ class GrpcDeploymentService implements Service {
         } catch (ClassNotFoundException e) {
             throw new StartException(e);
         }
-        // Sort by @Priority descending; unannotated interceptors come last.
         classes.sort(Comparator.comparingInt((Class<? extends ServerInterceptor> clazz) -> {
             Priority p = clazz.getAnnotation(Priority.class);
             return p != null ? p.value() : Integer.MAX_VALUE;

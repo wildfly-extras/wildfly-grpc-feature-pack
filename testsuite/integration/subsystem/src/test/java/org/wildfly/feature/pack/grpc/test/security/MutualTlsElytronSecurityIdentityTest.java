@@ -21,6 +21,7 @@ import org.jboss.as.controller.client.helpers.Operations.CompositeOperationBuild
 import org.jboss.dmr.ModelNode;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -69,18 +70,18 @@ public class MutualTlsElytronSecurityIdentityTest {
     static final String REALM_NAME = "grpc-mtls-realm";
     static final String DECODER_NAME = "grpc-cn-decoder";
     static final String DOMAIN_NAME = "grpc-mtls-domain";
-    static final String HTTP_AUTH_FACTORY_NAME = "grpc-mtls-http-auth";
 
     private static ManagedChannel channel;
     private static GreeterGrpc.GreeterBlockingStub blockingStub;
 
     // -------------------------------------------------------------------------
-    // Server setup: Elytron realm + security domain + http-authentication-factory
+    // Server setup: Elytron realm + security domain
     // -------------------------------------------------------------------------
 
     /**
-     * Configures Elytron for certificate-based authentication and wires the
-     * {@code http-authentication-factory} into the gRPC subsystem.
+     * Configures an Elytron filesystem-realm with the client certificate identity,
+     * a principal decoder for the X.500 CN, and an {@code application-security-domain}
+     * mapping that makes the security domain available inside the WAR's handler chain.
      * Runs AFTER {@link TwowaySecureHelloWorldTest.MutualTlsServerSetupTask},
      * which enables {@code need-client-auth=true} on the HTTPS listener.
      */
@@ -116,21 +117,19 @@ public class MutualTlsElytronSecurityIdentityTest {
             op.get("realms").add().get("realm").set(REALM_NAME);
             builder.addStep(op);
 
-            // 4. http-authentication-factory with CLIENT_CERT mechanism
-            ModelNode factoryAddress = Operations.createAddress(
-                    "subsystem", "elytron", "http-authentication-factory", HTTP_AUTH_FACTORY_NAME);
-            op = Operations.createAddOperation(factoryAddress);
-            op.get("http-server-mechanism-factory").set("global");
+            // 4. Wire into Undertow's application-security-domain using the security-domain
+            // attribute (no http-authentication-factory). This makes SecurityDomain.getCurrent()
+            // available inside the WAR's handler chain without activating any HTTP authentication
+            // mechanism. The CLIENT_CERT HTTP mechanism is intentionally omitted: the Elytron
+            // filesystem-realm cannot verify X509PeerCertificateChainEvidence, so using it would
+            // cause a 403 Forbidden before the request reaches the GrpcServlet. The inner handler
+            // chain wrapper (GrpcServletInstallProcessor) authenticates the TLS peer certificate
+            // directly via ServerAuthenticationContext.setAuthenticationPrincipal().
+            ModelNode appDomainAddress = Operations.createAddress(
+                    "subsystem", "undertow", "application-security-domain", DOMAIN_NAME);
+            op = Operations.createAddOperation(appDomainAddress);
             op.get("security-domain").set(DOMAIN_NAME);
-            op.get("mechanism-configurations").add()
-                    .get("mechanism-name").set("CLIENT_CERT");
             builder.addStep(op);
-
-            // 5. Wire the http-authentication-factory into the gRPC subsystem
-            builder.addStep(Operations.createWriteAttributeOperation(
-                    Operations.createAddress("subsystem", "grpc"),
-                    "http-authentication-factory",
-                    new ModelNode(HTTP_AUTH_FACTORY_NAME)));
 
             ModelNode compositeResult = client.getControllerClient().execute(builder.build());
             if (!Operations.isSuccessfulOutcome(compositeResult)) {
@@ -138,7 +137,7 @@ public class MutualTlsElytronSecurityIdentityTest {
                         + Operations.getFailureDescription(compositeResult));
             }
 
-            // 6. Add the client identity (CN=client) to the realm
+            // 5. Add the client identity (CN=client) to the realm
             ModelNode removeOp = Operations.createOperation("remove-identity", realmAddress);
             removeOp.get("identity").set(CLIENT_CERT_CN);
             client.getControllerClient().execute(removeOp); // ignore outcome
@@ -159,12 +158,24 @@ public class MutualTlsElytronSecurityIdentityTest {
     // Deployment
     // -------------------------------------------------------------------------
 
+    private static final String JBOSS_WEB_XML =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<jboss-web>\n"
+            + "    <security-domain>" + DOMAIN_NAME + "</security-domain>\n"
+            + "</jboss-web>\n";
+
     @Deployment
     public static Archive<?> createTestArchive() {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "MutualTlsElytronSecurityIdentityTest.war");
         war.addClasses(SecurityIdentityGreeterServiceImpl.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
+        // No web.xml: omitting <login-config> prevents the CLIENT_CERT HTTP mechanism from
+        // running and causing 403 (filesystem-realm cannot verify X509 certificate evidence).
+        // The jboss-web.xml security-domain declaration is sufficient to make
+        // SecurityDomain.getCurrent() available; the inner handler chain wrapper then
+        // authenticates the TLS peer certificate directly.
+        war.addAsWebInfResource(new StringAsset(JBOSS_WEB_XML), "jboss-web.xml");
         return war;
     }
 
