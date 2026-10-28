@@ -20,6 +20,7 @@ import org.jboss.as.controller.client.helpers.Operations.CompositeOperationBuild
 import org.jboss.dmr.ModelNode;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -39,12 +40,12 @@ import messages.HelloRequest;
 /**
  * Verifies that the built-in {@code ElytronSecurityIdentityInterceptor} propagates an
  * authenticated Elytron {@link org.wildfly.security.auth.server.SecurityIdentity} into
- * the gRPC {@link io.grpc.Context} when {@code http-authentication-factory} is configured
- * on the gRPC subsystem.
+ * the gRPC {@link io.grpc.Context} when the WAR has a security domain configured.
  *
  * <p>The test configures a real Elytron filesystem-realm with user {@code alice}, wires a
- * BASIC-auth HTTP authentication factory into {@code /subsystem=grpc}, then makes gRPC calls
- * with and without {@code Authorization: Basic} credentials and asserts the result.
+ * BASIC-auth HTTP authentication factory into Undertow's {@code application-security-domain},
+ * then makes gRPC calls with and without {@code Authorization: Basic} credentials and asserts
+ * the result.
  */
 @RunWith(Arquillian.class)
 @ServerSetup(SecurityIdentityTest.ElytronSecuritySetupTask.class)
@@ -97,11 +98,15 @@ public class SecurityIdentityTest {
             mechConfig.get("mechanism-realm-configurations").add().get("realm-name").set(REALM_NAME);
             builder.addStep(op);
 
-            // Wire the HTTP authentication factory into the gRPC subsystem
-            builder.addStep(Operations.createWriteAttributeOperation(
-                    Operations.createAddress("subsystem", "grpc"),
-                    "http-authentication-factory",
-                    new ModelNode(HTTP_AUTH_FACTORY_NAME)));
+            // Wire the security domain into Undertow's application-security-domain mapping.
+            // override-deployment-config=true forces PRO_ACTIVE authentication so credentials
+            // in HTTP headers (including gRPC metadata) are processed on every request.
+            ModelNode appDomainAddress = Operations.createAddress(
+                    "subsystem", "undertow", "application-security-domain", DOMAIN_NAME);
+            op = Operations.createAddOperation(appDomainAddress);
+            op.get("http-authentication-factory").set(HTTP_AUTH_FACTORY_NAME);
+            op.get("override-deployment-config").set(true);
+            builder.addStep(op);
 
             ModelNode compositeResult = client.getControllerClient().execute(builder.build());
             if (!Operations.isSuccessfulOutcome(compositeResult)) {
@@ -133,16 +138,28 @@ public class SecurityIdentityTest {
                         + Operations.getFailureDescription(pwResult));
             }
 
-            // Force a full reload so the gRPC subsystem restarts with the new http-authentication-factory.
-            // setRestartAllServices() on the attribute marks the server as reload-required, but
-            // using reloadIfRequired() is fragile if state transitions aren't detected correctly.
             ServerReload.executeReloadAndWaitForCompletion(client.getControllerClient());
         }
     }
 
     // -------------------------------------------------------------------------
-    // Deployment: plain WAR, no jboss-web.xml needed
+    // Deployment
     // -------------------------------------------------------------------------
+
+    private static final String JBOSS_WEB_XML =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<jboss-web>\n"
+            + "    <security-domain>" + DOMAIN_NAME + "</security-domain>\n"
+            + "</jboss-web>\n";
+
+    private static final String WEB_XML =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">\n"
+            + "    <login-config>\n"
+            + "        <auth-method>BASIC</auth-method>\n"
+            + "        <realm-name>" + REALM_NAME + "</realm-name>\n"
+            + "    </login-config>\n"
+            + "</web-app>\n";
 
     @Deployment
     public static Archive<?> createTestArchive() {
@@ -150,6 +167,8 @@ public class SecurityIdentityTest {
         war.addClasses(SecurityIdentityGreeterServiceImpl.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
+        war.addAsWebInfResource(new StringAsset(WEB_XML), "web.xml");
+        war.addAsWebInfResource(new StringAsset(JBOSS_WEB_XML), "jboss-web.xml");
         return war;
     }
 
