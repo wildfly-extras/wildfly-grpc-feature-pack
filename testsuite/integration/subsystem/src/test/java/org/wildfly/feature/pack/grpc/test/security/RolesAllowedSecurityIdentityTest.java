@@ -39,23 +39,22 @@ import io.grpc.StatusRuntimeException;
 import messages.HelloRequest;
 
 /**
- * Verifies that {@code @RolesAllowed} is enforced on CDI beans called from gRPC service methods
- * when the gRPC subsystem's {@code ElytronSecurityIdentityInterceptor} wraps callbacks with
- * {@link org.wildfly.security.auth.server.SecurityIdentity#runAs}.
+ * Verifies that role-based access control works for CDI beans called from gRPC service methods,
+ * using the Elytron {@link org.wildfly.security.auth.server.SecurityIdentity} propagated by the
+ * subsystem's built-in {@code ElytronSecurityIdentityInterceptor}.
  *
- * <p>The test configures the same Elytron filesystem-realm as {@link SecurityIdentityTest} but
- * additionally:
+ * <p>The test configures an Elytron filesystem-realm with:
  * <ul>
- *   <li>Assigns alice the group {@code grpc-user} (mapped to a role via
+ *   <li>Alice assigned the group {@code grpc-user} (mapped to a role via
  *       {@code simple-role-decoder}).</li>
- *   <li>Configures the security domain with a role-decoder so that
- *       {@code @RolesAllowed("grpc-user")} passes for alice and fails for anonymous callers.</li>
+ *   <li>A security domain wired into Undertow's {@code application-security-domain} so that
+ *       {@code SecurityDomain.getCurrent()} is available inside the WAR handler chain.</li>
  * </ul>
  *
  * <p>The {@link RolesAllowedGreeterServiceImpl} gRPC service injects a CDI bean
- * ({@link RoleProtectedGreetingService}) whose {@code greet()} method is annotated with
- * {@code @RolesAllowed("grpc-user")}. Access is granted only when the caller's identity
- * carries the {@code grpc-user} role.
+ * ({@link RoleProtectedGreetingService}) whose {@code greet()} method performs an explicit
+ * role check via {@link org.wildfly.extension.grpc.GrpcSecurity#SECURITY_IDENTITY_KEY}.
+ * Access is granted only when the caller's identity carries the {@code grpc-user} role.
  */
 @RunWith(Arquillian.class)
 @ServerSetup(RolesAllowedSecurityIdentityTest.ElytronRolesSetupTask.class)
@@ -122,19 +121,14 @@ public class RolesAllowedSecurityIdentityTest {
             mechConfig.get("mechanism-realm-configurations").add().get("realm-name").set(REALM_NAME);
             builder.addStep(op);
 
-            // 5. Wire into /subsystem=grpc
-            builder.addStep(Operations.createWriteAttributeOperation(
-                    Operations.createAddress("subsystem", "grpc"),
-                    "http-authentication-factory",
-                    new ModelNode(HTTP_AUTH_FACTORY_NAME)));
-
-            // 6. Undertow application-security-domain mapping — required to activate
-            // WildFly's CDI security interceptors (which enforce @RolesAllowed) for
-            // deployments that declare <security-domain> in jboss-web.xml.
+            // 5. Undertow application-security-domain mapping.
+            // override-deployment-config=true forces PRO_ACTIVE mode so credentials are
+            // processed on every request, enabling SecurityDomain.getCurrent() in interceptCall().
             ModelNode appDomainAddress = Operations.createAddress(
                     "subsystem", "undertow", "application-security-domain", DOMAIN_NAME);
             op = Operations.createAddOperation(appDomainAddress);
             op.get("http-authentication-factory").set(HTTP_AUTH_FACTORY_NAME);
+            op.get("override-deployment-config").set(true);
             builder.addStep(op);
 
             ModelNode compositeResult = client.getControllerClient().execute(builder.build());
@@ -187,20 +181,23 @@ public class RolesAllowedSecurityIdentityTest {
     // Minimal web.xml required so WildFly parses jboss-web.xml into WarMetaData.
     private static final String WEB_XML =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\"/>\n";
+            + "<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">\n"
+            + "    <login-config>\n"
+            + "        <auth-method>BASIC</auth-method>\n"
+            + "        <realm-name>" + REALM_NAME + "</realm-name>\n"
+            + "    </login-config>\n"
+            + "</web-app>\n";
 
     @Deployment
     public static Archive<?> createTestArchive() {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "RolesAllowedSecurityIdentityTest.war");
-        // No @ElytronRolesAllowedBinding needed — GrpcSecurityCdiExtension automatically applies
-        // the gRPC @RolesAllowed interceptor to any CDI bean whose methods have @RolesAllowed.
         war.addClasses(RolesAllowedGreeterServiceImpl.class, RoleProtectedGreetingService.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
         // beans.xml enables CDI — required for @Inject and @RolesAllowed CDI interceptor
         war.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        // Security domain declaration activates WildFly's CDI @RolesAllowed interceptors
         war.addAsWebInfResource(new StringAsset(WEB_XML), "web.xml");
+        // jboss-web.xml declares the security domain so ElytronContextAssociationHandler activates
         war.addAsWebInfResource(new StringAsset(JBOSS_WEB_XML), "jboss-web.xml");
         return war;
     }

@@ -27,7 +27,6 @@
             <xs:attribute name="max-inbound-metadata-size" type="nonnegativeJavaInt" default="8192"/>
             <xs:attribute name="server-name" type="xs:string" default="default-server" />
             <xs:attribute name="virtual-host" type="xs:string" default="default-host" />
-            <xs:attribute name="http-authentication-factory" type="xs:string" />
     </xs:complexType>
 
     <xs:simpleType name="nonnegativeJavaInt" id="nonnegativeJavaInt">
