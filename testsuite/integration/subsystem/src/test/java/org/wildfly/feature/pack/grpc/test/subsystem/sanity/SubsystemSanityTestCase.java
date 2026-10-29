@@ -2,7 +2,7 @@
  *  Copyright The WildFly Authors
  *  SPDX-License-Identifier: Apache-2.0
  */
-package org.wildfly.test.feature.pack.grpc.subsystem.sanity;
+package org.wildfly.feature.pack.grpc.test.subsystem.sanity;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

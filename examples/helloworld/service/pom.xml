@@ -17,6 +17,7 @@
     </parent>
 
     <artifactId>wildfly-grpc-examples-helloworld-service</artifactId>
+    <packaging>war</packaging>
     <name>WildFly gRPC :: Examples :: Hello World :: Service</name>
 
     <properties>
@@ -27,6 +28,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>wildfly-grpc-examples-helloworld-proto</artifactId>
+            <!-- The gRPC and protobuf jars are provided at runtime by the
+                 WildFly module system (org.wildfly.grpc-dependency / io.grpc-all).
+                 Marking provided prevents them from being bundled in WEB-INF/lib,
+                 which would expose internal gRPC classes to Jandex scanning. -->
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -72,6 +78,32 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-keystores</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/server-content/standalone/configuration</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${maven.multiModuleProjectDirectory}/ssl-gen/target/generated-ssl</directory>
+                                    <includes>
+                                        <include>configure-elytron-tls.cli</include>
+                                        <include>server.keystore.p12</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
@@ -91,7 +123,6 @@
                     </feature-packs>
                     <layers>
                         <layer>jaxrs-server</layer>
-                        <!-- Layers from this FP  -->
                         <layer>grpc</layer>
                     </layers>
                     <galleon-options>
@@ -100,6 +131,16 @@
                     </galleon-options>
                     <stability>preview</stability>
                     <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
+                    <extra-server-content-dirs>
+                        <extra-content-dir>${project.build.directory}/server-content</extra-content-dir>
+                    </extra-server-content-dirs>
+                    <packaging-scripts>
+                        <execution>
+                            <scripts>
+                                <script>${project.build.directory}/server-content/standalone/configuration/configure-elytron-tls.cli</script>
+                            </scripts>
+                        </execution>
+                    </packaging-scripts>
                 </configuration>
                 <executions>
                     <execution>

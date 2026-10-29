@@ -22,8 +22,8 @@ public enum SslMode {
     TWOWAY("twoway");
 
     private static final String HOST = "localhost";
-    private static final int PORT = 9555;
-    private static final String TARGET = HOST + ":" + PORT;
+    private static final int UNSECURE_PORT = 8080;
+    private static final int SECURE_PORT = 8443;
 
     private final String label;
 
@@ -46,12 +46,12 @@ public enum SslMode {
             ClassLoader classLoader = SslMode.class.getClassLoader();
             switch (this) {
                 case NONE:
-                    return ManagedChannelBuilder.forTarget(TARGET)
+                    return ManagedChannelBuilder.forTarget(HOST + ":" + UNSECURE_PORT)
                             .usePlaintext().build();
                 case ONEWAY:
                     try (InputStream trustStore = classLoader.getResourceAsStream("client.truststore.pem")) {
                         ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore).build();
-                        return Grpc.newChannelBuilderForAddress(HOST, PORT, creds).build();
+                        return Grpc.newChannelBuilderForAddress(HOST, SECURE_PORT, creds).build();
                     }
                 case TWOWAY:
                     KeyStore clientKeyStore = KeyStore.getInstance("PKCS12");
@@ -64,7 +64,7 @@ public enum SslMode {
                         ChannelCredentials creds = TlsChannelCredentials.newBuilder().trustManager(trustStore)
                                 .keyManager(kmf.getKeyManagers())
                                 .build();
-                        return Grpc.newChannelBuilderForAddress(HOST, PORT, creds).build();
+                        return Grpc.newChannelBuilderForAddress(HOST, SECURE_PORT, creds).build();
                     }
                 default:
                     throw new IllegalStateException("Unexpected ssl mode: " + this);

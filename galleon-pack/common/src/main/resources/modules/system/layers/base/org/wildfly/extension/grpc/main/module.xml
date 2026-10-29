@@ -20,14 +20,17 @@
         <module name="io.smallrye.jandex" />
         <module name="org.jboss.logging" />
         <module name="org.jboss.modules" />
-        <module name="org.jboss.as.network" />
         <module name="org.jboss.as.version" />
         <module name="org.jboss.staxmapper" />
         <module name="org.wildfly.security.manager" />
         <module name="org.wildfly.subsystem" />
-        <module name="io.netty.netty-common" />
-        <module name="io.netty.netty-codec" optional="true" />
-        <module name="io.netty.netty-handler" optional="true" />
+        <module name="org.wildfly.extension.undertow" />
+        <module name="org.jboss.as.web-common" />
+        <module name="org.jboss.metadata.web" />
+        <module name="io.undertow.core" />
+        <module name="io.undertow.servlet" />
+        <module name="jakarta.servlet.api" />
+        <module name="io.grpc.servlet.jakarta" />
         <!--
                 Additional module dependencies.
                 If they contain any classes that should be exposed to the user's code,
@@ -37,5 +40,6 @@
         <module name="org.wildfly.grpc-dependency" />
         <module name="org.jboss.as.weld.common" optional="true" />
         <module name="jakarta.enterprise.api" optional="true" />
+        <module name="jakarta.security.enterprise.api" optional="true" />
     </dependencies>
 </module>
