@@ -4,16 +4,16 @@
  */
 package org.wildfly.extension.grpc;
 
-import static org.jboss.as.controller.PersistentResourceXMLDescription.builder;
-import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_NAME;
-import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_PATH;
-
 import org.jboss.as.controller.PersistentResourceXMLDescription;
 import org.jboss.as.controller.PersistentSubsystemSchema;
 import org.jboss.as.controller.SubsystemSchema;
 import org.jboss.as.controller.xml.VersionedNamespace;
 import org.jboss.as.version.Stability;
 import org.jboss.staxmapper.IntVersion;
+
+import static org.jboss.as.controller.PersistentResourceXMLDescription.builder;
+import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_NAME;
+import static org.wildfly.extension.grpc.Paths.SUBSYSTEM;
 
 enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchema> {
     // 1.0: Netty-based server (removed in servlet rewrite — kept so the parser rejects old
@@ -25,7 +25,7 @@ enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchem
             // Returning an empty description causes the parser to reject unknown attributes,
             // surfacing a clear error rather than silently dropping Netty-only configuration.
             // TODO - How can this avoid this deprecated variant?
-            return builder(SUBSYSTEM_PATH, getNamespace()).build();
+            return builder(SUBSYSTEM, getNamespace()).build();
         }
     },
     // 2.0: Undertow/servlet-based server
@@ -33,7 +33,7 @@ enum GrpcSubsystemSchema implements PersistentSubsystemSchema<GrpcSubsystemSchem
         @Override
         public PersistentResourceXMLDescription getXMLDescription() {
             // TODO - How can this avoid this deprecated variant?
-            return builder(SUBSYSTEM_PATH, getNamespace())
+            return builder(SUBSYSTEM, getNamespace())
                     .addAttributes(GrpcSubsystemDefinition.MAX_INBOUND_MESSAGE_SIZE,
                             GrpcSubsystemDefinition.MAX_INBOUND_METADATA_SIZE,
                             GrpcSubsystemDefinition.SERVER_NAME,

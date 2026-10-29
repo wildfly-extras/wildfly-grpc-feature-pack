@@ -90,7 +90,7 @@ class GrpcDeploymentService implements Service {
                 routingRegistry.registerService(ssd.getServiceDescriptor().getName(), contextPath);
                 handlerRegistry.addService(ssd);
                 registeredServices.add(ssd);
-                LOGGER.grpcServiceRegistered(ssd.getServiceDescriptor().getName(), deploymentName, contextPath);
+                LOGGER.grpcServiceRegistered(ssd.getServiceDescriptor().getName(), deploymentName);
             }
         } catch (StartException | RuntimeException e) {
             unregister(routingRegistry, e);

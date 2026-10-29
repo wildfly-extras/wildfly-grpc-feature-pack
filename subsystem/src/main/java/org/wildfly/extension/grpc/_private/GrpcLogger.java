@@ -68,6 +68,6 @@ public interface GrpcLogger extends BasicLogger {
     void noHttp2ListenerConfigured(String deploymentName);
 
     @LogMessage(level = INFO)
-    @Message(id = 15, value = "Registered gRPC service '%s' for deployment '%s' at context path '%s'")
-    void grpcServiceRegistered(String serviceName, String deploymentName, String contextPath);
+    @Message(id = 15, value = "Registered gRPC service '%s' for deployment '%s'")
+    void grpcServiceRegistered(String serviceName, String deploymentName);
 }
