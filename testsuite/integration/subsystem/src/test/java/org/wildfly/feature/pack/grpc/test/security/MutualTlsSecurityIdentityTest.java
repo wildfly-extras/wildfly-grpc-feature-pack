@@ -95,26 +95,19 @@ public class MutualTlsSecurityIdentityTest {
     }
 
     /**
-     * Makes a mTLS gRPC call and checks whether the Elytron {@code SecurityIdentity} was
-     * propagated into the gRPC context by the built-in interceptor.
-     *
-     * <p>If the identity is propagated, the service returns the client certificate's principal
-     * name. If not (i.e. {@code SecurityDomain.getCurrent()} was null in the interceptor),
-     * the service returns {@code "anonymous"}.
-     */
-    /**
      * Verifies that mTLS at the Undertow listener level does NOT automatically propagate
-     * a {@link org.wildfly.security.auth.server.SecurityIdentity} to the gRPC context.
+     * a {@link org.wildfly.security.auth.server.SecurityIdentity} to the gRPC context
+     * when the WAR has no security domain configured.
      *
      * <p>WildFly's mTLS setup ({@code need-client-auth=true}) validates the client
-     * certificate at the TLS layer but does not run the Elytron
-     * {@code ElytronContextAssociationHandler} for gRPC requests (which bypass the
-     * per-deployment handler chain). Therefore {@code SecurityDomain.getCurrent()}
-     * is null in the gRPC interceptor even with mutual TLS.
+     * certificate at the TLS layer, but without a security domain declared in
+     * {@code jboss-web.xml} and a matching {@code application-security-domain} mapping
+     * in Undertow, {@code ElytronContextAssociationHandler} is not activated for the
+     * deployment and the identity bridge in {@code GrpcServletInstallProcessor} skips
+     * identity propagation. The result is an anonymous identity.
      *
-     * <p>To propagate identity for gRPC calls, the gRPC subsystem needs its own
-     * mechanism (e.g. an {@code elytron-security-domain} management attribute that
-     * lets the interceptor authenticate directly from gRPC call metadata).
+     * <p>To propagate the client certificate identity, configure a security domain on
+     * the WAR as demonstrated by {@link MutualTlsElytronSecurityIdentityTest}.
      */
     @Test
     public void securityIdentityIsAnonymousWithoutElytronConfig() {
