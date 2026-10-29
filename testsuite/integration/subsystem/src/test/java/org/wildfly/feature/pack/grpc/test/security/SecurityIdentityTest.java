@@ -4,9 +4,6 @@
  */
 package org.wildfly.feature.pack.grpc.test.security;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -28,12 +25,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.feature.pack.grpc.test.helloworld.GreeterGrpc;
+import org.wildfly.feature.pack.grpc.test.utility.BasicCallCredentials;
 import org.wildfly.feature.pack.grpc.test.utility.ServerReload;
 
-import io.grpc.CallCredentials;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.Metadata;
 import messages.HelloReply;
 import messages.HelloRequest;
 
@@ -196,7 +192,7 @@ public class SecurityIdentityTest {
     @Test
     public void securityIdentityIsAvailableForAuthenticatedUser() {
         HelloReply reply = blockingStub
-                .withCallCredentials(basicAuth(TEST_USER, TEST_PASSWORD))
+                .withCallCredentials(new BasicCallCredentials(TEST_USER, TEST_PASSWORD))
                 .sayHello(HelloRequest.newBuilder().setName("test").build());
         Assert.assertEquals(
                 "Authenticated gRPC call must expose the caller's principal name via SECURITY_IDENTITY_KEY",
@@ -211,27 +207,4 @@ public class SecurityIdentityTest {
                 "anonymous", reply.getMessage());
     }
 
-    // -------------------------------------------------------------------------
-    // Helper: HTTP BASIC call credentials
-    // -------------------------------------------------------------------------
-
-    private static CallCredentials basicAuth(String username, String password) {
-        final String encoded = Base64.getEncoder()
-                .encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
-        return new CallCredentials() {
-            @Override
-            public void applyRequestMetadata(RequestInfo requestInfo, Executor appExecutor,
-                    MetadataApplier applier) {
-                final Metadata metadata = new Metadata();
-                metadata.put(
-                        Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER),
-                        "Basic " + encoded);
-                applier.apply(metadata);
-            }
-
-            @Override
-            public void thisUsesUnstableApi() {
-            }
-        };
-    }
 }

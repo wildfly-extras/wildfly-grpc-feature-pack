@@ -16,8 +16,6 @@ import org.wildfly.feature.pack.grpc.test.helloworld.GreeterGrpc;
 
 /**
  * gRPC service implementation that delegates to {@link RoleProtectedGreetingService}.
- * The role check in the CDI bean uses {@link org.wildfly.extension.grpc.GrpcSecurity#SECURITY_IDENTITY_KEY}
- * which is populated by the subsystem's built-in {@code ElytronSecurityIdentityInterceptor}.
  */
 @Dependent
 public class RolesAllowedGreeterServiceImpl extends GreeterGrpc.GreeterImplBase {

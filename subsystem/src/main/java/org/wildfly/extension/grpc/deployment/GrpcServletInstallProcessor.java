@@ -7,9 +7,11 @@ package org.wildfly.extension.grpc.deployment;
 import static org.wildfly.extension.grpc._private.GrpcLogger.LOGGER;
 
 import java.net.InetSocketAddress;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+import io.undertow.server.SSLSessionInfo;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
@@ -62,7 +64,7 @@ public class GrpcServletInstallProcessor implements DeploymentUnitProcessor {
         // extension callback where DeploymentInfo is fully populated.
 
         final MutableHandlerRegistry registry = new MutableHandlerRegistry();
-        final GrpcServlet grpcServlet = (GrpcServlet) new ServletServerBuilder()
+        final GrpcServlet grpcServlet = new ServletServerBuilder()
                 .maxInboundMessageSize(maxInboundMessageSize)
                 .maxInboundMetadataSize(maxInboundMetadataSize)
                 .fallbackHandlerRegistry(registry)
@@ -97,7 +99,7 @@ public class GrpcServletInstallProcessor implements DeploymentUnitProcessor {
                     // Insert an identity-bridge handler at the FRONT of the inner handler chain list
                     // (index 0, innermost). ElytronRunAsHandler (appended later by
                     // AuthenticationManager.configure()) becomes the outermost inner handler and runs
-                    // FIRST — calling alice.runAs() — then our bridge runs inside that scope.
+                    // FIRST then our bridge runs inside that scope.
                     // For unsecured WARs the bridge is a no-op; pass through directly.
                     deploymentInfo.getInnerHandlerChainWrappers().add(0, next -> exchange -> {
                         if (!hasSecurityDomain) {
@@ -113,23 +115,18 @@ public class GrpcServletInstallProcessor implements DeploymentUnitProcessor {
                         // the TLS session and authenticate it explicitly via the security domain.
                         if ((identity == null || identity.isAnonymous()) && domain != null) {
                             try {
-                                final io.undertow.server.SSLSessionInfo sslInfo =
+                                final SSLSessionInfo sslInfo =
                                         exchange.getConnection().getSslSessionInfo();
                                 if (sslInfo != null) {
-                                    final java.security.cert.Certificate[] certs =
+                                    final Certificate[] certs =
                                             sslInfo.getPeerCertificates();
                                     if (certs != null && certs.length > 0) {
                                         final X509Certificate x509 = (X509Certificate) certs[0];
-                                        final ServerAuthenticationContext sac =
-                                                domain.createNewAuthenticationContext();
-                                        try {
-                                            sac.setAuthenticationPrincipal(
-                                                    x509.getSubjectX500Principal());
+                                        try (ServerAuthenticationContext sac = domain.createNewAuthenticationContext()) {
+                                            sac.setAuthenticationPrincipal(x509.getSubjectX500Principal());
                                             if (sac.authorize()) {
                                                 identity = sac.getAuthorizedIdentity();
                                             }
-                                        } finally {
-                                            sac.close();
                                         }
                                     }
                                 }
@@ -138,8 +135,7 @@ public class GrpcServletInstallProcessor implements DeploymentUnitProcessor {
                             }
                         }
 
-                        final InetSocketAddress remoteAddr = (InetSocketAddress)
-                                exchange.getConnection().getPeerAddress(InetSocketAddress.class);
+                        final InetSocketAddress remoteAddr = exchange.getConnection().getPeerAddress(InetSocketAddress.class);
                         if (identity != null && remoteAddr != null) {
                             GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR.put(remoteAddr, identity);
                             // Clean up when the connection closes rather than when individual

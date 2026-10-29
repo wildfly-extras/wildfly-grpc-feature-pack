@@ -14,13 +14,20 @@ import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
-import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.wildfly.extension.grpc.deployment.GrpcDependencyProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcDeploymentProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcServiceInstallProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcServletInstallProcessor;
 import org.wildfly.extension.undertow.Host;
+
+import static org.jboss.as.server.deployment.Phase.DEPENDENCIES;
+import static org.jboss.as.server.deployment.Phase.INSTALL;
+import static org.jboss.as.server.deployment.Phase.POST_MODULE;
+import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_NAME;
+import static org.wildfly.extension.grpc.GrpcSubsystemDefinition.MAX_INBOUND_MESSAGE_SIZE;
+import static org.wildfly.extension.grpc.GrpcSubsystemDefinition.MAX_INBOUND_METADATA_SIZE;
+import static org.wildfly.extension.grpc.GrpcSubsystemDefinition.SERVER_CAPABILITY;
 
 class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
@@ -40,7 +47,7 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
             throws OperationFailedException {
 
         final CapabilityServiceTarget target = context.getCapabilityServiceTarget();
-        final CapabilityServiceBuilder<?> builder = target.addCapability(GrpcSubsystemDefinition.SERVER_CAPABILITY);
+        final CapabilityServiceBuilder<?> builder = target.addCapability(SERVER_CAPABILITY);
 
         final String serverNameRef = GrpcSubsystemDefinition.SERVER_NAME
                 .resolveModelAttribute(context, model).asString();
@@ -49,28 +56,28 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
         final Supplier<Host> undertowHost = builder.requiresCapability(
                 Capabilities.UNDERTOW_HOST_CAPABILITY, Host.class, serverNameRef, virtualHostRef);
 
-        final int maxInboundMessageSize = GrpcSubsystemDefinition.MAX_INBOUND_MESSAGE_SIZE
-                .resolveModelAttribute(context, model).asInt();
-        final int maxInboundMetadataSize = GrpcSubsystemDefinition.MAX_INBOUND_METADATA_SIZE
-                .resolveModelAttribute(context, model).asInt();
+        final Consumer<GrpcUndertowService> provides = builder.provides(SERVER_CAPABILITY);
 
-        final Consumer<GrpcUndertowService> provides = builder.provides(GrpcSubsystemDefinition.SERVER_CAPABILITY);
-
-        final GrpcUndertowService service = new GrpcUndertowService(provides, undertowHost,
-                maxInboundMessageSize, maxInboundMetadataSize);
+        final GrpcUndertowService service = new GrpcUndertowService(provides, undertowHost
+        );
 
         builder.setInstance(service).install();
 
+        final int maxInboundMessageSize = MAX_INBOUND_MESSAGE_SIZE
+                .resolveModelAttribute(context, model).asInt();
+        final int maxInboundMetadataSize = MAX_INBOUND_METADATA_SIZE
+                .resolveModelAttribute(context, model).asInt();
+
         context.addStep(new AbstractDeploymentChainStep() {
             public void execute(final DeploymentProcessorTarget processorTarget) {
-                processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES,
+                processorTarget.addDeploymentProcessor(SUBSYSTEM_NAME, DEPENDENCIES,
                         DEPENDENCIES_PRIORITY, new GrpcDependencyProcessor());
-                processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.POST_MODULE,
+                processorTarget.addDeploymentProcessor(SUBSYSTEM_NAME, POST_MODULE,
                         POST_MODULE_SCAN_PRIORITY, new GrpcDeploymentProcessor());
-                processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.POST_MODULE,
+                processorTarget.addDeploymentProcessor(SUBSYSTEM_NAME, POST_MODULE,
                         POST_MODULE_SERVLET_PRIORITY,
                         new GrpcServletInstallProcessor(maxInboundMessageSize, maxInboundMetadataSize));
-                processorTarget.addDeploymentProcessor(GrpcExtension.SUBSYSTEM_NAME, Phase.INSTALL,
+                processorTarget.addDeploymentProcessor(SUBSYSTEM_NAME, INSTALL,
                         INSTALL_PRIORITY, new GrpcServiceInstallProcessor());
             }
         }, OperationContext.Stage.RUNTIME);
