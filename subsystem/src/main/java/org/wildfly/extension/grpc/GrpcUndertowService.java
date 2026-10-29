@@ -38,8 +38,6 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
 
     private final Consumer<GrpcUndertowService> serviceConsumer;
     private final Supplier<Host> undertowHost;
-    private final int maxInboundMessageSize;
-    private final int maxInboundMetadataSize;
 
     /** Maps gRPC service name (e.g. "helloworld.Greeter") → WAR context path (e.g. "/my-app"). */
     private final Map<String, String> serviceContextPaths = new ConcurrentHashMap<>();
@@ -48,13 +46,9 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
     private volatile Host resolvedHost;
 
     GrpcUndertowService(final Consumer<GrpcUndertowService> serviceConsumer,
-            final Supplier<Host> undertowHost,
-            final int maxInboundMessageSize,
-            final int maxInboundMetadataSize) {
+            final Supplier<Host> undertowHost) {
         this.serviceConsumer = serviceConsumer;
         this.undertowHost = undertowHost;
-        this.maxInboundMessageSize = maxInboundMessageSize;
-        this.maxInboundMetadataSize = maxInboundMetadataSize;
     }
 
     @Override
