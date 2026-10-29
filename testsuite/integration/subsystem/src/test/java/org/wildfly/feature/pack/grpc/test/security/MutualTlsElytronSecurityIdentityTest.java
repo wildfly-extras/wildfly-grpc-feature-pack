@@ -41,17 +41,19 @@ import messages.HelloRequest;
 
 /**
  * Verifies that mutual TLS (mTLS), combined with a properly configured Elytron
- * security domain and {@code http-authentication-factory} on the gRPC subsystem,
+ * security domain and {@code application-security-domain} mapping in Undertow,
  * propagates the client certificate's identity into the gRPC
  * {@link io.grpc.Context} via {@link org.wildfly.extension.grpc.GrpcSecurity#SECURITY_IDENTITY_KEY}.
  *
  * <p>The ssl-gen module generates client certificates with {@code CN=client}.
  * The test configures an Elytron {@code filesystem-realm} with that identity,
  * an {@code x500-attribute-principal-decoder} to extract {@code CN} from the
- * certificate subject, and an {@code http-authentication-factory} wired into
- * {@code /subsystem=grpc}. The built-in interceptor then authenticates the
- * client certificate from the SSL session and exposes the identity so that
- * gRPC service methods can read it via {@code SECURITY_IDENTITY_KEY.get()}.
+ * certificate subject, and an {@code application-security-domain} that maps the
+ * WAR's security domain to the Elytron domain. The inner handler chain wrapper
+ * in {@code GrpcServletInstallProcessor} authenticates the client certificate
+ * from the TLS session via {@code ServerAuthenticationContext.setAuthenticationPrincipal()},
+ * and the built-in {@code ElytronSecurityIdentityInterceptor} exposes the identity
+ * so that gRPC service methods can read it via {@code SECURITY_IDENTITY_KEY.get()}.
  */
 @RunWith(Arquillian.class)
 @ServerSetup({
