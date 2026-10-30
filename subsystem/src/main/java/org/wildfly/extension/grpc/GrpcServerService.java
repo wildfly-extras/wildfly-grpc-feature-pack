@@ -34,6 +34,7 @@ import io.grpc.ServerMethodDefinition;
 import io.grpc.ServerServiceDefinition;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
+import io.grpc.protobuf.services.ProtoReflectionServiceV1;
 import io.grpc.util.MutableHandlerRegistry;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -99,6 +100,9 @@ class GrpcServerService implements Service, WildFlyGrpcDeploymentRegistry {
                 }
                 serverBuilder.permitKeepAliveWithoutCalls(configuration.isPermitKeepAliveWithoutCalls());
 
+                if (configuration.isEnableServerReflection()) {
+                    serverBuilder.addService(ProtoReflectionServiceV1.newInstance());
+                }
                 if (configuration.getKeyManager() != null) {
                     final SSLContext sslContext = configuration.getSslContext() == null ? null
                             : configuration.getSslContext().get();

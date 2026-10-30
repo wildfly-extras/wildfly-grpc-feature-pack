@@ -53,4 +53,20 @@ public class SubsystemTestCase extends AbstractSubsystemBaseTest {
     public void testExpressions() throws Exception {
         standardSubsystemTest("grpc-subsystem-expressions.xml", false);
     }
+
+    @Test
+    public void testExperimental() throws Exception {
+        standardSubsystemTest("grpc-subsystem-experimental.xml", null, false,
+                new ManagementAdditionalInitialization(Stability.EXPERIMENTAL) {
+
+                    @Override
+                    protected void initializeExtraSubystemsAndModel(ExtensionRegistry extensionRegistry,
+                            Resource rootResource, ManagementResourceRegistration rootRegistration,
+                            RuntimeCapabilityRegistry capabilityRegistry) {
+                        super.initializeExtraSubystemsAndModel(extensionRegistry, rootResource, rootRegistration,
+                                capabilityRegistry);
+                        registerCapabilities(capabilityRegistry, "org.wildfly.weld");
+                    }
+                });
+    }
 }
