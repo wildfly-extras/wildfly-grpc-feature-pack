@@ -1,6 +1,6 @@
 # WildFly gRPC
 
-Feature pack to bring gRPC support to WildFly. gRPC services are served via WildFly's Undertow HTTP/2 stack — no separate port is needed. The `grpc` Galleon layer enables HTTP/2 cleartext (h2c) on the standard HTTP listener (port 8080) automatically. For TLS (port 8443), configure an Undertow `https-listener` with `enable-http2="true"` — HTTP/2 is not enabled on HTTPS listeners by default even though TLS supports ALPN.
+Feature pack to bring gRPC support to WildFly. gRPC services are served via WildFly's Undertow HTTP/2 stack — no separate port is needed. WildFly's standard Undertow layer enables HTTP/2 cleartext (h2c) on the default HTTP listener (port 8080). For TLS (port 8443), configure an Undertow `https-listener` with `enable-http2="true"` — HTTP/2 is not enabled on HTTPS listeners by default even though TLS supports ALPN.
 
 Only gRPC services are supported at the moment. Support for gRPC clients is coming soon.
 

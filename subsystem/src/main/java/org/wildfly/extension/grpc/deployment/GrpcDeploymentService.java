@@ -67,10 +67,6 @@ class GrpcDeploymentService implements Service {
     @Override
     public void start(final StartContext context) throws StartException {
         final WildFlyGrpcDeploymentRegistry routingRegistry = routingRegistrySupplier.get();
-        if (!routingRegistry.isHttp2Configured()) {
-            LOGGER.noHttp2ListenerConfigured(deploymentName);
-        }
-
         try {
             final List<ServerInterceptor> interceptors = createInterceptors();
             // Prepend the identity bridge interceptor so GrpcSecurity.SECURITY_IDENTITY_KEY is

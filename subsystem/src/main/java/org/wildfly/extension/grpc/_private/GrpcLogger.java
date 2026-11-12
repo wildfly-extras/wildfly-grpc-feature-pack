@@ -60,13 +60,6 @@ public interface GrpcLogger extends BasicLogger {
     @Message(id = 13, value = "Exception during gRPC service cleanup; resources may not have been fully released.")
     void failedToCleanupGrpcResources(@Cause Throwable cause);
 
-    @LogMessage(level = WARN)
-    @Message(id = 14, value = "Deployment '%s' contains gRPC services but no HTTP/2-capable listener is configured "
-            + "on the Undertow server. gRPC requires HTTP/2 (h2 or h2c). Configure an https-listener (recommended "
-            + "for production), or set enable-http2=\"true\" on the http-listener for plaintext h2c. "
-            + "gRPC calls will fail until HTTP/2 is available.")
-    void noHttp2ListenerConfigured(String deploymentName);
-
     @LogMessage(level = INFO)
     @Message(id = 15, value = "Registered gRPC service '%s' for deployment '%s'")
     void grpcServiceRegistered(String serviceName, String deploymentName);
