@@ -31,10 +31,10 @@ import static org.wildfly.extension.grpc.GrpcSubsystemDefinition.SERVER_CAPABILI
 
 class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
-    private static final int DEPENDENCIES_PRIORITY = 6304;
-    private static final int POST_MODULE_SCAN_PRIORITY = 6305;
-    private static final int POST_MODULE_SERVLET_PRIORITY = 6306;
-    private static final int INSTALL_PRIORITY = 6306;
+    private static final int DEPENDENCIES_PRIORITY = 0x18A0;
+    private static final int POST_MODULE_SCAN_PRIORITY = 0x18A1;
+    private static final int POST_MODULE_SERVLET_PRIORITY = 0x18A2;
+    private static final int INSTALL_PRIORITY = 0x18A3;
 
     static GrpcSubsystemAdd INSTANCE = new GrpcSubsystemAdd();
 
@@ -58,8 +58,7 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         final Consumer<GrpcUndertowService> provides = builder.provides(SERVER_CAPABILITY);
 
-        final GrpcUndertowService service = new GrpcUndertowService(provides, undertowHost
-        );
+        final GrpcUndertowService service = new GrpcUndertowService(provides, undertowHost);
 
         builder.setInstance(service).install();
 
