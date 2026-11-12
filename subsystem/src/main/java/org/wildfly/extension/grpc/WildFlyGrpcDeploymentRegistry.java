@@ -4,42 +4,32 @@
  */
 package org.wildfly.extension.grpc;
 
-import java.util.List;
-
 import org.jboss.msc.service.StartException;
 
-import io.grpc.BindableService;
-import io.grpc.ServerInterceptor;
-import io.grpc.ServerServiceDefinition;
-
 /**
- * A registry for registering {@linkplain BindableService services} with a deployment.
- *
- * @author <a href="mailto:jperkins@redhat.com">James R. Perkins</a>
+ * Routes gRPC service names to the WAR context paths that host them.
  */
 public interface WildFlyGrpcDeploymentRegistry {
 
     /**
-     * Adds a {@link BindableService} instance to the gRPC server.
+     * Registers a gRPC service name and the WAR context path that serves it.
+     * The gRPC subsystem filter uses this mapping to route incoming requests.
      *
-     * @param deploymentName
-     *                           the name of the owning deployment
-     * @param service
-     *                           the service instance to add
-     * @param interceptors
-     *                           {@link ServerInterceptor}s to wrap around the service
-     * @return the registered {@link ServerServiceDefinition}
+     * @param serviceName
+     *                        the fully-qualified gRPC service name (e.g. {@code helloworld.Greeter})
+     * @param contextPath
+     *                        the WAR context path (e.g. {@code /my-app})
      * @throws StartException
-     *                            if the gRPC service name is already registered by another deployment
+     *                            if the service name is already registered by another deployment
      */
-    ServerServiceDefinition addService(String deploymentName, BindableService service, List<ServerInterceptor> interceptors)
-            throws StartException;
+    void registerService(String serviceName, String contextPath) throws StartException;
 
     /**
-     * Removes a previously registered service from the gRPC server.
+     * Removes a previously registered gRPC service name from the routing table.
      *
-     * @param ssd
-     *                the service definition to remove
+     * @param serviceName
+     *                        the fully-qualified gRPC service name to remove
      */
-    void removeService(ServerServiceDefinition ssd);
+    void unregisterService(String serviceName);
+
 }

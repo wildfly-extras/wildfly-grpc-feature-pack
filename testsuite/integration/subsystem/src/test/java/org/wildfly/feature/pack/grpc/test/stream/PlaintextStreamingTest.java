@@ -34,7 +34,7 @@ public class PlaintextStreamingTest extends StreamingTestParent {
 
     @BeforeClass
     public static void beforeClass() {
-        channel = ManagedChannelBuilder.forTarget(TARGET).usePlaintext().build();
+        channel = ManagedChannelBuilder.forTarget(TARGET_HOST + ":" + UNSECURE_PORT).usePlaintext().build();
         stub = ChatServiceGrpc.newStub(channel);
     }
 }
