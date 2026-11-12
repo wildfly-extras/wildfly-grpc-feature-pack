@@ -137,14 +137,15 @@ public class GrpcServletInstallProcessor implements DeploymentUnitProcessor {
 
                         final InetSocketAddress remoteAddr = exchange.getConnection().getPeerAddress(InetSocketAddress.class);
                         if (identity != null && remoteAddr != null) {
-                            GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR.put(remoteAddr, identity);
+                            final GrpcSecurity.IdentityEntry entry = new GrpcSecurity.IdentityEntry(identity);
+                            GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR.put(remoteAddr, entry);
                             // Clean up when the connection closes rather than when individual
                             // exchanges complete. Under HTTP/2 multiplexing, multiple streams
                             // share the same connection and remote address; removing on exchange
                             // completion would race with other streams' interceptor reads.
                             exchange.getConnection().addCloseListener(
                                     conn -> GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR
-                                            .remove(remoteAddr));
+                                            .remove(remoteAddr, entry));
                         }
                         next.handleRequest(exchange);
                     });

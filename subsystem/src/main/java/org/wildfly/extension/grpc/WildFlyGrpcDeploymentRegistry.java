@@ -32,14 +32,4 @@ public interface WildFlyGrpcDeploymentRegistry {
      */
     void unregisterService(String serviceName);
 
-    /**
-     * Returns {@code true} if the backing Undertow server has at least one HTTP/2-capable listener.
-     * An HTTPS listener always supports h2 via ALPN. A plain HTTP listener requires
-     * {@code enable-http2="true"} to support h2c.
-     * <p>
-     * Returns {@code true} by default (no warning) when the server has not yet started.
-     */
-    default boolean isHttp2Configured() {
-        return true;
-    }
 }

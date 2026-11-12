@@ -17,7 +17,6 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.wildfly.extension.undertow.Host;
 import org.wildfly.extension.undertow.UndertowFilter;
-import org.wildfly.extension.undertow.UndertowListener;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.util.Headers;
@@ -120,13 +119,4 @@ class GrpcUndertowService implements Service, WildFlyGrpcDeploymentRegistry {
         serviceContextPaths.remove(serviceName);
     }
 
-    @Override
-    public boolean isHttp2Configured() {
-        final Host host = resolvedHost;
-        if (host == null) {
-            return true;
-        }
-        return host.getServer().getListeners().stream()
-                .anyMatch(UndertowListener::isSecure);
-    }
 }

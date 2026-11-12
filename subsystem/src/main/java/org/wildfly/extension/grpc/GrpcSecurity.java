@@ -41,8 +41,28 @@ public final class GrpcSecurity {
      * and removed when the underlying connection closes, ensuring the identity remains
      * available for all multiplexed HTTP/2 streams on the same connection.
      */
-    public static final ConcurrentHashMap<InetSocketAddress, SecurityIdentity>
+    public static final ConcurrentHashMap<InetSocketAddress, IdentityEntry>
             AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR = new ConcurrentHashMap<>();
+
+    /**
+     * Identity associated with one Undertow connection.
+     * <p>
+     * This wrapper deliberately supplies a unique map value for each connection instead of
+     * storing {@link SecurityIdentity} directly. Its unique token is necessary because records
+     * compare their components structurally: two connections can authenticate as the same
+     * identity. A connection-close listener removes its entry with
+     * {@link ConcurrentHashMap#remove(Object, Object)}. If the operating system reuses a client
+     * address before the old listener runs, that conditional removal must not delete the
+     * replacement connection's identity.
+     *
+     * @param identity the authenticated identity for this connection
+     */
+    public record IdentityEntry(SecurityIdentity identity, Object token) {
+
+        public IdentityEntry(final SecurityIdentity identity) {
+            this(identity, new Object());
+        }
+    }
 
     private GrpcSecurity() {
     }

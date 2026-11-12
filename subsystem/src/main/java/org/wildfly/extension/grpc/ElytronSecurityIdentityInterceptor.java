@@ -52,7 +52,11 @@ public final class ElytronSecurityIdentityInterceptor implements ServerIntercept
         SecurityIdentity identity = null;
         final SocketAddress remoteSocketAddr = call.getAttributes().get(Grpc.TRANSPORT_ATTR_REMOTE_ADDR);
         if (remoteSocketAddr instanceof InetSocketAddress) {
-            identity = GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR.get(remoteSocketAddr);
+            final GrpcSecurity.IdentityEntry entry =
+                    GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR.get(remoteSocketAddr);
+            if (entry != null) {
+                identity = entry.identity();
+            }
         }
 
         // Fallback: SecurityDomain.getCurrent() (works when classloader is registered with domain).

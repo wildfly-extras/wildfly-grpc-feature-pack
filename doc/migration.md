@@ -21,9 +21,9 @@ is served by WildFly's existing Undertow listeners on the standard ports:
 
 ## Plaintext connections — h2c
 
-gRPC over a plaintext connection uses HTTP/2 cleartext (h2c). The WildFly gRPC Galleon
-feature group automatically sets `enable-http2="true"` on the default `http-listener`
-when the feature pack is provisioned — no manual configuration is required.
+gRPC over a plaintext connection uses HTTP/2 cleartext (h2c). WildFly's standard Undertow
+layer sets `enable-http2="true"` on the default `http-listener` when provisioned, so no
+manual configuration is required.
 
 gRPC clients connect with `.usePlaintext()`:
 ```java
