@@ -21,7 +21,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <version.tamboui>0.6.0</version.tamboui>
+        <version.tamboui>0.7.0</version.tamboui>
     </properties>
 
     <modules>
