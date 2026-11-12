@@ -72,6 +72,20 @@ public class ServerReload {
     }
 
     /**
+     * Executes the given reload operation and waits the {@link #TIMEOUT default timeout} for the reload to complete.
+     * Use this overload when you need to pass reload parameters (e.g. {@code stability}).
+     *
+     * @param client   the client to use for the request. Cannot be {@code null}
+     * @param reloadOp the reload operation to execute
+     *
+     * @throws AssertionError if the reload does not complete within the timeout
+     */
+    public static void executeReloadAndWaitForCompletion(final ModelControllerClient client, final ModelNode reloadOp) {
+        executeReload(client, reloadOp);
+        waitForLiveServerToReload(TIMEOUT, createDefaultConfig());
+    }
+
+    /**
      * Executes a {@code reload} operation and waits a configurable maximum time for the reload to complete.
      *
      * @param client  the client to use for the request. Cannot be {@code null}
