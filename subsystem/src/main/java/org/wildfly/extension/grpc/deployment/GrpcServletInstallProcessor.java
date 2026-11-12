@@ -130,8 +130,8 @@ public class GrpcServletInstallProcessor implements DeploymentUnitProcessor {
                                         }
                                     }
                                 }
-                            } catch (Exception ignored) {
-                                // SSL session or cert authentication not available
+                            } catch (Exception e) {
+                                LOGGER.debugf(e, "Unable to extract mTLS identity for gRPC request");
                             }
                         }
 
