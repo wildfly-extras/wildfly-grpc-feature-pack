@@ -63,4 +63,7 @@ public interface GrpcLogger extends BasicLogger {
     @LogMessage(level = INFO)
     @Message(id = 15, value = "Registered gRPC service '%s' for deployment '%s'")
     void grpcServiceRegistered(String serviceName, String deploymentName);
+
+    @Message(id = 16, value = "Access denied: requires one of %s")
+    SecurityException accessDenied(String roles);
 }

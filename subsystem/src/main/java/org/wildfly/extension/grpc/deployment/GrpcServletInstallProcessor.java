@@ -6,20 +6,14 @@ package org.wildfly.extension.grpc.deployment;
 
 import static org.wildfly.extension.grpc._private.GrpcLogger.LOGGER;
 
-import java.net.InetSocketAddress;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
-import io.undertow.server.SSLSessionInfo;
+import jakarta.servlet.DispatcherType;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.wildfly.extension.grpc.GrpcSecurity;
+import org.wildfly.extension.grpc.GrpcElytronIdentityFilter;
 import org.wildfly.extension.undertow.deployment.UndertowAttachments;
-import org.wildfly.security.auth.server.SecurityDomain;
-import org.wildfly.security.auth.server.SecurityIdentity;
-import org.wildfly.security.auth.server.ServerAuthenticationContext;
 
 import io.grpc.BindableService;
 import io.grpc.servlet.jakarta.GrpcServlet;
@@ -76,6 +70,12 @@ public class GrpcServletInstallProcessor implements DeploymentUnitProcessor {
                             Servlets.servlet("grpc", GrpcServlet.class, new ImmediateInstanceFactory<>(grpcServlet))
                                     .addMapping("/grpc-dispatch/*")
                                     .setAsyncSupported(true));
+                    deploymentInfo.addFilter(Servlets.filter("grpc-elytron-identity",
+                            GrpcElytronIdentityFilter.class,
+                            new ImmediateInstanceFactory<>(new GrpcElytronIdentityFilter()))
+                            .setAsyncSupported(true));
+                    deploymentInfo.addFilterUrlMapping("grpc-elytron-identity", "/grpc-dispatch/*",
+                            DispatcherType.REQUEST);
 
                     // Read RESOLVED_SECURITY_DOMAIN here (inside the servlet extension callback)
                     // rather than at POST_MODULE time, because it is set by WildFly's deployment
@@ -96,59 +96,6 @@ public class GrpcServletInstallProcessor implements DeploymentUnitProcessor {
                         }
                     }
 
-                    // Insert an identity-bridge handler at the FRONT of the inner handler chain list
-                    // (index 0, innermost). ElytronRunAsHandler (appended later by
-                    // AuthenticationManager.configure()) becomes the outermost inner handler and runs
-                    // FIRST then our bridge runs inside that scope.
-                    // For unsecured WARs the bridge is a no-op; pass through directly.
-                    deploymentInfo.getInnerHandlerChainWrappers().add(0, next -> exchange -> {
-                        if (!hasSecurityDomain) {
-                            next.handleRequest(exchange);
-                            return;
-                        }
-                        final SecurityDomain domain = SecurityDomain.getCurrent();
-                        SecurityIdentity identity =
-                                domain != null ? domain.getCurrentSecurityIdentity() : null;
-
-                        // For mTLS: ElytronContextAssociationHandler may run in CONSTRAINT_DRIVEN
-                        // mode and not authenticate the client certificate. Extract the cert from
-                        // the TLS session and authenticate it explicitly via the security domain.
-                        if ((identity == null || identity.isAnonymous()) && domain != null) {
-                            try {
-                                final SSLSessionInfo sslInfo =
-                                        exchange.getConnection().getSslSessionInfo();
-                                if (sslInfo != null) {
-                                    final Certificate[] certs =
-                                            sslInfo.getPeerCertificates();
-                                    if (certs != null && certs.length > 0) {
-                                        final X509Certificate x509 = (X509Certificate) certs[0];
-                                        try (ServerAuthenticationContext sac = domain.createNewAuthenticationContext()) {
-                                            sac.setAuthenticationPrincipal(x509.getSubjectX500Principal());
-                                            if (sac.authorize()) {
-                                                identity = sac.getAuthorizedIdentity();
-                                            }
-                                        }
-                                    }
-                                }
-                            } catch (Exception e) {
-                                LOGGER.debugf(e, "Unable to extract mTLS identity for gRPC request");
-                            }
-                        }
-
-                        final InetSocketAddress remoteAddr = exchange.getConnection().getPeerAddress(InetSocketAddress.class);
-                        if (identity != null && remoteAddr != null) {
-                            final GrpcSecurity.IdentityEntry entry = new GrpcSecurity.IdentityEntry(identity);
-                            GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR.put(remoteAddr, entry);
-                            // Clean up when the connection closes rather than when individual
-                            // exchanges complete. Under HTTP/2 multiplexing, multiple streams
-                            // share the same connection and remote address; removing on exchange
-                            // completion would race with other streams' interceptor reads.
-                            exchange.getConnection().addCloseListener(
-                                    conn -> GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR
-                                            .remove(remoteAddr, entry));
-                        }
-                        next.handleRequest(exchange);
-                    });
                 });
 
         deploymentUnit.putAttachment(GrpcDeploymentAttachments.GRPC_HANDLER_REGISTRY, registry);

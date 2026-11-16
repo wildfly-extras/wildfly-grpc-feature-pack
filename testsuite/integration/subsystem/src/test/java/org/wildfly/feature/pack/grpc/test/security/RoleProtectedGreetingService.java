@@ -10,9 +10,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 /**
  * CDI bean whose {@code greet()} method is protected by {@code @RolesAllowed("grpc-user")}.
  *
- * <p>{@link org.wildfly.extension.grpc.security.GrpcSecurityCdiExtension} automatically
- * binds {@link org.wildfly.extension.grpc.security.GrpcRolesAllowedInterceptor} to this
- * bean, which checks the Elytron identity exposed via
+ * <p>The feature pack's temporary Elytron CDI extension automatically binds its role
+ * interceptor to this bean, which checks the Elytron identity exposed via
  * {@code SecurityDomain.getCurrent().getCurrentSecurityIdentity()}. That identity is
  * populated on gRPC executor threads by {@code ElytronSecurityIdentityInterceptor} using
  * {@code SecurityIdentity.runAs()}.

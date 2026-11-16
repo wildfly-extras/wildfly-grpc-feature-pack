@@ -4,8 +4,6 @@
  */
 package org.wildfly.extension.grpc;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.security.PrivilegedAction;
 
 import org.wildfly.security.auth.server.SecurityDomain;
@@ -14,7 +12,6 @@ import org.wildfly.security.auth.server.SecurityIdentity;
 import io.grpc.Context;
 import io.grpc.Contexts;
 import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener;
-import io.grpc.Grpc;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
@@ -49,23 +46,8 @@ public final class ElytronSecurityIdentityInterceptor implements ServerIntercept
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
             ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
-        SecurityIdentity identity = null;
-        final SocketAddress remoteSocketAddr = call.getAttributes().get(Grpc.TRANSPORT_ATTR_REMOTE_ADDR);
-        if (remoteSocketAddr instanceof InetSocketAddress) {
-            final GrpcSecurity.IdentityEntry entry =
-                    GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR.get(remoteSocketAddr);
-            if (entry != null) {
-                identity = entry.identity();
-            }
-        }
-
-        // Fallback: SecurityDomain.getCurrent() (works when classloader is registered with domain).
-        if (identity == null) {
-            final SecurityDomain domain = SecurityDomain.getCurrent();
-            if (domain != null) {
-                identity = domain.getCurrentSecurityIdentity();
-            }
-        }
+        final SecurityIdentity identity =
+                GrpcElytronIdentityContext.claim(headers.get(GrpcElytronIdentityContext.HEADER_KEY));
 
         if (identity == null) {
             return next.startCall(call, headers);
