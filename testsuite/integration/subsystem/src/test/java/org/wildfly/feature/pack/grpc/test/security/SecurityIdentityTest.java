@@ -5,6 +5,10 @@
 package org.wildfly.feature.pack.grpc.test.security;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -53,6 +57,8 @@ public class SecurityIdentityTest {
     static final String HTTP_AUTH_FACTORY_NAME = "grpc-security-test-http-auth";
     static final String TEST_USER = "alice";
     static final String TEST_PASSWORD = "password";
+    static final String SECOND_TEST_USER = "bob";
+    static final String SECOND_TEST_PASSWORD = "password";
 
     private static ManagedChannel channel;
     private static GreeterGrpc.GreeterBlockingStub blockingStub;
@@ -113,12 +119,20 @@ public class SecurityIdentityTest {
             // Step 2: Add test identity outside the composite — SnapshotServerSetupTask restores
             // the Elytron config but not the filesystem-realm data directory, so a leftover
             // identity from a previous run would cause "identity already exists".
+            addIdentity(client, realmAddress, TEST_USER, TEST_PASSWORD);
+            addIdentity(client, realmAddress, SECOND_TEST_USER, SECOND_TEST_PASSWORD);
+
+            ServerReload.executeReloadAndWaitForCompletion(client.getControllerClient());
+        }
+
+        private static void addIdentity(final ManagementClient client, final ModelNode realmAddress,
+                final String user, final String password) throws Exception {
             ModelNode removeOp = Operations.createOperation("remove-identity", realmAddress);
-            removeOp.get("identity").set(TEST_USER);
+            removeOp.get("identity").set(user);
             client.getControllerClient().execute(removeOp); // ignore outcome
 
             ModelNode addOp = Operations.createOperation("add-identity", realmAddress);
-            addOp.get("identity").set(TEST_USER);
+            addOp.get("identity").set(user);
             ModelNode addResult = client.getControllerClient().execute(addOp);
             if (!Operations.isSuccessfulOutcome(addResult)) {
                 throw new RuntimeException("Failed to add identity: "
@@ -126,15 +140,13 @@ public class SecurityIdentityTest {
             }
 
             ModelNode pwOp = Operations.createOperation("set-password", realmAddress);
-            pwOp.get("identity").set(TEST_USER);
-            pwOp.get("clear").get("password").set(TEST_PASSWORD);
+            pwOp.get("identity").set(user);
+            pwOp.get("clear").get("password").set(password);
             ModelNode pwResult = client.getControllerClient().execute(pwOp);
             if (!Operations.isSuccessfulOutcome(pwResult)) {
                 throw new RuntimeException("Failed to set password: "
                         + Operations.getFailureDescription(pwResult));
             }
-
-            ServerReload.executeReloadAndWaitForCompletion(client.getControllerClient());
         }
     }
 
@@ -205,6 +217,32 @@ public class SecurityIdentityTest {
         Assert.assertEquals(
                 "Unauthenticated gRPC call must not expose a security identity",
                 "anonymous", reply.getMessage());
+    }
+
+    /**
+     * HTTP/2 multiplexes all calls below over one connection. Each request must retain the
+     * identity authenticated from its own Authorization header; connection or remote-address
+     * based propagation would allow one request to observe another caller's identity.
+     */
+    @Test
+    public void concurrentCallsOnOneHttp2ChannelRetainTheirOwnIdentity() throws Exception {
+        final ExecutorService executor = Executors.newFixedThreadPool(8);
+        try {
+            for (int round = 0; round < 10; round++) {
+                final Future<String> alice = executor.submit(callAs(TEST_USER, TEST_PASSWORD));
+                final Future<String> bob = executor.submit(callAs(SECOND_TEST_USER, SECOND_TEST_PASSWORD));
+                Assert.assertEquals(TEST_USER, alice.get(10, TimeUnit.SECONDS));
+                Assert.assertEquals(SECOND_TEST_USER, bob.get(10, TimeUnit.SECONDS));
+            }
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    private static Callable<String> callAs(final String user, final String password) {
+        return () -> blockingStub.withCallCredentials(new BasicCallCredentials(user, password))
+                .sayHello(HelloRequest.newBuilder().setName("test").build())
+                .getMessage();
     }
 
 }
