@@ -39,7 +39,6 @@ public class GrpcDependencyProcessor implements DeploymentUnitProcessor {
 
         moduleSpecification.addSystemDependency(cdiDependency(
                 new ModuleDependency(moduleLoader, "org.wildfly.grpc-dependency", false, false, true, false)));
-
     }
 
     private ModuleDependency cdiDependency(ModuleDependency moduleDependency) {
