@@ -88,7 +88,7 @@
         <version.formatter.plugin>2.29.0</version.formatter.plugin>
         <version.galleon.plugin>8.2.3.Final</version.galleon.plugin>
         <version.impsort.plugin>1.13.0</version.impsort.plugin>
-        <version.jandex.plugin>3.6.0</version.jandex.plugin>
+        <version.jandex.plugin>3.6.1</version.jandex.plugin>
         <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
         <version.keytool.plugin>2.0.2</version.keytool.plugin>
         <version.license.plugin>5.1.2</version.license.plugin>
