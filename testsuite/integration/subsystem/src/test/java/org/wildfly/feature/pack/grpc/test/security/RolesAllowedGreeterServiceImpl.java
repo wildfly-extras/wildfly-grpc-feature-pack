@@ -26,6 +26,7 @@ public class RolesAllowedGreeterServiceImpl extends GreeterGrpc.GreeterImplBase 
     @Override
     public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
         try {
+            assertSubsystemClassesAreHidden();
             final String message = greetingService.greet(request.getName());
             responseObserver.onNext(HelloReply.newBuilder().setMessage(message).build());
             responseObserver.onCompleted();
@@ -33,6 +34,26 @@ public class RolesAllowedGreeterServiceImpl extends GreeterGrpc.GreeterImplBase 
             responseObserver.onError(Status.PERMISSION_DENIED
                     .withDescription(e.getMessage())
                     .asRuntimeException());
+        }
+    }
+
+    /**
+     * The CDI extension is registered by the subsystem, not discovered from a module dependency
+     * visible to the application. Keep this check free of compile-time references to those types.
+     */
+    private void assertSubsystemClassesAreHidden() throws ClassNotFoundException {
+        final ClassLoader applicationClassLoader = getClass().getClassLoader();
+        assertClassIsHidden(applicationClassLoader, "org.wildfly.extension.grpc.ElytronSecurityIdentityInterceptor");
+        assertClassIsHidden(applicationClassLoader, "org.wildfly.extension.grpc.security.GrpcSecurityCdiExtension");
+    }
+
+    private static void assertClassIsHidden(final ClassLoader classLoader, final String className)
+            throws ClassNotFoundException {
+        try {
+            classLoader.loadClass(className);
+            throw new IllegalStateException("Subsystem implementation class leaked to deployment: " + className);
+        } catch (ClassNotFoundException expected) {
+            // Expected: application modules do not depend on the gRPC subsystem module.
         }
     }
 }

@@ -49,7 +49,7 @@ import messages.HelloRequest;
  *
  * <p>The {@link RolesAllowedGreeterServiceImpl} gRPC service injects a CDI bean
  * ({@link RoleProtectedGreetingService}) whose {@code greet()} method performs an explicit
- * role check via {@link org.wildfly.extension.grpc.GrpcSecurity#SECURITY_IDENTITY_KEY}.
+ * role check against the Elytron identity associated with the CDI invocation.
  * Access is granted only when the caller's identity carries the {@code grpc-user} role.
  */
 @RunWith(Arquillian.class)

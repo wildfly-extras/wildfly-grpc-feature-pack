@@ -69,8 +69,8 @@ class GrpcDeploymentService implements Service {
         final WildFlyGrpcDeploymentRegistry routingRegistry = routingRegistrySupplier.get();
         try {
             final List<ServerInterceptor> interceptors = createInterceptors();
-            // Prepend the identity bridge interceptor so GrpcSecurity.SECURITY_IDENTITY_KEY is
-            // populated from the Elytron thread-local set by ElytronContextAssociationHandler.
+            // Prepend the identity bridge interceptor so the identity captured from
+            // ElytronContextAssociationHandler is associated with gRPC executor callbacks.
             // This runs in interceptCall() on the Undertow request thread, before gRPC dispatches
             // the call to its executor — so the security context is captured before thread switch.
             final List<ServerInterceptor> allInterceptors = new ArrayList<>();
