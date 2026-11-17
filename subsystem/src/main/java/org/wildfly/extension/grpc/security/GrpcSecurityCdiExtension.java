@@ -5,6 +5,7 @@
 package org.wildfly.extension.grpc.security;
 
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
 import jakarta.enterprise.inject.spi.Extension;
@@ -21,13 +22,11 @@ import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
  *       carry {@link RolesAllowed}, so application code only needs {@code @RolesAllowed}.</li>
  * </ol>
  *
- * <p>Loaded by Weld via {@code META-INF/services/jakarta.enterprise.inject.spi.Extension}
- * from the {@code org.wildfly.extension.grpc} module, which
- * {@code GrpcDependencyProcessor} adds to every gRPC-capable deployment.
+ * <p>Registered by the subsystem's deployment processor through WildFly's Weld capability.
  */
 public class GrpcSecurityCdiExtension implements Extension {
 
-    void beforeBeanDiscovery(@jakarta.enterprise.event.Observes BeforeBeanDiscovery bbd,
+    void beforeBeanDiscovery(@Observes BeforeBeanDiscovery bbd,
             BeanManager bm) {
         bbd.addAnnotatedType(
                 bm.createAnnotatedType(GrpcRolesAllowedInterceptor.class),
@@ -35,7 +34,7 @@ public class GrpcSecurityCdiExtension implements Extension {
     }
 
     <T> void addInterceptorBindingToRolesAllowedTypes(
-            @jakarta.enterprise.event.Observes ProcessAnnotatedType<T> event) {
+            @Observes ProcessAnnotatedType<T> event) {
         final Class<T> javaClass = event.getAnnotatedType().getJavaClass();
         if (GrpcRolesAllowedInterceptor.class.equals(javaClass)
                 || GrpcSecuredBinding.class.equals(javaClass)) {
