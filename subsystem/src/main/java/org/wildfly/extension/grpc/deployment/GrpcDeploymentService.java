@@ -131,6 +131,7 @@ class GrpcDeploymentService implements Service {
         } catch (ClassNotFoundException e) {
             throw new StartException(e);
         }
+        // Sort by @Priority descending; unannotated interceptors come last.
         classes.sort(Comparator.comparingInt((Class<? extends ServerInterceptor> clazz) -> {
             Priority p = clazz.getAnnotation(Priority.class);
             return p != null ? p.value() : Integer.MAX_VALUE;
