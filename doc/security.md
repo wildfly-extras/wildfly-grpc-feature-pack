@@ -104,30 +104,19 @@ authenticated identity.
 
 The wrapper:
 1. Reads the identity from `SecurityDomain.getCurrent().getCurrentSecurityIdentity()`
-2. For mTLS deployments where `ElytronContextAssociationHandler` runs in `CONSTRAINT_DRIVEN`
-   mode (not `PRO_ACTIVE`), falls back to explicit client certificate authentication via
-   `ServerAuthenticationContext.setAuthenticationPrincipal()` using the X.509 certificate
-   from the TLS session
-3. Stores the identity in `GrpcSecurity.AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR`, a
-   `ConcurrentHashMap` keyed by the client's remote `InetSocketAddress`
-4. Registers a connection-close listener to remove the entry when the TCP connection ends
+2. Registers it under an unguessable, one-time token
+3. Wraps the servlet request to add that token as an internal gRPC metadata header
+4. Removes the token when the asynchronous request completes, times out, or fails
 
-The connection-close listener (rather than an exchange-completion listener) is used because
-HTTP/2 multiplexes multiple streams over a single connection — all streams share the same
-remote address, so removing the identity when one exchange completes would race with other
-streams' interceptor reads.
+The token is scoped to an HTTP request, rather than a connection. This preserves isolation
+between callers whose HTTP/2 streams share one TCP connection.
 
 ### 2. `ElytronSecurityIdentityInterceptor`
 
 A built-in gRPC `ServerInterceptor` that runs on every inbound call. It:
 
-1. Looks up the identity from `AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR` using the call's
-   `TRANSPORT_ATTR_REMOTE_ADDR` attribute
-2. Falls back to `SecurityDomain.getCurrent().getCurrentSecurityIdentity()` if the map
-   lookup misses
-3. Sets `GrpcSecurity.SECURITY_IDENTITY_KEY` on the gRPC `Context` so service code can
-   read the identity on any thread via `Context` propagation
-4. Wraps all listener callbacks (`onMessage`, `onHalfClose`, `onCancel`, `onComplete`,
+1. Claims the identity using the one-time token from the internal request metadata
+2. Wraps all listener callbacks (`onMessage`, `onHalfClose`, `onCancel`, `onComplete`,
    `onReady`) with `SecurityIdentity.runAs()` so that:
    - `SecurityDomain.getCurrent().getCurrentSecurityIdentity()` returns the identity on
      gRPC executor threads
@@ -135,43 +124,15 @@ A built-in gRPC `ServerInterceptor` that runs on every inbound call. It:
    - EJBs called from gRPC services see the correct security context
 
 For unauthenticated requests where no identity is found, the interceptor passes through
-without wrapping — service code will see `null` from `SECURITY_IDENTITY_KEY.get()` and
-no `SecurityIdentity` on the thread.
+without wrapping.
 
 ---
 
 ## Reading the Security Identity
 
-### Option A: gRPC Context key (recommended for gRPC service methods)
-
-```java
-import org.wildfly.extension.grpc.GrpcSecurity;
-import org.wildfly.security.auth.server.SecurityIdentity;
-
-// Inside a gRPC service method or CDI bean called from it:
-SecurityIdentity identity = GrpcSecurity.SECURITY_IDENTITY_KEY.get();
-if (identity != null && !identity.isAnonymous()) {
-    String caller = identity.getPrincipal().getName();
-}
-```
-
-`SECURITY_IDENTITY_KEY` is set to the authenticated identity for authenticated callers,
-or may be `null` if no identity could be determined. Use a null check followed by
-`identity.isAnonymous()` to distinguish authenticated from anonymous callers.
-The key propagates across gRPC's async thread boundaries via `io.grpc.Context`.
-
-### Option B: Elytron thread-local (works anywhere in the call stack)
-
-```java
-import org.wildfly.security.auth.server.SecurityDomain;
-import org.wildfly.security.auth.server.SecurityIdentity;
-
-SecurityDomain domain = SecurityDomain.getCurrent();
-SecurityIdentity identity = domain != null ? domain.getCurrentSecurityIdentity() : null;
-```
-
-Available because `runAs()` wraps every listener callback. This is the same mechanism
-that regular servlet deployments use.
+The security bridge is internal to the subsystem. Applications should use Jakarta security
+semantics on CDI beans, such as `@RolesAllowed`; the subsystem does not expose a gRPC
+`Context` key or other identity API to service implementations or server interceptors.
 
 ---
 
@@ -216,24 +177,18 @@ public class OrderGrpcService extends OrderServiceGrpc.OrderServiceImplBase {
 
 ### How it works
 
-The gRPC subsystem module ships `GrpcSecurityCdiExtension`, a CDI Portable Extension that
-activates automatically for all CDI-enabled gRPC deployments:
+The gRPC subsystem registers an internal CDI Portable Extension through WildFly's Weld
+capability for CDI-enabled gRPC deployments:
 
 - **`BeforeBeanDiscovery`**: registers `GrpcRolesAllowedInterceptor` so CDI discovers it
   from the subsystem module (not the deployment archive)
 - **`ProcessAnnotatedType`**: adds the internal `@GrpcSecuredBinding` interceptor binding to
   any CDI bean class that has `@RolesAllowed` on its methods — invisibly, without user action
-- **`ProcessBeanAttributes`**: vetoes WildFly's exchange-based `SecurityContext` bean
-- **`AfterBeanDiscovery`**: registers `GrpcElytronSecurityContext`, a `SecurityContext`
-  implementation backed by `SecurityDomain.getCurrent()` instead of the Undertow exchange,
-  so role checks work on gRPC executor threads
 - **`GrpcRolesAllowedInterceptor`**: fires for beans bound with `@GrpcSecuredBinding` and
   checks `@RolesAllowed` values against `SecurityDomain.getCurrent().getCurrentSecurityIdentity()`,
   throwing `SecurityException` when access is denied
 
-The extension is loaded by Weld via `META-INF/services/jakarta.enterprise.inject.spi.Extension`
-from the `org.wildfly.extension.grpc` module, which `GrpcDependencyProcessor` adds to every
-gRPC-capable deployment.
+The extension remains loaded by the subsystem module; it is not visible to the deployment.
 
 ### Role configuration
 
@@ -263,22 +218,11 @@ domain configured via `jboss-web.xml`:
 
 1. Undertow validates the client certificate at the TLS layer (`need-client-auth=true`
    on the HTTPS listener)
-2. The inner handler chain wrapper in `GrpcServletInstallProcessor` extracts the
-   certificate's `X500Principal` from the SSL session via `SSLSessionInfo.getPeerCertificates()`
-3. The principal is authenticated against the Elytron `SecurityDomain` via
-   `ServerAuthenticationContext.setAuthenticationPrincipal()`
-4. The resulting `SecurityIdentity` is stored in `AUTHENTICATED_IDENTITY_BY_REMOTE_ADDR`,
-   keyed by the client's remote `InetSocketAddress`
-5. `ElytronSecurityIdentityInterceptor` reads the identity from the map, sets
-   `SECURITY_IDENTITY_KEY`, and wraps callbacks with `runAs()`
-
-**Important**: the `application-security-domain` mapping for mTLS uses the `security-domain`
-attribute directly (not `http-authentication-factory`) and does **not** use the `CLIENT_CERT`
-HTTP authentication mechanism. The Elytron filesystem-realm cannot verify
-`X509PeerCertificateChainEvidence`, so activating the `CLIENT_CERT` mechanism would cause a
-403 Forbidden before the request reaches the `GrpcServlet`. Instead, the inner handler chain
-wrapper authenticates the TLS peer certificate directly via
-`ServerAuthenticationContext.setAuthenticationPrincipal()`.
+2. Undertow's `CLIENT_CERT` HTTP authentication mechanism maps the certificate principal to
+   the Elytron security domain
+3. The servlet filter transfers the resulting `SecurityIdentity` to the gRPC call with a
+   one-time internal metadata token
+4. `ElytronSecurityIdentityInterceptor` claims that token and wraps callbacks with `runAs()`
 
 The Elytron security domain should use an `x500-attribute-principal-decoder` to extract
 the relevant field (e.g., `CN`) from the certificate subject:
@@ -303,9 +247,9 @@ The client certificate's CN generated by the `ssl-gen` module is `client`.
 
 | Authentication mechanism | Configuration required | Identity source in service |
 |---|---|---|
-| HTTP BASIC (plaintext) | `jboss-web.xml` security domain + `application-security-domain` with `http-authentication-factory` | `SECURITY_IDENTITY_KEY.get()` or `SecurityDomain.getCurrent()` |
-| Mutual TLS | `jboss-web.xml` security domain + `application-security-domain` with `security-domain` + `need-client-auth` on HTTPS listener | Same |
-| None (unauthenticated) | No security domain in `jboss-web.xml` | `null` from `SECURITY_IDENTITY_KEY.get()` |
+| HTTP BASIC (plaintext) | `jboss-web.xml` security domain + `application-security-domain` with `http-authentication-factory` | CDI authorization such as `@RolesAllowed` |
+| Mutual TLS | `jboss-web.xml` security domain + `application-security-domain` with `security-domain` + `need-client-auth` on HTTPS listener | CDI authorization such as `@RolesAllowed` |
+| None (unauthenticated) | No security domain in `jboss-web.xml` | CDI authorization denies protected operations |
 
 All mechanisms make `@RolesAllowed` work on `@Inject`-ed CDI beans without any extra
 annotation on the CDI bean or the gRPC service implementation.

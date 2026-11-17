@@ -16,6 +16,7 @@ import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.dmr.ModelNode;
 import org.wildfly.extension.grpc.deployment.GrpcDependencyProcessor;
+import org.wildfly.extension.grpc.deployment.GrpcCdiExtensionProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcDeploymentProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcServiceInstallProcessor;
 import org.wildfly.extension.grpc.deployment.GrpcServletInstallProcessor;
@@ -24,6 +25,7 @@ import org.wildfly.extension.undertow.Host;
 import static org.jboss.as.server.deployment.Phase.DEPENDENCIES;
 import static org.jboss.as.server.deployment.Phase.INSTALL;
 import static org.jboss.as.server.deployment.Phase.POST_MODULE;
+import static org.jboss.as.server.deployment.Phase.POST_MODULE_WELD_PORTABLE_EXTENSIONS;
 import static org.wildfly.extension.grpc.GrpcExtension.SUBSYSTEM_NAME;
 import static org.wildfly.extension.grpc.GrpcSubsystemDefinition.MAX_INBOUND_MESSAGE_SIZE;
 import static org.wildfly.extension.grpc.GrpcSubsystemDefinition.MAX_INBOUND_METADATA_SIZE;
@@ -32,7 +34,10 @@ import static org.wildfly.extension.grpc.GrpcSubsystemDefinition.SERVER_CAPABILI
 class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     private static final int DEPENDENCIES_PRIORITY = 0x18A0;
-    private static final int POST_MODULE_SCAN_PRIORITY = 0x18A1;
+    // Register the CDI extension before Weld scans portable extensions.  This also keeps
+    // the subsystem module out of the deployment's module dependencies.
+    private static final int POST_MODULE_SCAN_PRIORITY = POST_MODULE_WELD_PORTABLE_EXTENSIONS - 2;
+    private static final int POST_MODULE_CDI_EXTENSION_PRIORITY = POST_MODULE_WELD_PORTABLE_EXTENSIONS - 1;
     private static final int POST_MODULE_SERVLET_PRIORITY = 0x18A2;
     private static final int INSTALL_PRIORITY = 0x18A3;
 
@@ -73,6 +78,8 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
                         DEPENDENCIES_PRIORITY, new GrpcDependencyProcessor());
                 processorTarget.addDeploymentProcessor(SUBSYSTEM_NAME, POST_MODULE,
                         POST_MODULE_SCAN_PRIORITY, new GrpcDeploymentProcessor());
+                processorTarget.addDeploymentProcessor(SUBSYSTEM_NAME, POST_MODULE,
+                        POST_MODULE_CDI_EXTENSION_PRIORITY, new GrpcCdiExtensionProcessor());
                 processorTarget.addDeploymentProcessor(SUBSYSTEM_NAME, POST_MODULE,
                         POST_MODULE_SERVLET_PRIORITY,
                         new GrpcServletInstallProcessor(maxInboundMessageSize, maxInboundMetadataSize));

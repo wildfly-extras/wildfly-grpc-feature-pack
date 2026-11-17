@@ -21,6 +21,7 @@ import org.jboss.as.controller.client.helpers.Operations.CompositeOperationBuild
 import org.jboss.dmr.ModelNode;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
@@ -42,17 +43,15 @@ import messages.HelloRequest;
 /**
  * Verifies that mutual TLS (mTLS), combined with a properly configured Elytron
  * security domain and {@code application-security-domain} mapping in Undertow,
- * propagates the client certificate's identity into the gRPC
- * {@link io.grpc.Context} via {@link org.wildfly.extension.grpc.GrpcSecurity#SECURITY_IDENTITY_KEY}.
+ * makes the client certificate's identity available to CDI authorization.
  *
  * <p>The ssl-gen module generates client certificates with {@code CN=client}.
  * The test configures an Elytron {@code filesystem-realm} with that identity,
  * an {@code x500-attribute-principal-decoder} to extract {@code CN} from the
- * certificate subject, and an {@code application-security-domain} that maps the
- * WAR's security domain to the Elytron domain. Undertow's standard {@code CLIENT_CERT}
- * mechanism authenticates the client certificate and the built-in
- * {@code ElytronSecurityIdentityInterceptor} exposes the identity so that gRPC service
- * methods can read it via {@code SECURITY_IDENTITY_KEY.get()}.
+ * certificate subject, and an {@code application-security-domain} that maps the WAR's
+ * security domain to the Elytron domain. Undertow's standard {@code CLIENT_CERT} mechanism
+ * authenticates the client certificate, and a CDI bean protected by {@code @RolesAllowed}
+ * authorizes the request.
  */
 @RunWith(Arquillian.class)
 @ServerSetup({
@@ -70,6 +69,7 @@ public class MutualTlsElytronSecurityIdentityTest {
 
     static final String REALM_NAME = "grpc-mtls-realm";
     static final String DECODER_NAME = "grpc-cn-decoder";
+    static final String ROLE_DECODER_NAME = "grpc-mtls-role-decoder";
     static final String DOMAIN_NAME = "grpc-mtls-domain";
     static final String MECHANISM_FACTORY_NAME = "grpc-mtls-client-cert-mechanisms";
     static final String HTTP_AUTH_FACTORY_NAME = "grpc-mtls-client-cert-auth";
@@ -110,14 +110,22 @@ public class MutualTlsElytronSecurityIdentityTest {
             op.get("attribute-name").set("CN");
             builder.addStep(op);
 
-            // 3. security-domain using the realm and the CN decoder
+            // 3. Security domain using the realm, CN decoder and groups role decoder.
+            ModelNode roleDecoderAddress = Operations.createAddress(
+                    "subsystem", "elytron", "simple-role-decoder", ROLE_DECODER_NAME);
+            op = Operations.createAddOperation(roleDecoderAddress);
+            op.get("attribute").set("groups");
+            builder.addStep(op);
+
             ModelNode domainAddress = Operations.createAddress(
                     "subsystem", "elytron", "security-domain", DOMAIN_NAME);
             op = Operations.createAddOperation(domainAddress);
             op.get("default-realm").set(REALM_NAME);
             op.get("permission-mapper").set("default-permission-mapper");
             op.get("principal-decoder").set(DECODER_NAME);
-            op.get("realms").add().get("realm").set(REALM_NAME);
+            ModelNode realm = op.get("realms").add();
+            realm.get("realm").set(REALM_NAME);
+            realm.get("role-decoder").set(ROLE_DECODER_NAME);
             builder.addStep(op);
 
             // 4. The HTTPS listener's trust-manager has already validated the certificate during
@@ -166,6 +174,16 @@ public class MutualTlsElytronSecurityIdentityTest {
                         + Operations.getFailureDescription(addResult));
             }
 
+            ModelNode rolesOp = Operations.createOperation("add-identity-attribute", realmAddress);
+            rolesOp.get("identity").set(CLIENT_CERT_CN);
+            rolesOp.get("name").set("groups");
+            rolesOp.get("value").add("grpc-user");
+            ModelNode rolesResult = client.getControllerClient().execute(rolesOp);
+            if (!Operations.isSuccessfulOutcome(rolesResult)) {
+                throw new RuntimeException("Failed to add mTLS identity roles: "
+                        + Operations.getFailureDescription(rolesResult));
+            }
+
             ServerReload.executeReloadAndWaitForCompletion(client.getControllerClient());
         }
     }
@@ -192,11 +210,12 @@ public class MutualTlsElytronSecurityIdentityTest {
     @Deployment
     public static Archive<?> createTestArchive() {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "MutualTlsElytronSecurityIdentityTest.war");
-        war.addClasses(SecurityIdentityGreeterServiceImpl.class);
+        war.addClasses(RolesAllowedGreeterServiceImpl.class, RoleProtectedGreetingService.class);
         war.addPackage(HelloRequest.class.getPackage());
         war.addClass(GreeterGrpc.class);
         war.addAsWebInfResource(new StringAsset(WEB_XML), "web.xml");
         war.addAsWebInfResource(new StringAsset(JBOSS_WEB_XML), "jboss-web.xml");
+        war.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         return war;
     }
 
@@ -239,14 +258,14 @@ public class MutualTlsElytronSecurityIdentityTest {
     /**
      * Verifies that when mutual TLS is configured together with an Elytron
      * {@code http-authentication-factory} on the Undertow application security domain, the client
-     * certificate's CN ({@code "client"}) is available as the security identity
-     * principal via {@link org.wildfly.extension.grpc.GrpcSecurity#SECURITY_IDENTITY_KEY}.
+     * certificate's CN ({@code "client"}) is mapped to the {@code grpc-user} role and may
+     * invoke the CDI bean protected by {@code @RolesAllowed}.
      */
     @Test
-    public void securityIdentityIsPopulatedFromClientCertificate() {
+    public void clientCertificateIdentityAuthorizesCdiBean() {
         HelloReply reply = blockingStub.sayHello(HelloRequest.newBuilder().setName("test").build());
         Assert.assertEquals(
-                "The gRPC service must see the client certificate's CN as the security identity principal",
-                CLIENT_CERT_CN, reply.getMessage());
+                "The gRPC service must authorize the client certificate identity in CDI",
+                "Secured Hello test", reply.getMessage());
     }
 }

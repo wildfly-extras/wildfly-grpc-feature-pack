@@ -9,8 +9,6 @@ import java.security.PrivilegedAction;
 import org.wildfly.security.auth.server.SecurityDomain;
 import org.wildfly.security.auth.server.SecurityIdentity;
 
-import io.grpc.Context;
-import io.grpc.Contexts;
 import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
@@ -19,12 +17,10 @@ import io.grpc.ServerInterceptor;
 
 /**
  * Built-in {@link ServerInterceptor} that bridges the Elytron {@link SecurityIdentity}
- * (set by {@code ElytronContextAssociationHandler} on the Undertow request thread) into
- * the gRPC {@link Context} and wraps every listener callback with
+ * (set by {@code ElytronContextAssociationHandler} on the Undertow request thread) to
+ * gRPC executor threads by wrapping every listener callback with
  * {@link SecurityIdentity#runAs} so that:
  * <ul>
- * <li>{@link GrpcSecurity#SECURITY_IDENTITY_KEY} returns the authenticated identity in
- * service methods.</li>
  * <li>{@link SecurityDomain#getCurrent()}.{@link SecurityDomain#getCurrentSecurityIdentity()}
  * returns a non-null identity on gRPC executor threads, enabling Elytron-aware CDI
  * interceptors (e.g. {@code @RolesAllowed}) to work transparently.</li>
@@ -53,20 +49,13 @@ public final class ElytronSecurityIdentityInterceptor implements ServerIntercept
             return next.startCall(call, headers);
         }
 
-        final SecurityIdentity effectiveIdentity = identity;
-
-        // Propagate the identity into the gRPC Context so service code can use
-        // GrpcSecurity.SECURITY_IDENTITY_KEY.get() on any thread.
-        final Context ctx = Context.current()
-                .withValue(GrpcSecurity.SECURITY_IDENTITY_KEY, effectiveIdentity);
-
         // Wrap listener callbacks with runAs() so SecurityDomain.getCurrent() returns
         // the identity on gRPC executor threads — required for @RolesAllowed CDI interceptors.
-        final ServerCall.Listener<ReqT> delegate = Contexts.interceptCall(ctx, call, headers, next);
+        final ServerCall.Listener<ReqT> delegate = next.startCall(call, headers);
         return new SimpleForwardingServerCallListener<>(delegate) {
             @Override
             public void onMessage(ReqT message) {
-                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
+                identity.runAs((PrivilegedAction<Void>) () -> {
                     super.onMessage(message);
                     return null;
                 });
@@ -74,7 +63,7 @@ public final class ElytronSecurityIdentityInterceptor implements ServerIntercept
 
             @Override
             public void onHalfClose() {
-                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
+                identity.runAs((PrivilegedAction<Void>) () -> {
                     super.onHalfClose();
                     return null;
                 });
@@ -82,7 +71,7 @@ public final class ElytronSecurityIdentityInterceptor implements ServerIntercept
 
             @Override
             public void onCancel() {
-                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
+                identity.runAs((PrivilegedAction<Void>) () -> {
                     super.onCancel();
                     return null;
                 });
@@ -90,7 +79,7 @@ public final class ElytronSecurityIdentityInterceptor implements ServerIntercept
 
             @Override
             public void onComplete() {
-                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
+                identity.runAs((PrivilegedAction<Void>) () -> {
                     super.onComplete();
                     return null;
                 });
@@ -98,7 +87,7 @@ public final class ElytronSecurityIdentityInterceptor implements ServerIntercept
 
             @Override
             public void onReady() {
-                effectiveIdentity.runAs((PrivilegedAction<Void>) () -> {
+                identity.runAs((PrivilegedAction<Void>) () -> {
                     super.onReady();
                     return null;
                 });
