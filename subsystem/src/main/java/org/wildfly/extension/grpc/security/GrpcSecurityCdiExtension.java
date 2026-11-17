@@ -10,6 +10,7 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.enterprise.inject.spi.WithAnnotations;
 
 /**
  * CDI Portable Extension that enables transparent {@link RolesAllowed} enforcement
@@ -34,7 +35,7 @@ public class GrpcSecurityCdiExtension implements Extension {
     }
 
     <T> void addInterceptorBindingToRolesAllowedTypes(
-            @Observes ProcessAnnotatedType<T> event) {
+            @Observes @WithAnnotations(RolesAllowed.class) ProcessAnnotatedType<T> event) {
         final Class<T> javaClass = event.getAnnotatedType().getJavaClass();
         if (GrpcRolesAllowedInterceptor.class.equals(javaClass)
                 || GrpcSecuredBinding.class.equals(javaClass)) {
