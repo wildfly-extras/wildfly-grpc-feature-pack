@@ -28,10 +28,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>wildfly-grpc-examples-helloworld-proto</artifactId>
-            <!-- The gRPC and protobuf jars are provided at runtime by the
-                 WildFly module system (org.wildfly.grpc-dependency / io.grpc-all).
-                 Marking provided prevents them from being bundled in WEB-INF/lib,
-                 which would expose internal gRPC classes to Jandex scanning. -->
+            <!-- This artifact carries helloworld.proto, which is unpacked below and used to
+                 generate source code compiled into WEB-INF/classes. Its gRPC/protobuf
+                 dependencies are provided at runtime by WildFly
+                 (org.wildfly.grpc-dependency / io.grpc-all). Keep this dependency provided
+                 so neither the proto artifact nor those libraries are bundled in WEB-INF/lib. -->
             <scope>provided</scope>
         </dependency>
     </dependencies>
