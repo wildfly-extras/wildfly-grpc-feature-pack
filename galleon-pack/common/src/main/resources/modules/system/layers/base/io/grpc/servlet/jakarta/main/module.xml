@@ -6,20 +6,20 @@
 
 -->
 
-<module xmlns="urn:jboss:module:1.9" name="com.squareup.okhttp3">
-
+<module xmlns="urn:jboss:module:1.9" name="io.grpc.servlet.jakarta">
     <properties>
         <property name="jboss.api" value="private" />
     </properties>
 
     <resources>
-        <artifact name="${com.squareup.okhttp3:okhttp}" />
-        <artifact name="${com.squareup.okio:okio-jvm}" />
+        <artifact name="${io.grpc:grpc-servlet-jakarta}" />
     </resources>
 
     <dependencies>
-        <module name="org.jetbrains.kotlin.kotlin-stdlib" />
+        <module name="io.grpc-all" />
+        <module name="com.google.guava" />
+        <module name="jakarta.servlet.api" />
+        <module name="io.undertow.servlet" />
         <module name="java.logging" />
     </dependencies>
 </module>
-
