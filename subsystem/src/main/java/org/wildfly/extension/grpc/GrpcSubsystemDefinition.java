@@ -21,10 +21,17 @@ import org.jboss.as.controller.client.helpers.MeasurementUnit;
 import org.jboss.as.controller.operations.validation.IntRangeValidator;
 import org.jboss.as.controller.operations.validation.LongRangeValidator;
 import org.jboss.as.controller.operations.validation.ModelTypeValidator;
+import org.jboss.as.version.Stability;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
 
 public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
+
+    static final SimpleAttributeDefinition GRPC_ENABLE_SERVER_REFLECTION = new SimpleAttributeDefinitionBuilder(
+            "enable-server-reflection", ModelType.BOOLEAN).setAllowExpression(true).setDefaultValue(ModelNode.FALSE)
+            .setRequired(false).setRestartAllServices().setStability(Stability.EXPERIMENTAL)
+            .setValidator(new ModelTypeValidator(ModelType.BOOLEAN, false))
+            .build();
 
     static final SimpleAttributeDefinition GRPC_FLOW_CONTROL_WINDOW = new SimpleAttributeDefinitionBuilder(
             "flow-control-window", ModelType.INT).setAllowExpression(true).setDefaultValue(new ModelNode(1048576))
@@ -131,7 +138,8 @@ public class GrpcSubsystemDefinition extends PersistentResourceDefinition {
             .setCapabilityReference(Capabilities.TRUST_MANAGER_CAPABILITY).setRequired(false)
             .setRestartAllServices().setValidator(new ModelTypeValidator(ModelType.STRING, true)).build();
 
-    static final List<AttributeDefinition> ATTRIBUTES = List.of(GRPC_FLOW_CONTROL_WINDOW, GRPC_HANDSHAKE_TIMEOUT,
+    static final List<AttributeDefinition> ATTRIBUTES = List.of(GRPC_ENABLE_SERVER_REFLECTION, GRPC_FLOW_CONTROL_WINDOW,
+            GRPC_HANDSHAKE_TIMEOUT,
             GRPC_INITIAL_FLOW_CONTROL_WINDOW, GRPC_KEEP_ALIVE_TIME, GRPC_KEEP_ALIVE_TIMEOUT, GRPC_KEY_MANAGER_NAME,
             GRPC_MAX_CONCURRENT_CALLS_PER_CONNECTION, GRPC_MAX_CONNECTION_AGE, GRPC_MAX_CONNECTION_AGE_GRACE,
             GRPC_MAX_CONNECTION_IDLE, GRPC_MAX_INBOUND_MESSAGE_SIZE, GRPC_MAX_INBOUND_METADATA_SIZE,

@@ -24,6 +24,7 @@ class ServerConfiguration {
 
     private volatile boolean built = false;
 
+    private boolean enableServerReflection;
     private Supplier<SocketBinding> socketBinding;
     private Supplier<TrustManager> trustManager;
     private Supplier<KeyManager> keyManager;
@@ -126,6 +127,16 @@ class ServerConfiguration {
     ServerConfiguration setSessionTimeout(final Long sessionTimeout) {
         assertNotBuilt();
         this.sessionTimeout = sessionTimeout;
+        return this;
+    }
+
+    boolean isEnableServerReflection() {
+        return enableServerReflection;
+    }
+
+    ServerConfiguration setEnableServerReflection(final boolean enableServerReflection) {
+        assertNotBuilt();
+        this.enableServerReflection = enableServerReflection;
         return this;
     }
 

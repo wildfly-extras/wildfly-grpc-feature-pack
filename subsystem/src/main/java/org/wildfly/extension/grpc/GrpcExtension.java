@@ -6,6 +6,8 @@ package org.wildfly.extension.grpc;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
 
+import java.util.EnumSet;
+
 import org.jboss.as.controller.ModelVersion;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemModel;
@@ -24,7 +26,7 @@ public class GrpcExtension extends SubsystemExtension<GrpcSubsystemSchema> {
 
     public GrpcExtension() {
         super(SubsystemConfiguration.of(SUBSYSTEM_NAME, GrpcSubsystemModel.CURRENT, GrpcSubsystemRegistrar::new),
-                SubsystemPersistence.of(GrpcSubsystemSchema.CURRENT));
+                SubsystemPersistence.of(EnumSet.allOf(GrpcSubsystemSchema.class)));
     }
 
     @Override

@@ -96,7 +96,9 @@ class GrpcSubsystemAdd extends AbstractBoottimeAddStepHandler {
                         .asLongOrNull())
                 .setShutdownTimeout(
                         GrpcSubsystemDefinition.GRPC_SHUTDOWN_TIMEOUT.resolveModelAttribute(context, model).asInt())
-                .setStartTls(GrpcSubsystemDefinition.GRPC_START_TLS.resolveModelAttribute(context, model).asBoolean());
+                .setStartTls(GrpcSubsystemDefinition.GRPC_START_TLS.resolveModelAttribute(context, model).asBoolean())
+                .setEnableServerReflection(GrpcSubsystemDefinition.GRPC_ENABLE_SERVER_REFLECTION
+                        .resolveModelAttribute(context, model).asBoolean());
 
         if (isDefined(GrpcSubsystemDefinition.GRPC_TRUST_MANAGER_NAME, model)) {
             configuration.setTrustManager(builder.requiresCapability(Capabilities.TRUST_MANAGER_CAPABILITY,
