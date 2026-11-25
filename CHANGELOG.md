@@ -6,6 +6,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-26
+
+### Added
+
+- Add CDI integration for gRPC services and interceptors, including support for injecting CDI-managed dependencies
+- Generate fresh TLS certificates, keystores, truststores, and Elytron configuration at build time with the new `ssl-gen` module
+
+### Changed
+
+- Replace the JavaFX chat example client with a TamboUI terminal client that reports connection state and supports all SSL modes
+- Package the chat and HelloWorld clients as self-contained JARs and standardize their `--ssl=<mode>` command-line option
+- Order interceptors by `@Priority` using standard comparator-based sorting
+- Build examples as part of the default Maven build while excluding them from deployment
+- Publish releases directly to Maven Central
+
+### Removed
+
+- Remove the separate Preview feature pack; the standard feature pack can now be provisioned on WildFly Preview
+
+### Fixed
+
+- Reject duplicate gRPC service names across deployments and reliably unregister services during undeploy or startup failure
+- Log failures encountered while cleaning up gRPC deployment resources
+- Produce PEM certificates accepted by `grpcurl` and other strict TLS clients
+
+### Upgrades
+
+- Bump Apache Maven to 3.10.2 and JBoss Parent to 55
+- Bump Bouncy Castle to 1.87
+- Bump Checkstyle to 10.21.4
+- Bump gRPC to 1.85.1
+- Bump Jandex Maven Plugin to 3.6.1
+- Bump Kotlin to 2.4.21
+- Bump license-maven-plugin to 5.1.2
+- Bump OkHttp to 5.5.1
+- Bump proto-google-common-protos to 2.82.0 and Protobuf to 4.36.2
+- Bump ShrinkWrap to 2.0.0.Final
+- Bump TamboUI to 0.7.0
+- Bump WildFly to 42.0.0.Final and WildFly Core to 34.0.1.Final
+- Bump WildFly Galleon Maven Plugin to 8.2.3.Final and Galleon Maven Plugin to 7.0.13.Final
+- Bump WildFly Maven Plugin to 6.2.0.Final
+
 ## [0.2.1] - 2026-08-04
 
 ### Added
@@ -315,7 +357,8 @@ Lots of new features, bug fixes and dependency upgrades went into this release.
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.16...v0.2.0
 [0.1.16]: https://github.com/wildfly-extras/wildfly-grpc-feature-pack/compare/v0.1.15...v0.1.16
