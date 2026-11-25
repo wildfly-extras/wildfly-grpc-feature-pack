@@ -128,3 +128,18 @@ Here are some tips on increasing the chance that your pull request is accepted:
 
  * Write a [good commit message](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
  * Include tests that fail without your code, and pass with it
+
+
+# Release Procedure
+
+Releases are published to Maven Central
+
+From a clean checkout of `main`, run the release helper with the release version and the next development version (without `.Final` or `-SNAPSHOT`):
+
+```shell
+./release.sh <release-version> <next-version>
+```
+
+For example, `./release.sh 0.2.2 0.2.3` updates the release to `0.2.2.Final`, creates and pushes the `v0.2.2` tag, and then updates `main` to `0.2.3-SNAPSHOT`.
+
+The tag triggers the release workflow, which builds, signs, and uploads the artifacts to Maven Central. The deployment is published automatically after Central validates it. Follow its progress in the [Central Portal deployments page](https://central.sonatype.com/publishing/deployments).
