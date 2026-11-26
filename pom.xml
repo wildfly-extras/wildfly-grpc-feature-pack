@@ -5,8 +5,7 @@
      SPDX-License-Identifier: Apache-2.0
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -17,7 +16,7 @@
 
     <groupId>org.wildfly.grpc</groupId>
     <artifactId>wildfly-grpc-parent</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.3.0.Final</version>
     <packaging>pom</packaging>
     <name>WildFly gRPC :: Parent</name>
     <description>WildFly gRPC subsystem</description>
@@ -45,7 +44,7 @@
         <connection>scm:git:${repo.scm.connection}</connection>
         <developerConnection>scm:git:${repo.scm.connection}</developerConnection>
         <url>${repo.scm.url}</url>
-        <tag>HEAD</tag>
+        <tag>v0.3.0</tag>
     </scm>
 
     <issueManagement>
@@ -128,7 +127,7 @@
     </modules>
 
     <!-- No dependencies! Dependencies are managed in code-parent -->
-    <dependencies/>
+    <dependencies />
 
     <build>
         <!--
@@ -210,7 +209,7 @@
                         <failsOnError>true</failsOnError>
                         <includeTestSourceDirectory>true</includeTestSourceDirectory>
                         <excludes>**/*$logger.java,**/*$bundle.java</excludes>
-                        <useFile/>
+                        <useFile />
                     </configuration>
                     <dependencies>
                         <dependency>
