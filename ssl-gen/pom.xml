@@ -21,7 +21,7 @@
 
     <properties>
         <!-- Don't try to deploy the wildfly-grpc-ssl-gen module that is only used for examples and testing -->
-        <maven.deploy.skip>true</maven.deploy.skip>
+        <central.skipPublishing>true</central.skipPublishing>
 
         <ssl.dir>${project.build.directory}/generated-ssl</ssl.dir>
         <ssl.password>secret</ssl.password>
