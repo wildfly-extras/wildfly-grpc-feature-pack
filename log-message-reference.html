@@ -39,35 +39,11 @@
         <td>void</td>
         <td>Failed to stop gRPC server</td>
       </tr>
-      <tr id="WFLYGRPC0004">
-        <td><a href="#WFLYGRPC0004">WFLYGRPC0004</a></td>
-        <td></td>
-        <td>java.lang.RuntimeException</td>
-        <td>Failed to register %s</td>
-      </tr>
       <tr id="WFLYGRPC0005">
         <td><a href="#WFLYGRPC0005">WFLYGRPC0005</a></td>
         <td></td>
-        <td>java.lang.RuntimeException</td>
+        <td>org.jboss.msc.service.StartException</td>
         <td>Failed to register %s for deployment %s</td>
-      </tr>
-      <tr id="WFLYGRPC0006">
-        <td><a href="#WFLYGRPC0006">WFLYGRPC0006</a></td>
-        <td>DEBUG</td>
-        <td>void</td>
-        <td>Registering gRPC service %s for deployment %s.</td>
-      </tr>
-      <tr id="WFLYGRPC0007">
-        <td><a href="#WFLYGRPC0007">WFLYGRPC0007</a></td>
-        <td>DEBUG</td>
-        <td>void</td>
-        <td>Registering global gRPC ServerInterceptor %s.</td>
-      </tr>
-      <tr id="WFLYGRPC0008">
-        <td><a href="#WFLYGRPC0008">WFLYGRPC0008</a></td>
-        <td>DEBUG</td>
-        <td>void</td>
-        <td>Registering gRPC ServerInterceptor %s for deployment %s.</td>
       </tr>
       <tr id="WFLYGRPC0009">
         <td><a href="#WFLYGRPC0009">WFLYGRPC0009</a></td>
@@ -80,6 +56,24 @@
         <td></td>
         <td>java.lang.IllegalStateException</td>
         <td>The configuration object has already been built.</td>
+      </tr>
+      <tr id="WFLYGRPC0011">
+        <td><a href="#WFLYGRPC0011">WFLYGRPC0011</a></td>
+        <td></td>
+        <td>org.jboss.as.server.deployment.DeploymentUnitProcessingException</td>
+        <td>gRPC service '%s' is already registered by deployment '%s'</td>
+      </tr>
+      <tr id="WFLYGRPC0012">
+        <td><a href="#WFLYGRPC0012">WFLYGRPC0012</a></td>
+        <td>WARN</td>
+        <td>void</td>
+        <td>Weld capability not available for deployment %s; CDI injection will not be available for gRPC services.</td>
+      </tr>
+      <tr id="WFLYGRPC0013">
+        <td><a href="#WFLYGRPC0013">WFLYGRPC0013</a></td>
+        <td>WARN</td>
+        <td>void</td>
+        <td>Exception during gRPC service cleanup; resources may not have been fully released.</td>
       </tr>
     </tbody>
   </table>
