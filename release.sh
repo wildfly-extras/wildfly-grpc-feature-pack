@@ -8,12 +8,9 @@
 # -------------------------------------------------------
 #
 # Creates a new release:
-#   - bump to release version
-#   - update changelog
-#   - commit & push changes
-#   - create & push tag (trigger GitHub release workflow)
-#   - bump to next snapshot version
-#   - commit & push changes
+#   - prepare and tag the release using Maven Release Plugin
+#   - update the working copy to the next snapshot version
+#   - deploy the tagged release to Maven Central
 #
 # -------------------------------------------------------
 
@@ -107,10 +104,8 @@ parse_params "$@"
 setup_colors
 
 FINAL_VERSION="${RELEASE_VERSION}.Final"
-GIT_REMOTES=("origin" "upstream")
 SNAPSHOT_VERSION="${NEXT_VERSION}-SNAPSHOT"
 TAG="v${RELEASE_VERSION}"
-WORKFLOW_URL="https://github.com/wildfly-extras/wildfly-grpc-feature-pack/actions/workflows/release.yml"
 
 is_semver "${RELEASE_VERSION}" || die "Release version is not a semantic version"
 is_semver "${NEXT_VERSION}" || die "Next version is not a semantic version"
@@ -123,12 +118,9 @@ msg "Codebase is ready to be released."
 msg ""
 msg "If you decide to continue, this script will "
 msg ""
-msg "   1. Bump the version to ${CYAN}${FINAL_VERSION}${NOFORMAT}"
-msg "   2. Update the ${CYAN}changelog${NOFORMAT} (there should already be entries in the ${CYAN}Unreleased${NOFORMAT} section!)"
-msg "   3. Create a tag for ${CYAN}${TAG}${NOFORMAT}"
-msg "   4. ${CYAN}Commit${NOFORMAT} and ${CYAN}push${NOFORMAT} to upstream (which will trigger the ${CYAN}release workflow${NOFORMAT} at GitHub)"
-msg "   5. Bump the version to ${CYAN}${SNAPSHOT_VERSION}${NOFORMAT}"
-msg "   6. ${CYAN}Commit${NOFORMAT} and ${CYAN}push${NOFORMAT} to upstream"
+msg "   1. Prepare and push release ${CYAN}${FINAL_VERSION}${NOFORMAT} with tag ${CYAN}${TAG}${NOFORMAT}"
+msg "   2. Commit and push the next snapshot version ${CYAN}${SNAPSHOT_VERSION}${NOFORMAT}"
+msg "   3. Deploy the tagged release to ${CYAN}Maven Central${NOFORMAT}"
 msg ""
 echo "Do you wish to continue?"
 select yn in "Yes" "No"; do
@@ -139,33 +131,12 @@ select yn in "Yes" "No"; do
 done
 
 msg ""
-./versionBump.sh "${FINAL_VERSION}"
-msg "Update changelog"
-mvn --quiet -DskipModules keepachangelog:release &> /dev/null
-# Maven plugin keepachangelog:release uses the project version from the POM (1.2.3.Final),
-# but action mindsers/changelog-reader-action in release.yml requires a semantic version (1.2.3).
-# So replace [1.2.3.Final] -> [1.2.3] and v1.2.3.Final -> v1.2.3
-sed -E -i.bak -e 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' -e 's/v([0-9]+\.[0-9]+\.[0-9]+)\.Final/v\1/g' CHANGELOG.md && rm CHANGELOG.md.bak
-msg "Push changes"
-git commit --quiet -am "Release ${RELEASE_VERSION}"
-for remote in "${GIT_REMOTES[@]}"; do
-  git push --quiet "${remote}" main &> /dev/null
-  msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
-done
-msg "Push tag"
-git tag "${TAG}"
-for remote in "${GIT_REMOTES[@]}"; do
-  git push --quiet --tags "${remote}" main &> /dev/null
-  msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
-done
-./versionBump.sh "${SNAPSHOT_VERSION}"
-msg "Push changes"
-git commit --quiet -am "Next is ${NEXT_VERSION}"
-for remote in "${GIT_REMOTES[@]}"; do
-  git push --quiet "${remote}" main &> /dev/null
-  msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
-done
-msg "Done. Watch the release workflow at ${CYAN}${WORKFLOW_URL}${NOFORMAT}"
-msg ""
-msg "The workflow uploads the signed release to Maven Central and publishes it automatically after validation."
-msg "Monitor validation and publication at ${CYAN}https://central.sonatype.com/publishing/deployments${NOFORMAT}."
+mvn --batch-mode release:clean release:prepare \
+    -DreleaseVersion="${FINAL_VERSION}" \
+    -DdevelopmentVersion="${SNAPSHOT_VERSION}" \
+    -Dtag="${TAG}" \
+    -Dresume=false
+
+mvn --batch-mode release:perform
+
+msg "Done. Monitor validation and publication at ${CYAN}https://central.sonatype.com/publishing/deployments${NOFORMAT}."

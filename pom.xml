@@ -89,7 +89,6 @@
         <version.galleon.plugin>8.2.3.Final</version.galleon.plugin>
         <version.impsort.plugin>1.13.0</version.impsort.plugin>
         <version.jandex.plugin>3.6.1</version.jandex.plugin>
-        <version.keepachangelog.plugin>2.1.1</version.keepachangelog.plugin>
         <version.keytool.plugin>2.1.0</version.keytool.plugin>
         <version.license.plugin>5.1.2</version.license.plugin>
         <version.wildfly.plugin>6.2.0.Final</version.wildfly.plugin>
@@ -201,11 +200,6 @@
                         <staticGroups>*</staticGroups>
                         <removeUnused>true</removeUnused>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>co.enear.maven.plugins</groupId>
-                    <artifactId>keepachangelog-maven-plugin</artifactId>
-                    <version>${version.keepachangelog.plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
