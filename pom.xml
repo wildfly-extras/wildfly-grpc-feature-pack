@@ -16,7 +16,7 @@
 
     <groupId>org.wildfly.grpc</groupId>
     <artifactId>wildfly-grpc-parent</artifactId>
-    <version>0.3.0.Final</version>
+    <version>0.3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WildFly gRPC :: Parent</name>
     <description>WildFly gRPC subsystem</description>
@@ -44,7 +44,7 @@
         <connection>scm:git:${repo.scm.connection}</connection>
         <developerConnection>scm:git:${repo.scm.connection}</developerConnection>
         <url>${repo.scm.url}</url>
-        <tag>v0.3.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>

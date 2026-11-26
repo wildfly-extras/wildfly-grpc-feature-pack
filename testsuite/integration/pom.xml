@@ -11,7 +11,7 @@
     <parent>
         <artifactId>wildfly-grpc-testsuite</artifactId>
         <groupId>org.wildfly.grpc</groupId>
-        <version>0.3.0.Final</version>
+        <version>0.3.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
