@@ -18,6 +18,10 @@ where `SSL` is either
 * `oneway`: server identity is verified
 * `twoway`: both server and client identities are verified
 
+This provisions a WildFly server with:
+- **Port 8080** — HTTP/2 cleartext (h2c)
+- **Port 8443** — HTTPS with HTTP/2 via ALPN (one-way TLS)
+
 Then, run the server with:
 
 ```shell
@@ -69,27 +73,27 @@ Alternatively, you can use [gRPCurl](https://github.com/fullstorydev/grpcurl) to
 Run these commands from the `examples/helloworld` directory:
 
 ```shell
-# clear text connection
+# plaintext (port 8080, h2c)
 grpcurl -proto proto/src/main/proto/helloworld.proto \
   -plaintext \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+  localhost:8080 helloworld.Greeter/SayHello
 ```
 
 ```shell
-# tls (oneway)
+# TLS, one-way (port 8443) — server authenticates to client, no client cert
 grpcurl -proto proto/src/main/proto/helloworld.proto \
   -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+  localhost:8443 helloworld.Greeter/SayHello
 ```
 
 ```shell
-# mutual TLS (twoway)
+# TLS, two-way (port 8443) — mutual authentication (requires -Dssl=twoway on service build)
 grpcurl -proto proto/src/main/proto/helloworld.proto \
   -cacert ../../ssl-gen/target/generated-ssl/client.truststore.pem \
   -cert ../../ssl-gen/target/generated-ssl/client.crt.pem \
   -key ../../ssl-gen/target/generated-ssl/client.key.pem \
   -d '{"name":"Bob"}' \
-  localhost:9555 helloworld.Greeter/SayHello
+  localhost:8443 helloworld.Greeter/SayHello
 ```

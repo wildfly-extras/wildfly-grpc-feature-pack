@@ -4,10 +4,7 @@
  */
 package org.wildfly.extension.grpc;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
-
 import org.jboss.as.controller.ModelVersion;
-import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemModel;
 import org.jboss.as.version.Stability;
 import org.wildfly.subsystem.SubsystemConfiguration;
@@ -17,8 +14,6 @@ import org.wildfly.subsystem.SubsystemPersistence;
 public class GrpcExtension extends SubsystemExtension<GrpcSubsystemSchema> {
 
     public static final String SUBSYSTEM_NAME = "grpc";
-    // TODO - Can we get rid of this path?
-    static final PathElement SUBSYSTEM_PATH = PathElement.pathElement(SUBSYSTEM, SUBSYSTEM_NAME);
 
     private static final Stability FEATURE_STABILITY = Stability.PREVIEW;
 
